@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 19:53:28 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/02/27 22:32:45 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,18 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <string.h>
+#include <linux/limits.h>
+
+
+//pwd command
+//propably need file dupping (dup2)
+void print_working_directory(void)
+{
+	char current_path[PATH_MAX];
+	getcwd(current_path, PATH_MAX);
+	printf("pwd: %s\n", current_path); // 
+}
+
 void read_loop(void)
 {
 	char *line;
@@ -29,12 +41,8 @@ void read_loop(void)
 
 int main(void)
 {
-	char *pwd;
-    char buf[1024];
-    getcwd(buf, 1024);
-    printf("pwd: %s\n", pwd);
-	printf("pwd: %s\n", buf);
 	//read_loop();
+	print_working_directory();
 	printf("exit");
     return (0);
 }
