@@ -1,33 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_alloc_new_delete.c                              :+:      :+:    :+:   */
+/*   ft_lstdelone_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 23:54:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 21:34:34 by ltaalas          ###   ########.fr       */
+/*   Created: 2024/11/06 17:07:04 by ltaalas           #+#    #+#             */
+/*   Updated: 2024/12/23 16:45:43 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_alloc.h"
+#include "../includes/libft.h"
 
-t_arena arena_new(t_u64 cap)
+void	ft_lstdelone(t_list *lst, void (*del)(void *))
 {
-	t_arena a;
-
-	a.data = malloc(cap);
-	if (a.data = NULL)
-		return ((t_arena){0});
-	a.capacity = cap;
-	a.size = 0;
-	return (a);
-}
-
-void arena_delete(t_arena *a)
-{
-	free(a->data);
-	a->data = NULL;
-	a->capacity = 0;
-	a->size = 0;
+	if (lst == NULL || del == NULL)
+		return ;
+	if (lst->content != NULL)
+		del(lst->content);
+	free(lst);
+	lst = NULL;
 }

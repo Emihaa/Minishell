@@ -1,33 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_alloc_new_delete.c                              :+:      :+:    :+:   */
+/*   ft_putnbr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 23:54:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 21:34:34 by ltaalas          ###   ########.fr       */
+/*   Created: 2024/10/31 13:42:48 by ltaalas           #+#    #+#             */
+/*   Updated: 2024/12/23 16:45:43 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_alloc.h"
+#include "../includes/libft.h"
 
-t_arena arena_new(t_u64 cap)
+void	ft_putnbr_fd(int n, int fd)
 {
-	t_arena a;
+	int		i;
+	char	num[12];
 
-	a.data = malloc(cap);
-	if (a.data = NULL)
-		return ((t_arena){0});
-	a.capacity = cap;
-	a.size = 0;
-	return (a);
-}
-
-void arena_delete(t_arena *a)
-{
-	free(a->data);
-	a->data = NULL;
-	a->capacity = 0;
-	a->size = 0;
+	i = 0;
+	if (n == -2147483648)
+	{
+		ft_putstr_fd("-2147483648", fd);
+		return ;
+	}
+	if (n < 0)
+	{
+		ft_putchar_fd('-', fd);
+		n = n * -1;
+	}
+	num[i++] = n % 10 + '0';
+	n /= 10;
+	while (n > 0)
+	{
+		num[i++] = n % 10 + '0';
+		n /= 10;
+	}
+	while (i-- > 0)
+		ft_putchar_fd(num[i], fd);
 }

@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_alloc_new_delete.c                              :+:      :+:    :+:   */
+/*   ft_realloc_fastish.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 23:54:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 21:34:34 by ltaalas          ###   ########.fr       */
+/*   Created: 2024/12/20 18:41:51 by ltaalas           #+#    #+#             */
+/*   Updated: 2025/01/09 21:25:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_alloc.h"
+#include <stddef.h>
+#include <stdlib.h>
+#include "../includes/fastish.h"
 
-t_arena arena_new(t_u64 cap)
+void	*ft_realloc_fastish(void *src, size_t size_src, size_t size_total)
 {
-	t_arena a;
+	void	*alloc;
 
-	a.data = malloc(cap);
-	if (a.data = NULL)
-		return ((t_arena){0});
-	a.capacity = cap;
-	a.size = 0;
-	return (a);
-}
-
-void arena_delete(t_arena *a)
-{
-	free(a->data);
-	a->data = NULL;
-	a->capacity = 0;
-	a->size = 0;
+	alloc = ft_calloc_fastish(size_total, sizeof(char));
+	if (alloc == NULL)
+		return (NULL);
+	if (size_total < size_src)
+		size_src = size_total;
+	ft_memmove_fastish(alloc, src, size_src);
+	free(src);
+	return (alloc);
 }

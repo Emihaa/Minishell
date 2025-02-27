@@ -1,33 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_alloc_new_delete.c                              :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 23:54:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 21:34:34 by ltaalas          ###   ########.fr       */
+/*   Created: 2024/10/30 20:20:20 by ltaalas           #+#    #+#             */
+/*   Updated: 2024/12/23 16:45:43 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_alloc.h"
+#include "../includes/libft.h"
 
-t_arena arena_new(t_u64 cap)
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	t_arena a;
+	unsigned int	i;
+	char			*str;
 
-	a.data = malloc(cap);
-	if (a.data = NULL)
-		return ((t_arena){0});
-	a.capacity = cap;
-	a.size = 0;
-	return (a);
-}
-
-void arena_delete(t_arena *a)
-{
-	free(a->data);
-	a->data = NULL;
-	a->capacity = 0;
-	a->size = 0;
+	str = NULL;
+	if (!s || !f)
+		return (NULL);
+	i = 0;
+	str = malloc(sizeof(char) * (ft_strlen(s) + 1));
+	if (str == NULL)
+		return (NULL);
+	while (s[i])
+	{
+		str[i] = f(i, s[i]);
+		i++;
+	}
+	str[i] = 0;
+	return (str);
 }

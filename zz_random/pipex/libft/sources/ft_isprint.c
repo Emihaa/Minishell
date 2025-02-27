@@ -1,33 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_alloc_new_delete.c                              :+:      :+:    :+:   */
+/*   ft_isprint.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 23:54:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 21:34:34 by ltaalas          ###   ########.fr       */
+/*   Created: 2024/10/28 15:50:25 by ltaalas           #+#    #+#             */
+/*   Updated: 2024/10/28 15:50:27 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_alloc.h"
-
-t_arena arena_new(t_u64 cap)
+int	ft_isprint(int c)
 {
-	t_arena a;
-
-	a.data = malloc(cap);
-	if (a.data = NULL)
-		return ((t_arena){0});
-	a.capacity = cap;
-	a.size = 0;
-	return (a);
-}
-
-void arena_delete(t_arena *a)
-{
-	free(a->data);
-	a->data = NULL;
-	a->capacity = 0;
-	a->size = 0;
+	if ((c >= 32 && c <= 126))
+		return (1);
+	return (0);
 }
