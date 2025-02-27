@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/02/27 19:28:23 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/02/28 00:15:14 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,13 +36,18 @@ LIBFT = $(LIB_DIR)/$(LIBFT_DIR)/build/libft.a
 FASTISH_DIR = lib_fastish
 FASTISH = $(LIB_DIR)/$(FASTISH_DIR)/build/fastish.a
 
+LT_ALLOC_DIR = lt_alloc
+LT_ALLOC = $(LIB_DIR)/$(LT_ALLOC_DIR)/build/lt_alloc.a
+
 NAME = minishell
 
-SOURCES = pipex.c ft_error_exit.c utils.c path_functions.c sub_processes.c
+SOURCES = minishell.c
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
-HEADERS = $(addprefix $(INC_DIR)/, minishell.h libft.h fastish.h)
+HEADERS = $(addprefix $(INC_DIR)/, minishell.h)
+
+LINKS = $(addprefix -l, readline) # make this make any sense
 
 CC_FLAGS = -Wall -Wextra -Werror 
 
@@ -51,13 +56,19 @@ all: $(NAME)
 libft:
 	@echo "Cheking libft.a"
 	@$(BOLD_PURPLE)
-	@make --no-print-directory -C $(LIBFT_DIR)/ CC_FLAGS="$(CC_FLAGS)"
+	@make --no-print-directory -C $(LIB_DIR)/$(LIBFT_DIR)/ CC_FLAGS="$(CC_FLAGS)"
 	@$(RESET_COLOR)
 
 fastish:
 	@echo "Cheking fastish.a"
 	@$(BOLD_PURPLE)
-	@make --no-print-directory -C $(FASTISH_DIR)/ CC_FLAGS="$(CC_FLAGS)"
+	@make --no-print-directory -C $(LIB_DIR)/$(FASTISH_DIR)/ CC_FLAGS="$(CC_FLAGS)"
+	@$(RESET_COLOR)
+
+lt_alloc:
+	@echo "Cheking $@.a"
+	@$(BOLD_PURPLE)
+	@make --no-print-directory -C $(LIB_DIR)/$(LT_ALLOC_DIR)/ CC_FLAGS="$(CC_FLAGS)"
 	@$(RESET_COLOR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(OBJ_DIR)
@@ -66,47 +77,58 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(OBJ_DIR)
 	@$(RESET_COLOR)
 
 $(OBJ_DIR):
-	@$(BOLD_ORANGE) && echo "Making $@ directory"
+	@$(BOLD_ORANGE)
+	@echo -n "Making $@ directory"
 	$(RESET_COLOR)
 	@mkdir -p $@
-	$(BOLD_LIGHT_BLUE) && echo "Made $@ directory"
+	$(BOLD_LIGHT_BLUE)
+	@echo -n "Made $@ directory"
 	@$(RESET_COLOR)
 
-$(NAME): libft fastish $(OBJECTS) | $(BIN_DIR)
+$(NAME): lt_alloc $(OBJECTS) | $(BIN_DIR)
 	@make --no-print-directory $(BIN_DIR)/$(NAME)
 
-$(BIN_DIR)/$(NAME): $(LIBFT) $(FASTISH) $(OBJECTS) | $(BIN_DIR)
+#	restucture to just have one LIBS or DEPENDENCIES variable
+
+$(BIN_DIR)/$(NAME): $(OBJECTS) $(LT_ALLOC) | $(BIN_DIR)
 	@$(BOLD_GREEN)
 	@echo "Linking $(NAME)"
-	@cc $(CC_FLAGS) $(OBJECTS) $(FASTISH) $(LIBFT) \
+	@cc $(CC_FLAGS) $(OBJECTS) $(LT_ALLOC) $(LINKS) \
 	-o $(BIN_DIR)/$(NAME)
 	@$(RESET_COLOR)
 	@echo "Built to $(BIN_DIR)/$(NAME)"
 
 $(BIN_DIR):
-	@$(BOLD_ORANGE) && echo "Making $@ directory"
+	@$(BOLD_ORANGE)
+	@echo "Making $@ directory"
 	@$(RESET_COLOR)
 	@mkdir -p $@
-	@$(BOLD_LIGHT_BLUE) && echo "Made $@ directory"
+	@$(BOLD_LIGHT_BLUE)
+	@echo "Made $@ directory"
 	@$(RESET_COLOR)
 
 clean:
-	@$(BOLD_ORANGE) && echo "Cleaning $(NAME)/$(OBJ_DIR)/"
+	@$(BOLD_ORANGE)
+	@echo "Cleaning $(NAME)/$(OBJ_DIR)/"
 	@$(RESET_COLOR)
 	rm -f $(OBJECTS)
-	@make -C $(LIBFT_DIR) clean --no-print-directory
-	@make -C $(FASTISH_DIR) clean --no-print-directory
+	@make -C $(LIB_DIR)/$(LT_ALLOC_DIR) clean --no-print-directory
+# @make -C $(LIBFT_DIR) clean --no-print-directory
+# @make -C $(FASTISH_DIR) clean --no-print-directory
 	@$(RESET_COLOR)
 
 fclean:
-	@$(BOLD_ORANGE) && echo "Cleaning $(OBJ_DIR)/$(NAME)"
+	@$(BOLD_ORANGE) 
+	@echo "Cleaning $(OBJ_DIR)/$(NAME)"
 	@$(RESET_COLOR)
 	rm -f $(OBJECTS)
-	@$(UNDERSCORE_ORANGE) && echo "Deleting $(BIN_DIR)/$(NAME)"
+	@$(UNDERSCORE_ORANGE)
+	@echo "Deleting $(BIN_DIR)/$(NAME)"
 	@$(RESET_COLOR)
 	rm -f $(BIN_DIR)/$(NAME)
-	@make -C $(LIBFT_DIR) fclean --no-print-directory 
-	@make -C $(FASTISH_DIR) fclean --no-print-directory
+	@make -C $(LIB_DIR)/$(LT_ALLOC_DIR) fclean --no-print-directory
+# @make -C $(LIBFT_DIR) fclean --no-print-directory 
+# @make -C $(FASTISH_DIR) fclean --no-print-directory
 	@$(RESET_COLOR)
 
 re: fclean all

@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 16:02:01 by ltaalas           #+#    #+#              #
-#    Updated: 2025/02/28 00:17:34 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/02/28 00:17:48 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,24 +28,11 @@ BIN_DIR = build
 OBJ_DIR = objects
 INC_DIR = includes
 
-NAME = libft.a
-BONUS_NAME = .libft_bonus
+NAME = lt_alloc.a
  
-SOURCES = 			ft_is_white_space.c	ft_atoi.c		ft_calloc.c		get_next_line.c	\
-					ft_isalnum.c		ft_isalpha.c	ft_isascii.c 	ft_isdigit.c	\
-					ft_isprint.c		ft_itoa.c		ft_memchr.c		ft_memcmp.c		\
-					ft_memcpy.c			ft_memmove.c	ft_memset.c		ft_bzero.c		\
-					ft_putchar_fd.c 	ft_putendl_fd.c ft_putnbr_fd.c	ft_putstr_fd.c	\
-					ft_split.c			ft_strdup.c		ft_strchr.c		ft_strrchr.c 	\
-					ft_strjoin.c		ft_striteri.c	ft_strlcat.c	ft_strlcpy.c	\
-					ft_strlen.c			ft_strmapi.c	ft_strncmp.c	ft_strnstr.c 	\
-					ft_strtrim.c		ft_substr.c		ft_tolower.c	ft_toupper.c	\
+SOURCES = 	lt_alloc_new_delete.c	lt_alloc_arena.c	lt_alloc_arena_temp.c
 
-BONUS_SOURCES = 	ft_lstnew_bonus.c	ft_lstadd_front_bonus.c	ft_lstsize_bonus.c		\
-					ft_lstlast_bonus.c	ft_lstadd_back_bonus.c	ft_lstdelone_bonus.c	\
-					ft_lstclear_bonus.c	ft_lstiter_bonus.c		ft_lstmap_bonus.c
-
-HEADERS = $(addprefix $(INC_DIR)/, libft.h)
+HEADERS = $(addprefix $(INC_DIR)/, lt_alloc.h)
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 BONUS_OBJECTS = $(addprefix $(OBJ_DIR)/, $(BONUS_SOURCES:.c=.o))
@@ -89,8 +76,9 @@ $(BIN_DIR):
 clean:
 	@$(BOLD_ORANGE)
 	@echo "Cleaning $(NAME)/$(OBJ_DIR)/"
-	@rm -f $(OBJECTS) $(BONUS_OBJECTS) $(BIN_DIR)/$(BONUS_NAME)
+	@rm -f $(OBJECTS)
 	@$(RESET_COLOR)
+
 
 fclean: clean
 	@$(UNDERSCORE_ORANGE)
@@ -98,13 +86,6 @@ fclean: clean
 	@rm -f $(BIN_DIR)/$(NAME)
 	@$(RESET_COLOR)
 
-bonus: $(BONUS_NAME)
-
-$(BONUS_NAME): $(BIN_DIR)/$(BONUS_NAME)
-
-$(BIN_DIR)/$(BONUS_NAME): $(OBJECTS) $(BONUS_OBJECTS)
-	ar -rcs $(BIN_DIR)/$(NAME) $(OBJECTS) $(BONUS_OBJECTS)
-	touch $(BIN_DIR)/$(BONUS_NAME)
 
 re: fclean all
 
