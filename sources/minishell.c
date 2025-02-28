@@ -6,11 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/02/28 19:22:23 by ehaanpaa         ###   ########.fr       */
-=======
-/*   Updated: 2025/02/28 18:53:36 by ltaalas          ###   ########.fr       */
->>>>>>> refs/remotes/origin/main
+/*   Updated: 2025/02/28 19:36:07 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
