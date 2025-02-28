@@ -6,7 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/02/28 19:22:23 by ehaanpaa         ###   ########.fr       */
+=======
+/*   Updated: 2025/02/28 18:53:36 by ltaalas          ###   ########.fr       */
+>>>>>>> refs/remotes/origin/main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +27,8 @@ void env(char **envp)
 	int i;
 
 	i = 0;
+	if (envp == NULL)
+		return ;
 	while (envp[i])
 	{
 		printf("%s\n", envp[i]);
@@ -30,10 +36,20 @@ void env(char **envp)
 	}
 }
 
-// void echo(int argc, char *argv[])
-// {
-	
-// }
+void echo(int argc, char *argv[])
+{
+	int i;
+
+	i = 0;
+	while (i < argc)
+	{
+		printf("%s", argv[i]);
+		i++;
+	}
+	if (strncmp(argv[0], "-n", 3))
+		return ;
+	printf("\n");
+}
 
 //pwd command
 //propably need file dupping (dup2)
