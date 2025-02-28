@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 23:18:59 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/02/28 17:55:47 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,20 +14,15 @@
 // @question are these the only tokens needed?
 typedef enum e_token_type
 {
-	TOKEN_EXPANSION =		'$',
-
-	TOKEN_SINGLE_QUOTES =	'\'',
-	TOKEN_DOUBLE_QUOTES =	'"',
-
-	TOKEN_REDIRECT_LEFT =	'<',
-	TOKEN_REDIRECT_RIGHT =	'>',
-	
-	TOKEN_PIPE =			'|',
-
-	TOKEN_HERE_DOCUMENT = 	256,
-	TOKEN_REDIRECT_APPEND =	257,
-
-	TOKEN_COMMAND = 		258,
+	EXPANSION =			'$',
+	SINGLE_QUOTES =		'\'',
+	DOUBLE_QUOTES =		'"',
+	REDIRECT_IN =		'<',
+	REDIRECT_OUT =		'>',
+	PIPE =				'|',
+	HERE_DOCUMENT = 	256,
+	REDIRECT_APPEND =	257,
+	COMMAND = 			258,
 
 } t_token_type;
 
