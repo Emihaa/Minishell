@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/28 18:22:01 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/02/28 19:22:23 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,13 @@ void print_working_directory(void)
 {
 	char current_path[PATH_MAX];
 	getcwd(current_path, PATH_MAX);
-	printf("pwd: %s\n", current_path); // 
+	printf("%s\n", current_path);
+}
+
+void print_export(void)
+{
+	char *s = "vegenakki";
+	printf("%s\n", s);
 }
 
 void read_loop(char **envp)
@@ -50,6 +56,7 @@ void read_loop(char **envp)
 	while (1)
 	{
 		line = readline("minishell> ");
+		add_history(line);
     	//printf("%s\n", line);
 		if (strncmp(line, "env", 4) == 0)
 		{
@@ -59,6 +66,11 @@ void read_loop(char **envp)
 		if (strncmp(line, "pwd", 4) == 0)
 		{
 			print_working_directory();
+			continue;
+		}
+		if (strncmp(line, "export", 4) == 0)
+		{
+			print_export();
 			continue;
 		}
 		if (strncmp(line, "exit", 5) == 0)
