@@ -1,0 +1,12 @@
+minishell
+a.out
+*test*
+*Test*
+*copy*
+*.swp
+*.o
+*.a
+*.sh
+object/
+build/
+.vscode/
