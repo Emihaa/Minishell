@@ -6,29 +6,41 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/28 18:41:37 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/02/28 23:01:30 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#ifndef MINISHELL_H
+# define MINISHELL_H
+
+#include "../libs/lt_alloc/includes/lt_alloc.h" // maybe change to makefile link?
 
 // @question are these the only tokens needed?
-typedef enum e_token_type
+typedef enum
 {
-	EXPANSION 		=	'$',
-	SINGLE_QUOTES 	=	'\'',
-	DOUBLE_QUOTES	=	'"',
 	REDIRECT_IN		=	'<',
-	REDIRECT_OUT 	=	'>',
-	PIPE 			=	'|',
-	HERE_DOCUMENT	= 	256,
-	REDIRECT_APPEND =	257,
-	COMMAND			= 	258,
+	REDIRECT_OUT	=	'>',
+	PIPE			=	'|',
+	HERE_DOCUMENT	=	256, // <<
+	REDIRECT_APPEND	=	257, // >>
+	COMMAND			=	258, // with argv or not
+}	t_token_type;
 
-} t_token_type;
+
+// LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
 
 typedef struct s_token
 {
-	t_token_type type;
-	char *string;
-} t_token;
+	t_token_type	type;
+	char			*string;
+}	t_token;
 
+typedef struct s_lexer
+{
+	char *line;
+	t_u32 line_index;
+}	t_lexer;
+
+
+
+#endif
