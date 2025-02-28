@@ -21,7 +21,7 @@ void	*arena_alloc(t_arena *a, t_u64 size)
 		errno = ENOMEM;
 		return (NULL);
 	}
-	result = &a->data[size];
+	result = &a->data[a->size];
 	a->size += size;
 	while (size--)
 		((t_u8 *)result)[size] = 0;
@@ -37,7 +37,7 @@ void	*arena_alloc_no_zero(t_arena *a, t_u64 size)
 		errno = ENOMEM;
 		return (NULL);
 	}
-	result = &a->data[size];
+	result = &a->data[a->size];
 	a->size += size;
 	return (result);
 }
