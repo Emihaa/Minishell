@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/14 21:15:36 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/23 17:48:23 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/02/28 19:00:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*check_for_cmd_path(char *cmd_str, char **cmd_argv, char **envp)
 		if (bin_paths == NULL || bin_paths[0] == '\0')
 			return (cmd_with_path);
 	}
-	if (!strchr(cmd_argv[0], '/') && bin_paths != NULL && bin_paths[0] != '\0')
+	if (!ft_strchr(cmd_argv[0], '/') && bin_paths != NULL && bin_paths[0] != '\0')
 	{
 		cmd_with_path = get_cmd_with_path(cmd_argv, bin_paths);
 		if (cmd_with_path == NULL || is_directory(cmd_with_path))
