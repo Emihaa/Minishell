@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/28 23:01:30 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/02/28 23:23:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define MINISHELL_H
 
 #include "../libs/lt_alloc/includes/lt_alloc.h" // maybe change to makefile link?
+#include "../libs/libft/includes/libft.h"
 
 // @question are these the only tokens needed?
 typedef enum
@@ -24,6 +25,7 @@ typedef enum
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	257, // >>
 	COMMAND			=	258, // with argv or not
+	END_OF_LINE		=	-1,
 }	t_token_type;
 
 

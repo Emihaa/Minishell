@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/02/28 00:15:14 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/02/28 23:10:02 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -85,15 +85,15 @@ $(OBJ_DIR):
 	@echo -n "Made $@ directory"
 	@$(RESET_COLOR)
 
-$(NAME): lt_alloc $(OBJECTS) | $(BIN_DIR)
+$(NAME): lt_alloc libft $(OBJECTS) | $(BIN_DIR)
 	@make --no-print-directory $(BIN_DIR)/$(NAME)
 
 #	restucture to just have one LIBS or DEPENDENCIES variable
 
-$(BIN_DIR)/$(NAME): $(OBJECTS) $(LT_ALLOC) | $(BIN_DIR)
+$(BIN_DIR)/$(NAME): $(OBJECTS) $(LT_ALLOC) $(LIBFT) | $(BIN_DIR)
 	@$(BOLD_GREEN)
 	@echo "Linking $(NAME)"
-	@cc $(CC_FLAGS) $(OBJECTS) $(LT_ALLOC) $(LINKS) \
+	@cc $(CC_FLAGS) $(OBJECTS) $(LT_ALLOC) $(LIBFT) $(LINKS) \
 	-o $(BIN_DIR)/$(NAME)
 	@$(RESET_COLOR)
 	@echo "Built to $(BIN_DIR)/$(NAME)"
@@ -113,7 +113,7 @@ clean:
 	@$(RESET_COLOR)
 	rm -f $(OBJECTS)
 	@make -C $(LIB_DIR)/$(LT_ALLOC_DIR) clean --no-print-directory
-# @make -C $(LIBFT_DIR) clean --no-print-directory
+	 @make -C $(LIB_DIR)/$(LIBFT_DIR) clean --no-print-directory
 # @make -C $(FASTISH_DIR) clean --no-print-directory
 	@$(RESET_COLOR)
 
@@ -127,7 +127,7 @@ fclean:
 	@$(RESET_COLOR)
 	rm -f $(BIN_DIR)/$(NAME)
 	@make -C $(LIB_DIR)/$(LT_ALLOC_DIR) fclean --no-print-directory
-# @make -C $(LIBFT_DIR) fclean --no-print-directory 
+	@make -C $(LIB_DIR)/$(LIBFT_DIR) fclean --no-print-directory 
 # @make -C $(FASTISH_DIR) fclean --no-print-directory
 	@$(RESET_COLOR)
 
