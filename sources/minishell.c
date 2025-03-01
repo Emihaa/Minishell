@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/28 19:36:07 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/01 19:42:50 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <string.h>
 #include <linux/limits.h>
 
+#include "../includes/minishell.h" // fix maybe
 
 void env(char **envp)
 {
@@ -62,6 +63,12 @@ void print_export(void)
 	printf("%s\n", s);
 }
 
+void print_expansion(char *line)
+{	
+	//line++;
+	printf("%s\n", getenv(line));	
+}
+
 void read_loop(char **envp)
 {
 	char *line;
@@ -87,6 +94,11 @@ void read_loop(char **envp)
 		}
 		if (strncmp(line, "exit", 5) == 0)
 			return ;
+		if (*line == '$')
+		{
+			print_expansion(line);
+			continue;
+		}
 	}
 }
 
@@ -95,6 +107,6 @@ int main(int argc, char *argv[], char *envp[])
 	(void)argc;
 	(void)argv;
 	read_loop(envp);
-	printf("exit");
+	printf("exit\n");
     return (0);
 }
