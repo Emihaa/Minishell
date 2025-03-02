@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/01 23:40:55 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/02 20:40:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,12 @@
 #include "../libs/lt_alloc/includes/lt_alloc.h" // maybe change to makefile link?
 #include "../libs/libft/includes/libft.h"
 
+#include <unistd.h>
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+#include <string.h>
+#include <linux/limits.h>
 #include <stdbool.h>
 
 // @question are these the only tokens needed?
@@ -28,8 +34,10 @@ typedef enum e_token_type
 	REDIRECT_APPEND	=	257, // >>
 	COMMAND			=	258, // with argv or not
 	END_OF_LINE		=	-1,
+	ERROR			=	-204,
 }	t_token_type;
 
+#define TOKEN_TYPE_STRING
 
 // LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
 
@@ -39,7 +47,7 @@ typedef union u_data
 {
 	char	*filename;
 	char	**command_argv;
-};
+}	t_data;
 
 // LUKA: length based string
 // I expect this will make creating tokens a bit easier

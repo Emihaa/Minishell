@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/01 19:42:50 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/02 19:34:35 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void read_loop(char **envp)
 	{
 		line = readline("minishell> ");
 		add_history(line);
-    	//printf("%s\n", line);
+    	//printf("%s", line);
 		if (strncmp(line, "env", 4) == 0)
 		{
 			env(envp);
@@ -92,13 +92,13 @@ void read_loop(char **envp)
 			print_export();
 			continue;
 		}
-		if (strncmp(line, "exit", 5) == 0)
-			return ;
 		if (*line == '$')
 		{
 			print_expansion(line);
 			continue;
 		}
+		if (strncmp(line, "exit", 5) == 0)
+			return ;
 	}
 }
 
