@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/02 20:40:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/03 19:17:55 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,21 @@ typedef enum e_token_type
 	PIPE			=	'|',
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	257, // >>
-	COMMAND			=	258, // with argv or not
+	// COMMAND			=	258,
+	// ARGUMENT		=	259, // @question with argv or not?
+	WORD			=	260,	// generic word, could be command name or argument
 	END_OF_LINE		=	-1,
 	ERROR			=	-204,
 }	t_token_type;
 
-#define TOKEN_TYPE_STRING
+#define REDIRECT_IN_NAME	"<"
+#define REDIRECT_OUT_NAME	">"
+#define APPEND_NAME			">>"
+#define HEREDOC_NAME		"<<"
+#define PIPE_NAME			"|"
+#define EOL_NAME			"newline"
+#define ERROR_NAME			"ERROR"
+#define WORD_NAME			"WORD"
 
 // LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
 
@@ -62,6 +71,7 @@ typedef struct s_token
 {
 	t_token_type	type;
 	t_token_string	string;
+	char			*name;
 }	t_token;
 
 typedef struct s_lexer
