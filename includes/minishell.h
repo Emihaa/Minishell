@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/03 19:17:55 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/03 20:43:30 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,9 @@ typedef enum e_token_type
 #define HEREDOC_NAME		"<<"
 #define PIPE_NAME			"|"
 #define EOL_NAME			"newline"
-#define ERROR_NAME			"ERROR"
 #define WORD_NAME			"WORD"
+
+#define ERROR_NAME			"ERROR"
 
 // LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
 
@@ -63,15 +64,15 @@ typedef union u_data
 // and remove the need to allocate anything inside the lexer
 typedef struct s_token_string
 {
-	t_u64	length;
-	char	*pointer;
+	t_u64	length;		// total size of the string
+	char	*pointer;	// where the string starts
 }	t_token_string;
 
 typedef struct s_token
 {
-	t_token_type	type;
-	t_token_string	string;
-	char			*name;
+	t_token_type	type;	// the type of the token
+	t_token_string	string;	// the string of the token | if applicable will be a filename a command name or an argument
+	char			*name;	// added mostly for testing but might stay usefull
 }	t_token;
 
 typedef struct s_lexer
