@@ -6,38 +6,40 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/03 20:43:30 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/03 21:47:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-#include "../libs/lt_alloc/includes/lt_alloc.h" // maybe change to makefile link?
+// maybe change these to makefile link?
+// @NOTE: would cause problems for vscode higlighting and autocomplete
+#include "../libs/lt_alloc/includes/lt_alloc.h" 
 #include "../libs/libft/includes/libft.h"
 
-#include <unistd.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <string.h>
-#include <linux/limits.h>
-#include <stdbool.h>
+#include <unistd.h>	//for write and stuff
+#include <stdio.h>	// printf
+#include <readline/readline.h> // readline
+#include <readline/history.h> // add_history
+#include <string.h>	// was for testing // might need for strerror or something else
+#include <linux/limits.h>	// linux max length stuff
+#include <stdbool.h>	// for bool data type
 
 // @question are these the only tokens needed?
-typedef enum e_token_type
+typedef enum e_type
 {
 	REDIRECT_IN		=	'<',
 	REDIRECT_OUT	=	'>',
 	PIPE			=	'|',
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	257, // >>
-	// COMMAND			=	258,
+	// COMMAND		=	258,
 	// ARGUMENT		=	259, // @question with argv or not?
-	WORD			=	260,	// generic word, could be command name or argument
-	END_OF_LINE		=	-1,
-	ERROR			=	-204,
-}	t_token_type;
+	WORD			=	260,	// generic word, could be command name or argument 
+	END_OF_LINE		=	-1,		// first WORD before a pipe is the command and the following ones are arguments
+	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
+}	t_type;
 
 #define REDIRECT_IN_NAME	"<"
 #define REDIRECT_OUT_NAME	">"
@@ -68,13 +70,19 @@ typedef struct s_token_string
 	char	*pointer;	// where the string starts
 }	t_token_string;
 
+// struct for token information
+// can be extender if necessary
+// name should probably be created during parsing if the parser encounters a syntax error
 typedef struct s_token
 {
-	t_token_type	type;	// the type of the token
+	t_type	type;	// the type of the token
 	t_token_string	string;	// the string of the token | if applicable will be a filename a command name or an argument
-	char			*name;	// added mostly for testing but might stay usefull
+	char			*name;	// added mostly for testing but might stay useful
 }	t_token;
 
+// struct for any information the lexer might need
+// currently only the line string and the index seem to be required
+// parser will have to create this and pass it by reference to the lexer
 typedef struct s_lexer
 {
 	char *line;

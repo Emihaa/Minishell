@@ -6,24 +6,28 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/03 20:54:56 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/03 21:47:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h" // change to be a just "minishell.h" after making sure makefile linking works properly
+// to compile just the lexer for testing use "cc lexer.c -l readline ../libs/libft/build/libft.a -o lexer"
+
+#include "../includes/minishell.h" 
+// change to be a just "minishell.h" after making sure makefile linking works properly
 
 // LUKA: should the lexer care about syntax errors or not
 // seems like probably not
 // probably makes more sense to detect syntax error in parser when getting tokens in unexpected order
 
 static inline
-bool is_white_space(char c)
+bool	is_white_space(char c)
 {
 	return (c == ' ' || c == '\t'); // || c == '\n' maybe?
 }
 
+// does the current character delimit a word
 static inline
-bool is_delimiter(char c)
+bool	is_delimiter(char c)
 {
 	if (c == '|')
 		return (true);
@@ -33,14 +37,16 @@ bool is_delimiter(char c)
 		return (true);
 	if (c == '\0')
 		return (true);
+	if (is_white_space(c))
+		return (true);
 	return (false);
 }
 
 // moves in the line until finds a matching quote or the EOL 
 static inline
-int match_quote(t_lexer *lexer, char quote, int len)
+int	match_quote(t_lexer *lexer, char quote, int len)
 {
-	char c;
+	char	c;
 
 	if (quote == '\'' || quote == '"')
 	{
@@ -49,16 +55,18 @@ int match_quote(t_lexer *lexer, char quote, int len)
 		{
 			c = (lexer->line[lexer->line_index + len]);
 			if (c == quote || c == '\0')
-				break;
+				break ;
 			len += 1;
 		}
 	}
 	return (len);
 }
 
+// @question which style is nicer :P?
+
 // just returns a token with correct parameters for a pipe
 static inline
-t_token tokenize_pipe(t_lexer *lexer)
+t_token	tokenize_pipe(t_lexer *lexer)
 {
 	lexer->line_index += 1;
 	return ((t_token){
@@ -66,36 +74,36 @@ t_token tokenize_pipe(t_lexer *lexer)
 		.string = {
 			.length = 0,
 			.pointer = NULL,
-			},
+		},
 		.name = PIPE_NAME,
-		});
+	});
 }
 
 // just returns a token with correct parameters for a EOL
 static inline
-t_token tokenize_end_of_line(void)
+t_token	tokenize_end_of_line(void)
 {
 	return ((t_token)
-	{
-		.type = END_OF_LINE,
-		.string = (t_token_string) 
 		{
-			.length = 0,
-			.pointer = NULL,
-		},
-		.name = EOL_NAME,
-	});
+			.type = END_OF_LINE,
+			.string =
+			{
+				.length = 0,
+				.pointer = NULL,
+			},
+			.name = EOL_NAME,
+		});
 }
 
 // creates a token matching the input parameters
 // for tokens that can have a string
 // @TODO: rename
-t_token	tokenize_stuffs(t_lexer *lexer, t_token_type token_type, char *token_name, int to_skip) 
+t_token	tokenize_stuffs(t_lexer *lexer, t_type type, char *name, int to_skip)
 {
-	t_token token;
-	char c;
-	int len;
-	
+	t_token	token;
+	char	c;
+	int		len;
+
 	len = 0;
 	lexer->line_index += to_skip;
 	while (is_white_space(lexer->line[lexer->line_index]))
@@ -104,24 +112,23 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_token_type token_type, char *token_nam
 	{
 		c = lexer->line[lexer->line_index + len];
 		len = match_quote(lexer, c, len);
-		if (is_delimiter(c) || is_white_space(c))
-			break;
+		if (is_delimiter(c))
+			break ;
 		len += 1;
 	}
-	token = (t_token){
-		.type = token_type,
-		.string = (t_token_string){
-			.length = len,
-			.pointer = &lexer->line[lexer->line_index],
-		},
-		.name = token_name,
+	token.type = type;
+	token.string = (t_token_string)
+	{
+		.length = len,
+		.pointer = &lexer->line[lexer->line_index],
 	};
+	token.name = name;
 	lexer->line_index += len;
 	return (token);
 }
 
-// example
-// stuff necessary for calling
+// @example
+// stuff necessary for calling the lexer
 /*
 		t_lexer lexer;
 		lexer.line = readline("minishell >");
@@ -131,8 +138,12 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_token_type token_type, char *token_nam
 		token = get_next_token(&lexer);
 
 */
+
 // skips whitespace between tokens and finds the next token type to return
-t_token get_next_token(t_lexer *lexer)
+// @TODO:	find out which character can be valid parts of a word
+// 			currently anything other than a delimiter character counts as a word
+//			which doesn't seem correct
+t_token	get_next_token(t_lexer *lexer)
 {	
 	while (is_white_space(lexer->line[lexer->line_index]))
 		lexer->line_index += 1;
@@ -149,11 +160,12 @@ t_token get_next_token(t_lexer *lexer)
 	if (lexer->line[lexer->line_index] == '\0')
 		return (tokenize_end_of_line());
 	return (tokenize_stuffs(lexer, WORD, WORD_NAME, 0));
-	//return ((t_token){.type = ERROR, .string = {0}}); // error
+	//return ((t_token){.type = ERROR, .string = {0}}); // error	
 }
 
-
 // TESTING STUFF
+// comment out when integrating to project or testing other stuff that need the lexer 
+// and delete when ready to submit
 // cc lexer.c -l readline ../libs/libft/build/libft.a
 //testing main
 void print_tokens(t_lexer *lexer)
@@ -171,7 +183,6 @@ void print_tokens(t_lexer *lexer)
 	}
 }
 
-
 void read_loop(char **envp)
 {
 	char *line;
@@ -179,7 +190,7 @@ void read_loop(char **envp)
 	while (1)
 	{
 		t_lexer lexer = {0};
-		line = readline("minishell> ");
+		line = readline("lexer[TEST]> ");
 		add_history(line);
     	//printf("%s", line);
 		lexer.line = line;
