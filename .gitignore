@@ -1,6 +1,7 @@
 minishell
-a.out
 lexer
+heredoc
+a.out
 *test*
 *Test*
 *copy*
