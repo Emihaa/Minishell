@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/05 20:21:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/05 20:56:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,17 +70,35 @@ void	heredoc_sub_process(int out_fd, char *delimiter)
 		arena_realloc(&arena, &buff_base[current_total], line_len * sizeof(char));
 		ft_memmove(&buff_base[current_total], line, line_len * sizeof(char));
 		current_total += line_len;
+		arena_realloc(&arena, &buff_base[current_total], 1 * sizeof(char));
+		buff_base[current_total] = '\n';
+		current_total += 1;
 		free(line);
 	}
 	free(line);
 	arena_realloc(&arena, &buff_base[current_total], 1 * sizeof(char));
 	write(out_fd, buff_base, ft_strlen(buff_base));
-	write(out_fd, "\n", 1);
 	if (close(out_fd) == -1)
 		; //@TODO: error cheking;
 	printf("here_doc_sub_process_exit\n");
 	arena_delete(&arena);
 	exit(0);
+}
+
+void unused_heredoc(char *delim)
+{
+	const int delim_len = ft_strlen(delim);
+	char *line;
+
+	while (1)
+	{
+		line = readline("> ");
+			if (ft_strncmp(line, delim, delim_len) == 0)
+		break ;
+		free(line);
+	}
+	free(line);
+
 }
 
 int heredoc2(char *delimiter, pid_t *heredoc_pid)
@@ -116,16 +134,6 @@ int main(int argc, char *argv[], char *envp[])
 {
 	(void)argc;
 	(void)argv;
-	char buf[1024] = {0};
-	while (1)
-	{
-		read(STDIN_FILENO, buf, 1024);
-		write(STDOUT_FILENO, buf, ft_strlen(buf));
-
-	}
-	exit(1);
-
-
 	int wstatus;
 	pid_t heredoc_pid;
 	//read_loop(envp);
@@ -136,8 +144,8 @@ int main(int argc, char *argv[], char *envp[])
 		int in_fd = heredoc2("DELIM", &heredoc_pid);
 		dup2(in_fd, STDIN_FILENO);
 		close(in_fd);
-		//pid = waitpid(heredoc_pid, &wstatus, 0);
-		//printf("cat sub_process parent: 	%s\t%i\n", strerror(WEXITSTATUS(wstatus)), wstatus);
+		pid = waitpid(heredoc_pid, &wstatus, 0);
+		printf("cat sub_process parent: 	%s\t%i\n", strerror(WEXITSTATUS(wstatus)), wstatus);
 		char *cat_argv[2] = {[0] = "cat", [1] = NULL};
 		execve("/bin/cat", cat_argv, envp);
 		exit(1);
