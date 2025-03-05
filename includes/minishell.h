@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/04 22:08:05 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/05 16:09:29 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,15 @@
 #include "../libs/lt_alloc/includes/lt_alloc.h" 
 #include "../libs/libft/includes/libft.h"
 
-#include <unistd.h>	//for write and stuff
+#include <unistd.h>	//for write, pipe etc.
 #include <stdio.h>	// printf
 #include <readline/readline.h> // readline
 #include <readline/history.h> // add_history
 #include <string.h>	// was for testing // might need for strerror or something else
 #include <linux/limits.h>	// linux max length stuff
 #include <stdbool.h>	// for bool data type
+
+
 
 // @question are these the only tokens needed?
 typedef enum e_type
@@ -53,7 +55,7 @@ typedef enum e_type
 
 // LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
 
-// LUKA: maybe use this? idunno propably  not
+// LUKA: maybe use this? idunno probably  not
 // 
 typedef union u_data 
 {
@@ -64,6 +66,7 @@ typedef union u_data
 // LUKA: length based string
 // I expect this will make creating tokens a bit easier
 // and remove the need to allocate anything inside the lexer
+// UNUSED 04.03.25 added to token struct
 typedef struct s_token_string
 {
 	t_u64	length;		// total size of the string
@@ -76,9 +79,10 @@ typedef struct s_token_string
 typedef struct s_token
 {
 	t_type	type;	// the type of the token
-	t_token_string	string;	// the string of the token | if applicable will be a filename a command name or an argument
-	char			*name;	// added mostly for testing but might stay useful
-}	t_token;
+	char	*string; 	// the string of the token | if applicable will be a filename a command name or an argument
+	size_t	string_len;	// length of the string
+	char	*name;	// added mostly for testing but might stay useful
+}	t_token; //@TODO: re oder struct to reduce size;
 
 // struct for any information the lexer might need
 // currently only the line string and the index seem to be required

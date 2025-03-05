@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 16:43:43 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/26 19:05:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/04 23:37:30 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,12 @@ int	arena_unalloc(t_arena *a, t_u64 size)
 	}
 	a->size -= size;
 	return (0);
+}
+
+// this probably is kind of useless. maybe?
+void	arena_realloc(t_arena *a, t_u64 size)
+{
+	a->size += size;
 }
 
 void arena_reset(t_arena *a)
