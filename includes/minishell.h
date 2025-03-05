@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/03 21:47:54 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/04 22:08:05 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,13 @@ typedef struct s_lexer
 }	t_lexer;
 
 
+////// emilia nodetree stuff
+typedef struct s_node
+{
+	size_t data; // what position in tree
+	struct s_node *root; //previous node this is connected to
+	struct s_node *left; // struct on the under left
+	struct s_node *right; // struct on the under right 
+} t_node;
 
 #endif
