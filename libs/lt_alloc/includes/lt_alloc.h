@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:59:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/05 00:17:13 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/05 18:21:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ typedef int8_t		t_s8;
 
 #endif
 
-#define DEFAULT_ARENA_CAPACITY (1024 * 256)
+#define DEFAULT_ARENA_CAPACITY (1024 * 1024 * 256)
 
 typedef struct s_arena
 {
@@ -53,7 +53,7 @@ void	arena_delete(t_arena *a);
 
 void	*arena_alloc(t_arena *a, t_u64 size);
 int		arena_unalloc(t_arena *a, t_u64 size);
-void	arena_realloc(t_arena *a, t_u64 size); // maybe rename arena_add or something similar?
+void	arena_realloc(t_arena *a, void *data, t_u64 size); // maybe rename arena_add or something similar?
 void	arena_reset(t_arena *a);
 
 t_arena_temp arena_temp_begin(t_arena *a);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/05 16:09:29 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/05 19:07:15 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,15 @@
 #include "../libs/libft/includes/libft.h"
 
 #include <unistd.h>	//for write, pipe etc.
+#include <sys/types.h>  // pid_t
+#include <sys/wait.h> // wait, waitpid
 #include <stdio.h>	// printf
 #include <readline/readline.h> // readline
 #include <readline/history.h> // add_history
 #include <string.h>	// was for testing // might need for strerror or something else
 #include <linux/limits.h>	// linux max length stuff
 #include <stdbool.h>	// for bool data type
-
-
+#include <fcntl.h>
 
 // @question are these the only tokens needed?
 typedef enum e_type
