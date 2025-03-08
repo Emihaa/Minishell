@@ -6,17 +6,20 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/05 19:07:15 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/08 18:54:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+#define _GNU_SOURCE
+
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
 #include "../libs/lt_alloc/includes/lt_alloc.h" 
 #include "../libs/libft/includes/libft.h"
+
 
 #include <unistd.h>	//for write, pipe etc.
 #include <sys/types.h>  // pid_t
@@ -27,7 +30,8 @@
 #include <string.h>	// was for testing // might need for strerror or something else
 #include <linux/limits.h>	// linux max length stuff
 #include <stdbool.h>	// for bool data type
-#include <fcntl.h>
+#include <fcntl.h>		// open
+#include <sys/stat.h>
 
 // @question are these the only tokens needed?
 typedef enum e_type
@@ -53,6 +57,14 @@ typedef enum e_type
 #define WORD_NAME			"WORD"
 
 #define ERROR_NAME			"ERROR"
+
+// we should add
+typedef struct s_minishell
+{
+	uint32_t line_counter;
+	int		stdin_copy;
+}	t_minishell;
+
 
 // LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
 

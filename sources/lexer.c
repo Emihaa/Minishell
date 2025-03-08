@@ -6,13 +6,16 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/05 17:21:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/07 22:00:08 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // to compile just the lexer for testing use
-// cc lexer.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o lexer
+// 
+/*
+cc lexer.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o lexer
 
+*/
 #include "../includes/minishell.h" 
 // change to be a just "minishell.h" after making sure makefile linking works properly
 
@@ -162,23 +165,23 @@ t_token	get_next_token(t_lexer *lexer)
 // use to get an array of all the tokens in a line
 // give an arena to allocate the array with
 // give an initialized lexer
-t_token *get_token_array(t_arena *arena, t_lexer *lexer)
-{
-	t_token *token_array_base;
-	int	i;
+// t_token *get_token_array(t_arena *arena, t_lexer *lexer)
+// {
+// 	t_token *token_array_base;
+// 	int	i;
 
-	token_array_base = arena_alloc(arena, sizeof(t_token));
-	i = 0;
-	while (1)
-	{
-		token_array_base[i] = get_next_token(lexer);
-		if (token_array_base[i].type == END_OF_LINE)
-			break ;
-		arena_realloc(arena, sizeof(t_token));
-		i++;
-	}
-	return (token_array_base);
-}
+// 	token_array_base = arena_alloc(arena, sizeof(t_token));
+// 	i = 0;
+// 	while (1)
+// 	{
+// 		token_array_base[i] = get_next_token(lexer);
+// 		if (token_array_base[i].type == END_OF_LINE)
+// 			break ;
+// 		arena_realloc(arena, sizeof(t_token), );
+// 		i++;
+// 	}
+// 	return (token_array_base);
+// }
 
 // TESTING STUFF
 // comment out when integrating to project or testing other stuff that need the lexer 
@@ -200,38 +203,43 @@ void print_tokens(t_lexer *lexer)
 	}
 }
 
-void print_token_array(t_arena *arena, t_lexer *lexer)
-{
-	int i = 0;
-	t_token *token_array = get_token_array(arena, lexer);
-	while (1)
-	{
-		t_token token = token_array[i];
-		char *token_string = calloc(1, token.string_len + 1);
-		ft_memmove(token_string, token.string, token.string_len);
-		printf("token number: %i\ttoken name: %s\ttoken string: %s\n", token.type, token.name, token_string);
-		free(token_string);
-		if (token.type == END_OF_LINE || token.type == ERROR)
-			break ;
-		i++;
-	}
-	arena_reset(arena);
-}
+// void print_token_array(t_arena *arena, t_lexer *lexer)
+// {
+// 	int i = 0;
+// 	t_token *token_array = get_token_array(arena, lexer);
+// 	while (1)
+// 	{
+// 		t_token token = token_array[i];
+// 		char *token_string = calloc(1, token.string_len + 1);
+// 		ft_memmove(token_string, token.string, token.string_len);
+// 		printf("token number: %i\ttoken name: %s\ttoken string: %s\n", token.type, token.name, token_string);
+// 		free(token_string);
+// 		if (token.type == END_OF_LINE || token.type == ERROR)
+// 			break ;
+// 		i++;
+// 	}
+// 	arena_reset(arena);
+// }
 
 void read_loop(char **envp)
 {
-	t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
+	//t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	char *line;
 	(void)envp;
+
 	while (1)
 	{
 		t_lexer lexer = {0};
 		line = readline("lexer[TEST]> ");
+		if (line == NULL)
+		{
+			break ;
+		}
 		add_history(line);
     	//printf("%s", line);
 		lexer.line = line;
-		//print_tokens(&lexer);
-		print_token_array(&arena, &lexer);
+			print_tokens(&lexer);
+		//print_token_array(&arena, &lexer);
 		free(line);
 	}
 }
@@ -241,6 +249,16 @@ int main(int argc, char *argv[], char *envp[])
 	(void)argc;
 	(void)argv;
 	read_loop(envp);
+	//char buf[1024] = {0};
+	// while (1)
+	// {
+	// 	memset(buf, 0, 1024);
+	// 	if (read(STDIN_FILENO, buf, 1023) < 1)
+	// 		break;
+	// 	add_history(buf);
+	// 	write(STDOUT_FILENO, buf, ft_strlen(buf));
+	// }
+
 	printf("exit\n");
     return (0);
 }
