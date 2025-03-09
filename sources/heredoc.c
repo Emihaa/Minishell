@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/08 19:01:52 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/09 20:54:47 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,26 +60,8 @@ ltaalas@c1r3p1:~/projects/minishell/sources$
 */
 
 
-
-
-void unused_heredoc(char *delim)
-{
-	const int delim_len = ft_strlen(delim);
-	char *line;
-
-	while (1)
-	{
-		line = readline("> ");
-			if (ft_strncmp(line, delim, delim_len) == 0)
-				break ;
-		free(line);
-	}
-	free(line);
-
-}
-
-
-void heredoc_write(t_minishell *minishell, int write_fd, char *delimiter)
+static
+void	heredoc_write(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char *line;
@@ -90,29 +72,30 @@ void heredoc_write(t_minishell *minishell, int write_fd, char *delimiter)
 		minishell->line_counter += 1;
 		if (line == NULL)
 		{
-			perror(NULL); // @TODO: error cheking
-			if (errno == 0)
+			perror("readline error"); // @TODO: error cheking
+			if (errno == EXIT_SUCCESS)
 			{
 				printf("minishell: warning: here-document at line %i \
-				delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
+delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
 			}
 			break ;
 		}
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		if (write(write_fd, line, ft_strlen(line)) == -1)
-			perror(NULL);
+			perror("write line");
 		if (write(write_fd, "\n", 1) == -1)
-			perror(NULL);
+			perror("write '\\n'");
 		free(line);
 	}
 	free(line);
 	close(write_fd);
 }
 
-uint32_t num_len(uint32_t num)
+static inline
+uint8_t	num_len(uint32_t num)
 {
-	uint32_t i;
+	uint8_t i;
 
 	i = 0;
 	while (num > 0)
@@ -120,20 +103,18 @@ uint32_t num_len(uint32_t num)
 		num = num / 10;
 		i++;
 	}
-	printf("%i\n", i);
 	return (i);
 }
-#define HEREDOC_TEMP_NAME "./heredoc_temp"
-#define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
-int a = NAME_BASE_LEN;
+// @TODO: change to name to /tmp/...
 // we need some kind of global heredoc count to check if it is under 17
-char *create_temp_file_name(void)
+static
+char	*create_temp_file_name(void)
 {
-	static uint32_t heredoc_num = 1;
-	static char name_buf[20] = HEREDOC_TEMP_NAME; // len is 15
+	static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
+									// also should be reset whenever starting a new command reading loop
+	static char name_buf[30] = HEREDOC_TEMP_NAME; // len is 15
 	uint32_t num_temp;
 	uint8_t i;
-
 
 	num_temp = heredoc_num;
 	i = num_len(heredoc_num);
@@ -147,66 +128,83 @@ char *create_temp_file_name(void)
 	return(name_buf);
 }
 
-// change to /tmp
-void create_heredoc_fds(int fds[2])
+// change to name to /tmp
+static
+int	create_heredoc_fds(int fds[2])
 {
 	const char *file_name = create_temp_file_name();;
 
 	printf("%s\n", file_name);
 	if (file_name == NULL)
-		perror(NULL); // @TODO: error cheking
-	fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_RDWR, S_IWUSR | S_IRUSR); 
+		perror("filename is NULL"); // @TODO: error cheking
+	fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
 	if (fds[1] == -1)
 	{
 		perror("heredoc failure: write"); // @TODO: error shit
 		if (errno == EEXIST)
-			create_heredoc_fds(fds);
-		return ;
+			return (create_heredoc_fds(fds));
+		return (1); // @TODO: more error stuff
 	}
 	fds[0] = open(file_name, O_CLOEXEC | O_RDONLY);
 	if (fds[0] == -1)
 	{
 		perror("heredoc failure: read"); // @TODO: error shit
 	}
-	unlink(file_name);
+	if (unlink(file_name) == -1)
+		return (1); // @TODO: more error stuff
+	return (0);
+}
+
+int heredoc(t_minishell *minishell, char *delimiter)
+{
+	int fds[2];
+	int errval; // delete
+
+	errval = create_heredoc_fds(fds);
+	printf("heredoc_fds r_val: %i\n" , errval); // delete
+	heredoc_write(minishell, fds[WRITE], delimiter);
+	store_redirects(&fds[READ], NULL, minishell);
+	return (errval); // maybe error value
 }
 
 //	Testing stuff
 /*
-cc heredoc.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o heredoc
+cc heredoc.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o heredoc -g
 */
 
-int main(int argc, char *argv[], char *envp[])
-{
-	t_minishell minishell;
-	minishell.line_counter = 0;
-	(void)argc;
-	(void)argv;
-	int wstatus;
-	pid_t heredoc_pid;
-	//read_loop(envp);
-	minishell.stdin_copy = dup(STDERR_FILENO);
-	printf("%i\n", getpid());
-	int fds[2];
-	create_heredoc_fds(fds);
-	heredoc_write(&minishell, fds[1], "DELIM");
-	dup2(fds[0], STDIN_FILENO);
-	close(fds[0]);
-	pid_t pid = fork();
-	if (pid == 0)
-	{
-		close(minishell.stdin_copy);
-		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
-		printf("to cat \t%i\n", fds[0]);
-		execve("/bin/cat", cat_argv, envp);
-		exit(1);
-	}
-	dup2(minishell.stdin_copy, STDIN_FILENO);
-	close(minishell.stdin_copy);
-	pid = waitpid(pid, &wstatus, 0);
-	printf("%s\t%i\n", strerror(WEXITSTATUS(wstatus)), wstatus);
-	printf("exit\n");
-    return (0);
-}
+
+
+// int main(int argc, char *argv[], char *envp[])
+// {
+// 	pid_t pids[3] = {0};
+// 	t_minishell minishell;
+// 	init_minishell(&minishell);
+// 	(void)argc;
+// 	(void)argv;
+// 	int wstatus;
+// 	//read_loop(envp);
+// 	printf("%i\n", getpid());
+// 	while (minishell.command_count < 2)
+// 	{
+// 		heredoc(&minishell, "DELIM");
+// 		pid_t pid = fork();
+// 		if (pid == 0)
+// 		{
+// 			apply_redirect(&minishell);
+// 			char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+// 			printf("fd to cat \t%i\n", 17);
+// 			if (execve("/bin/cat", cat_argv, envp) == -1)
+// 				perror("execve fail");
+// 			exit(1);
+// 		}
+// 		reset_redirect(&minishell);
+// 		pids[minishell.command_count] = pid;
+// 		minishell.command_count += 1;
+// 	}
+// 	int exit_status = wait_for_sub_processes(&minishell, pids);
+// 	printf("last printf %s\t%i\n", strerror(exit_status), exit_status);
+// 	printf("exit\n");
+//     return (0);
+// }
 
 

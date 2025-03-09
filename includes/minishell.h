@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/08 18:54:46 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/09 22:44:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 // @NOTE: would cause problems for vscode higlighting and autocomplete
 #include "../libs/lt_alloc/includes/lt_alloc.h" 
 #include "../libs/libft/includes/libft.h"
-
 
 #include <unistd.h>	//for write, pipe etc.
 #include <sys/types.h>  // pid_t
@@ -61,8 +60,13 @@ typedef enum e_type
 // we should add
 typedef struct s_minishell
 {
-	uint32_t line_counter;
-	int		stdin_copy;
+	uint32_t	line_counter;
+	uint32_t	command_count;
+	uint32_t	heredoc_count;
+	int			redir_fds[2];
+	pid_t			*pids;
+	int			exit_status;
+	
 }	t_minishell;
 
 
@@ -116,4 +120,22 @@ typedef struct s_node
 	struct s_node *right; // struct on the under right 
 } t_node;
 
+
+// lexer stuff
+t_token *get_token_array(t_arena *arena, t_lexer *lexer);
+void print_tokens(t_lexer *lexer);
+
+//heredoc stuff
+#define HEREDOC_TEMP_NAME "./heredoc_temp"
+#define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
+// int a = NAME_BASE_LEN; // delete
+int heredoc(t_minishell *minishell, char *delimiter);
+
+
+// testing possible redirect stuff
+#define WRITE	1
+#define READ	0
+void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
+void apply_redirect(t_minishell *minishell);
+void reset_redirect(t_minishell *minishell);
 #endif
