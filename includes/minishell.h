@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 17:21:22 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 17:46:50 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,9 @@ typedef struct s_minishell
 	int			redir_fds[2];
 	pid_t			*pids;
 	int			exit_status;
-	
+	t_arena		node_arena;
+	t_arena		scratch_arena;
+	char		**envp;
 }	t_minishell;
 
 
@@ -140,14 +142,5 @@ void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
 void apply_redirect(t_minishell *minishell);
 void reset_redirect(t_minishell *minishell);
 
-
-//argv test stuff
-// nooo this is dumb
-// create argv once word tokens have been counted
-typedef struct s_argv_node
-{
-	struct s_argv_node	*next;
-	char				*string;
-}
 
 #endif

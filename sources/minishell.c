@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 17:10:57 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 17:54:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,19 +129,64 @@ void	wait_for_sub_processes(t_minishell *minishell)
 void print_token(t_token *token)
 {
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
-			token->type, token->name, token->string_len, token->string);
+			token->type, token->name, (int)token->string_len, token->string);
 }
 
+// prototypee
+void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_array)
+{
+	char **envp = minishell->envp;
+	int i;
+
+	i = 0;
+	while (token_array[i].type != END_OF_LINE)
+	{
+		if (token_array[i].type == WORD)
+		{
+			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
+				break;
+		}
+		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
+		{
+			char *delimiter = calloc(1, token_array[i].string_len + 1);
+			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
+			heredoc(minishell, delimiter); // delimiter will still have quotes removed
+			free(delimiter);
+		}
+		else
+		{
+			print_token(&token_array[i]);
+		}
+		++i;
+	}
+	
+	pid_t pid = fork();
+	if (pid == 0)
+	{
+		apply_redirect(minishell);
+		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+		printf("fd to cat \t%i\n", 17);
+		if (execve("/bin/cat", cat_argv, envp) == -1)
+			perror("execve fail");
+		exit(1);
+	}
+	reset_redirect(minishell);
+	minishell->pids = arena_alloc(arena, sizeof(minishell->pids));
+	minishell->pids[minishell->command_count] = pid;
+	minishell->command_count += 1;
+	wait_for_sub_processes(minishell);
+	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
+}
 // prototype for a read loop
 // this should probably call the parser which will call the lexer and return the tree
 // that will then be passed to some execution prep function which will traverses the tree 
 // 		and do the necessary redirect ect.
 
 //this might need another nested loop to calculate the amount of command etc.
-void read_loop(char **envp, t_minishell *minishell)
+void read_loop(t_minishell *minishell)
 {
 	char *line;
-	t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY); // just for testing
+	t_arena *arena = &minishell->node_arena;
 	t_token *token_array; // just for testing
 	t_lexer lexer; // to be definex in the parser
 	while (1)
@@ -155,63 +200,34 @@ void read_loop(char **envp, t_minishell *minishell)
 		minishell->line_counter += 1;
 		lexer.line = line;
 		lexer.line_index = 0;
-		token_array = get_token_array(&arena, &lexer);
-		for (int i = 0; token_array[i].type != END_OF_LINE; ++i)
-		{
-			if (token_array[i].type == WORD)
-			{
-				if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
-					break;
-			}
-			else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
-			{
-				char *delimiter = calloc(1, token_array[i].string_len + 1);
-				ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
-				heredoc(minishell, delimiter);
-				free(delimiter);
-			}
-			else
-			{
-				print_token(&token_array[i]);
-			}
-		}
-		
-		pid_t pid = fork();
-		if (pid == 0)
-		{
-			apply_redirect(minishell);
-			char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
-			printf("fd to cat \t%i\n", 17);
-			if (execve("/bin/cat", cat_argv, envp) == -1)
-				perror("execve fail");
-			exit(1);
-		}
-		reset_redirect(minishell);
-		minishell->pids = arena_alloc(&arena, sizeof(minishell->pids));
-		minishell->pids[minishell->command_count] = pid;
-		minishell->command_count += 1;
-		wait_for_sub_processes(minishell);
-		printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
-		arena_reset(&arena);
+		token_array = get_token_array(arena, &lexer);
+		minishell_exec_loop(minishell, arena, token_array);
+		arena_reset(arena);
 	}
 }
 
 void minishell_cleanup(t_minishell *minishell)
 {
-		
+	arena_delete(&minishell->node_arena);
+	arena_delete(&minishell->scratch_arena);
 }
 // set default values for the minishell struct
 // the struct is going to work as a kind of storage for globally needef alues
 // we might want to pre allocate the arenas that will be used here to make cleanup easier
-void init_minishell(t_minishell *minishell)
+void init_minishell(t_minishell *minishell, char **envp)
 {
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
 	minishell->exit_status = 0;
 	minishell->heredoc_count = 0;
+	minishell->envp = envp;
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pids = NULL;
+	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
+	if (minishell->node_arena.data == NULL)
+		; //@TODO: error cheking
+	minishell->scratch_arena = (t_arena){0};
 }
 
 int main(int argc, char *argv[], char *envp[])
@@ -219,8 +235,8 @@ int main(int argc, char *argv[], char *envp[])
 	t_minishell minishell;
 	(void)argc;
 	(void)argv;
-	init_minishell(&minishell);
-	read_loop(envp, &minishell);
+	init_minishell(&minishell, envp);
+	read_loop(&minishell);
 	minishell_cleanup(&minishell);
 	printf("exit\n");
     return (0);
