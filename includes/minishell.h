@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 17:46:50 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 18:34:07 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,9 @@ typedef struct s_lexer
 ////// emilia nodetree stuff
 typedef struct s_node
 {
-	size_t data; // what position in tree
-	struct s_node *root; //previous node this is connected to
+	t_token *token; // t_token token
+
+	struct s_node *root; // previous node this is connected to
 	struct s_node *left; // struct on the under left
 	struct s_node *right; // struct on the under right 
 } t_node;
