@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:33:32 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 21:35:27 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		if (write(write_fd, line, ft_strlen(line)) == -1)
-			perror("write line");
+			perror("write line"); // error cheking
 		if (write(write_fd, "\n", 1) == -1)
-			perror("write '\\n'");
+			perror("write '\\n'"); // error cheking
 		free(line);
 	}
 	free(line);
@@ -132,7 +132,7 @@ char	*create_temp_file_name(void)
 static
 int	create_heredoc_fds(int fds[2])
 {
-	const char *file_name = create_temp_file_name();;
+	const char *file_name = create_temp_file_name();
 
 	printf("%s\n", file_name);
 	if (file_name == NULL)

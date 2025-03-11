@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:33:13 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 18:40:38 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,11 +264,11 @@ void print_tokens(t_lexer *lexer)
 // }
 
 
-int main_test(int argc, char *argv[], char *envp[])
-{
-	(void)argc;
-	(void)argv;
-	read_loop(envp);
-	printf("exit\n");
-    return (0);
-}
+// int main_test(int argc, char *argv[], char *envp[])
+// {
+// 	(void)argc;
+// 	(void)argv;
+// 	read_loop(envp);
+// 	printf("exit\n");
+//     return (0);
+// }

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 17:12:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 17:32:00 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 21:59:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ char **start_command_argv(t_arena *a, t_token *data)
 	ft_memmove(&r_val[0], data->string, data->string_len);
 	return (r_val);
 }
+
 // give same arena as for the start
 char **add_to_command_argv(const char **argv, t_arena *a, t_token *data)
 {
