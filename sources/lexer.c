@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/05 20:02:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/11 18:04:57 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// to compile just the lexer for testing use "cc lexer.c -l readline ../libs/libft/build/libft.a -o lexer"
+// to compile just the lexer for testing use
 // cc lexer.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o lexer
 
 #include "../includes/minishell.h" 
