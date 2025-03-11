@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/09 22:45:36 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 17:10:57 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,15 +102,14 @@ void print_expansion(char *line)
 // 	}
 // }
 
-static int	wait_for_sub_processes(t_minishell *minishell)
+static
+void	wait_for_sub_processes(t_minishell *minishell)
 {
 	uint32_t	i;
 	int			wstatus;
-	int			exit_code;
 	pid_t		pid;
 
 	i = 0;
-	exit_code = 1;
 	printf("command count: %o\n", minishell->command_count);
 	while (i < minishell->command_count)
 	{
@@ -120,18 +119,31 @@ static int	wait_for_sub_processes(t_minishell *minishell)
 		if (pid == minishell->pids[minishell->command_count - 1])
 		{
 			printf("pid == %i\n", pid);
-			exit_code = WEXITSTATUS(wstatus);
+			minishell->exit_status = WEXITSTATUS(wstatus);
 		}
 		i++;
 	}
-	return (exit_code);
 }
+
+
+void print_token(t_token *token)
+{
+	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
+			token->type, token->name, token->string_len, token->string);
+}
+
+// prototype for a read loop
+// this should probably call the parser which will call the lexer and return the tree
+// that will then be passed to some execution prep function which will traverses the tree 
+// 		and do the necessary redirect ect.
+
+//this might need another nested loop to calculate the amount of command etc.
 void read_loop(char **envp, t_minishell *minishell)
 {
 	char *line;
-	t_arena token_array_arena = arena_new(DEFAULT_ARENA_CAPACITY);
-	t_token *token_array;
-	t_lexer lexer;
+	t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY); // just for testing
+	t_token *token_array; // just for testing
+	t_lexer lexer; // to be definex in the parser
 	while (1)
 	{
 		minishell->command_count = 0;
@@ -143,7 +155,7 @@ void read_loop(char **envp, t_minishell *minishell)
 		minishell->line_counter += 1;
 		lexer.line = line;
 		lexer.line_index = 0;
-		token_array = get_token_array(&token_array_arena, &lexer);
+		token_array = get_token_array(&arena, &lexer);
 		for (int i = 0; token_array[i].type != END_OF_LINE; ++i)
 		{
 			if (token_array[i].type == WORD)
@@ -151,7 +163,7 @@ void read_loop(char **envp, t_minishell *minishell)
 				if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
 					break;
 			}
-			else if(token_array[i].type == HERE_DOCUMENT)
+			else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
 			{
 				char *delimiter = calloc(1, token_array[i].string_len + 1);
 				ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
@@ -160,13 +172,10 @@ void read_loop(char **envp, t_minishell *minishell)
 			}
 			else
 			{
-				char *token_string = calloc(1, token_array[i].string_len + 1);
-				ft_memmove(token_string, token_array[i].string, token_array[i].string_len);
-				printf("token number: %i\ttoken name: %s\ttoken string: %s\n",
-						token_array[i].type, token_array[i].name, token_string);
-				free(token_string);
+				print_token(&token_array[i]);
 			}
 		}
+		
 		pid_t pid = fork();
 		if (pid == 0)
 		{
@@ -178,16 +187,22 @@ void read_loop(char **envp, t_minishell *minishell)
 			exit(1);
 		}
 		reset_redirect(minishell);
+		minishell->pids = arena_alloc(&arena, sizeof(minishell->pids));
 		minishell->pids[minishell->command_count] = pid;
 		minishell->command_count += 1;
-		minishell->exit_status = wait_for_sub_processes(minishell);
+		wait_for_sub_processes(minishell);
 		printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
-		arena_reset(&token_array_arena);
+		arena_reset(&arena);
 	}
 }
 
-
-
+void minishell_cleanup(t_minishell *minishell)
+{
+		
+}
+// set default values for the minishell struct
+// the struct is going to work as a kind of storage for globally needef alues
+// we might want to pre allocate the arenas that will be used here to make cleanup easier
 void init_minishell(t_minishell *minishell)
 {
 	minishell->command_count = 0;
@@ -196,7 +211,7 @@ void init_minishell(t_minishell *minishell)
 	minishell->heredoc_count = 0;
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
-	minishell->pids = malloc(sizeof(*minishell->pids) * 2);
+	minishell->pids = NULL;
 }
 
 int main(int argc, char *argv[], char *envp[])
@@ -206,6 +221,7 @@ int main(int argc, char *argv[], char *envp[])
 	(void)argv;
 	init_minishell(&minishell);
 	read_loop(envp, &minishell);
+	minishell_cleanup(&minishell);
 	printf("exit\n");
     return (0);
 }

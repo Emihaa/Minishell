@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/09 22:44:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 17:21:22 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #include <stdbool.h>	// for bool data type
 #include <fcntl.h>		// open
 #include <sys/stat.h>
+
 
 // @question are these the only tokens needed?
 typedef enum e_type
@@ -138,4 +139,15 @@ int heredoc(t_minishell *minishell, char *delimiter);
 void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
 void apply_redirect(t_minishell *minishell);
 void reset_redirect(t_minishell *minishell);
+
+
+//argv test stuff
+// nooo this is dumb
+// create argv once word tokens have been counted
+typedef struct s_argv_node
+{
+	struct s_argv_node	*next;
+	char				*string;
+}
+
 #endif
