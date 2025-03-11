@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 17:54:33 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 22:43:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,10 +148,8 @@ void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_
 		}
 		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
 		{
-			char *delimiter = calloc(1, token_array[i].string_len + 1);
-			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
+			char *delimiter = remove_quotes(arena, &token_array[i]);
 			heredoc(minishell, delimiter); // delimiter will still have quotes removed
-			free(delimiter);
 		}
 		else
 		{

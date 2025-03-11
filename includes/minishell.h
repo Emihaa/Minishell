@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:34:07 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 22:42:22 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,6 @@ typedef struct s_node
 	struct s_node *right; // struct on the under right 
 } t_node;
 
-
 // lexer stuff
 t_token *get_token_array(t_arena *arena, t_lexer *lexer);
 void print_tokens(t_lexer *lexer);
@@ -143,5 +142,7 @@ void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
 void apply_redirect(t_minishell *minishell);
 void reset_redirect(t_minishell *minishell);
 
+//general utils stuff
+char *remove_quotes(t_arena *arena, t_token *data);
 
 #endif
