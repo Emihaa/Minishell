@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lt_alloc_arena.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 16:43:43 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:04:15 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/11 18:34:28 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,12 @@ int	arena_unalloc(t_arena *a, t_u64 size)
 // this probably is kind of useless. maybe?
 void	arena_realloc(t_arena *a, void *data, t_u64 size)
 {
+	uint8_t *data_ptr;
+
+	data_ptr = ((uint8_t *)data) + size;
 	a->size += size;
 	while (size--)
-		((t_u8 *)data)[size] = 0;
+		data_ptr[size] = 0;
 }
 
 void arena_reset(t_arena *a)

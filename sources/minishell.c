@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/02 19:34:35 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/11 17:54:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,44 +69,211 @@ void print_expansion(char *line)
 	printf("%s\n", getenv(line));	
 }
 
-void read_loop(char **envp)
+// void read_loop(char **envp)
+// {
+// 	char *line;
+// 	while (1)
+// 	{
+// 		line = readline("minishell> ");
+// 		add_history(line);
+//     	//printf("%s", line);
+// 		if (strncmp(line, "env", 4) == 0)
+// 		{
+// 			env(envp);
+// 			continue;
+// 		}
+// 		if (strncmp(line, "pwd", 4) == 0)
+// 		{
+// 			print_working_directory();
+// 			continue;
+// 		}
+// 		if (strncmp(line, "export", 4) == 0)
+// 		{
+// 			print_export();
+// 			continue;
+// 		}
+// 		if (*line == '$')
+// 		{
+// 			print_expansion(line);
+// 			continue;
+// 		}
+// 		if (strncmp(line, "exit", 5) == 0)
+// 			return ;
+// 	}
+// }
+
+static
+void	wait_for_sub_processes(t_minishell *minishell)
+{
+	uint32_t	i;
+	int			wstatus;
+	pid_t		pid;
+
+	i = 0;
+	printf("command count: %o\n", minishell->command_count);
+	while (i < minishell->command_count)
+	{
+		pid = wait(&wstatus);
+		if (pid == (pid_t)(-1))
+			perror("wait issue");
+		if (pid == minishell->pids[minishell->command_count - 1])
+		{
+			printf("pid == %i\n", pid);
+			minishell->exit_status = WEXITSTATUS(wstatus);
+		}
+		i++;
+	}
+}
+
+
+void print_token(t_token *token)
+{
+	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
+			token->type, token->name, (int)token->string_len, token->string);
+}
+
+// prototypee
+void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_array)
+{
+	char **envp = minishell->envp;
+	int i;
+
+	i = 0;
+	while (token_array[i].type != END_OF_LINE)
+	{
+		if (token_array[i].type == WORD)
+		{
+			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
+				break;
+		}
+		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
+		{
+			char *delimiter = calloc(1, token_array[i].string_len + 1);
+			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
+			heredoc(minishell, delimiter); // delimiter will still have quotes removed
+			free(delimiter);
+		}
+		else
+		{
+			print_token(&token_array[i]);
+		}
+		++i;
+	}
+	
+	pid_t pid = fork();
+	if (pid == 0)
+	{
+		apply_redirect(minishell);
+		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+		printf("fd to cat \t%i\n", 17);
+		if (execve("/bin/cat", cat_argv, envp) == -1)
+			perror("execve fail");
+		exit(1);
+	}
+	reset_redirect(minishell);
+	minishell->pids = arena_alloc(arena, sizeof(minishell->pids));
+	minishell->pids[minishell->command_count] = pid;
+	minishell->command_count += 1;
+	wait_for_sub_processes(minishell);
+	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
+}
+// prototype for a read loop
+// this should probably call the parser which will call the lexer and return the tree
+// that will then be passed to some execution prep function which will traverses the tree 
+// 		and do the necessary redirect ect.
+
+//this might need another nested loop to calculate the amount of command etc.
+void read_loop(t_minishell *minishell)
 {
 	char *line;
+	t_arena *arena = &minishell->node_arena;
+	t_token *token_array; // just for testing
+	t_lexer lexer; // to be definex in the parser
 	while (1)
 	{
+		minishell->command_count = 0;
 		line = readline("minishell> ");
+		if (line == NULL)
+			break ; // @TODO: error cheking
 		add_history(line);
     	//printf("%s", line);
-		if (strncmp(line, "env", 4) == 0)
-		{
-			env(envp);
-			continue;
-		}
-		if (strncmp(line, "pwd", 4) == 0)
-		{
-			print_working_directory();
-			continue;
-		}
-		if (strncmp(line, "export", 4) == 0)
-		{
-			print_export();
-			continue;
-		}
-		if (*line == '$')
-		{
-			print_expansion(line);
-			continue;
-		}
-		if (strncmp(line, "exit", 5) == 0)
-			return ;
+		minishell->line_counter += 1;
+		lexer.line = line;
+		lexer.line_index = 0;
+		token_array = get_token_array(arena, &lexer);
+		minishell_exec_loop(minishell, arena, token_array);
+		arena_reset(arena);
 	}
+}
+
+void minishell_cleanup(t_minishell *minishell)
+{
+	arena_delete(&minishell->node_arena);
+	arena_delete(&minishell->scratch_arena);
+}
+// set default values for the minishell struct
+// the struct is going to work as a kind of storage for globally needef alues
+// we might want to pre allocate the arenas that will be used here to make cleanup easier
+void init_minishell(t_minishell *minishell, char **envp)
+{
+	minishell->command_count = 0;
+	minishell->line_counter = 0;
+	minishell->exit_status = 0;
+	minishell->heredoc_count = 0;
+	minishell->envp = envp;
+	minishell->redir_fds[READ] = STDIN_FILENO;
+	minishell->redir_fds[WRITE] = STDOUT_FILENO;
+	minishell->pids = NULL;
+	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
+	if (minishell->node_arena.data == NULL)
+		; //@TODO: error cheking
+	minishell->scratch_arena = (t_arena){0};
 }
 
 int main(int argc, char *argv[], char *envp[])
 {
+	t_minishell minishell;
 	(void)argc;
 	(void)argv;
-	read_loop(envp);
+	init_minishell(&minishell, envp);
+	read_loop(&minishell);
+	minishell_cleanup(&minishell);
 	printf("exit\n");
     return (0);
 }
+
+
+// heredoc testing main
+// currently using as reference
+// int main(int argc, char *argv[], char *envp[])
+// {
+// 	pid_t pids[3] = {0};
+// 	t_minishell minishell;
+// 	init_minishell(&minishell);
+// 	(void)argc;
+// 	(void)argv;
+// 	int wstatus;
+// 	//read_loop(envp);
+// 	printf("%i\n", getpid());
+// 	while (minishell.command_count < 2)
+// 	{
+// 		heredoc(&minishell, "DELIM");
+// 		pid_t pid = fork();
+// 		if (pid == 0)
+// 		{
+// 			apply_redirect(&minishell);
+// 			char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+// 			printf("fd to cat \t%i\n", 17);
+// 			if (execve("/bin/cat", cat_argv, envp) == -1)
+// 				perror("execve fail");
+// 			exit(1);
+// 		}
+// 		reset_redirect(&minishell);
+// 		pids[minishell.command_count] = pid;
+// 		minishell.command_count += 1;
+// 	}
+// 	int exit_status = wait_for_sub_processes(&minishell, pids);
+// 	printf("last printf %s\t%i\n", strerror(exit_status), exit_status);
+// 	printf("exit\n");
+//     return (0);
+// }

@@ -3,157 +3,208 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:04:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/11 18:33:32 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// this should be enough, will blow up the pipe!
-// maybe create a pipe in parent make a fork for writing to pipe and one for the command to read from.
+/*
 
-int	heredoc(char *delimiter)
+ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
+> 
+bash: warning: here-document at line 1 delimited by end-of-file (wanted `DELIM')
+ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
+> 
+bash: warning: here-document at line 8 delimited by end-of-file (wanted `DELIM')
+ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
+0
+ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM | ls
+> 
+bash: warning: here-document at line 10 delimited by end-of-file (wanted `DELIM')
+ a.out	   heredoc.c	      'heredoc copy 3.c'  'heredoc copy.c'   lexer.c	   old_lexer_testing_shit   test.txt
+ heredoc  'heredoc copy 2.c'  'heredoc copy 4.c'   lexer	     minishell.c   test			    tree.c
+ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
+0
+ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM | >> >
+bash: syntax error near unexpected token `>'
+> 
+bash: warning: here-document at line 12 delimited by end-of-file (wanted `DELIM')
+ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
+2
+ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
+> asd
+> DELIM
+ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
+0
+ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
+> asd
+> asd
+> asd
+> asd
+> 
+bash: warning: here-document at line 18 delimited by end-of-file (wanted `DELIM')
+ltaalas@c1r3p1:~/projects/minishell/sources$ 
+
+
+
+*/
+
+
+static
+void	heredoc_write(t_minishell *minishell, int write_fd, char *delimiter)
 {
-	const int delimiter_len = ft_strlen(delimiter);
+	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char *line;
-	int pipe_fds[2];
 
-	if (pipe(pipe_fds) == -1)
-		; // @TODO error cheking
 	while (1)
 	{
 		line = readline("> ");
-		// @TODO: check for realine failure?
-		if (ft_strncmp(line, delimiter, delimiter_len))
+		minishell->line_counter += 1;
+		if (line == NULL)
 		{
-			free(line);
+			perror("readline error"); // @TODO: error cheking
+			if (errno == EXIT_SUCCESS)
+			{
+				printf("minishell: warning: here-document at line %i \
+delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
+			}
 			break ;
 		}
-		write(pipe_fds[STDOUT_FILENO], line, ft_strlen(line));
-		write(pipe_fds[STDOUT_FILENO], "\n", 1);
-		free(line);
-	}
-	return (pipe_fds[STDIN_FILENO]);
-	//open("/tmp", O_TMPFILE, F);
-}
-
-
-// will probably want to only return the fd for the last heredoc
-// @TODO: figure out the best way to handle multiple overwriting heredocs
-
-// quick test consept for a blocking heredoc implementation
-// would not break the pipe
-void	heredoc_sub_process(int out_fd, char *delimiter)
-{
-	const int delimiter_len = ft_strlen(delimiter);
-	char *line;
-	printf("%i\n", getpid());
-	t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
-	char *buff_base = arena_alloc(&arena, 0);
-	size_t current_total = 0;
-	while (1)
-	{
-		line = readline("> ");
-		// @TODO: check for realine failure?
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
-		size_t line_len = ft_strlen(line);
-		if (current_total + line_len > DEFAULT_ARENA_CAPACITY)
-		{
-			printf("WHAT THE F*** ARE YOU DOING??\n\
-				Your heredoc size is trying to go above %i bytes", DEFAULT_ARENA_CAPACITY);
-			break;
-		}
-		arena_realloc(&arena, &buff_base[current_total], line_len * sizeof(char));
-		ft_memmove(&buff_base[current_total], line, line_len * sizeof(char));
-		current_total += line_len;
-		arena_realloc(&arena, &buff_base[current_total], 1 * sizeof(char));
-		buff_base[current_total] = '\n';
-		current_total += 1;
+		if (write(write_fd, line, ft_strlen(line)) == -1)
+			perror("write line");
+		if (write(write_fd, "\n", 1) == -1)
+			perror("write '\\n'");
 		free(line);
 	}
 	free(line);
-	arena_realloc(&arena, &buff_base[current_total], 1 * sizeof(char));
-	write(out_fd, buff_base, ft_strlen(buff_base));
-	if (close(out_fd) == -1)
-		; //@TODO: error cheking;
-	printf("here_doc_sub_process_exit\n");
-	arena_delete(&arena);
-	exit(0);
+	close(write_fd);
 }
 
-void unused_heredoc(char *delim)
+static inline
+uint8_t	num_len(uint32_t num)
 {
-	const int delim_len = ft_strlen(delim);
-	char *line;
+	uint8_t i;
 
-	while (1)
+	i = 0;
+	while (num > 0)
 	{
-		line = readline("> ");
-			if (ft_strncmp(line, delim, delim_len) == 0)
-		break ;
-		free(line);
+		num = num / 10;
+		i++;
 	}
-	free(line);
+	return (i);
+}
+// @TODO: change to name to /tmp/...
+// we need some kind of global heredoc count to check if it is under 17
+static
+char	*create_temp_file_name(void)
+{
+	static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
+									// also should be reset whenever starting a new command reading loop
+	static char name_buf[30] = HEREDOC_TEMP_NAME; // len is 15
+	uint32_t num_temp;
+	uint8_t i;
 
+	num_temp = heredoc_num;
+	i = num_len(heredoc_num);
+	name_buf[NAME_BASE_LEN + i] = '\0';
+	while(i--)
+	{
+		name_buf[NAME_BASE_LEN + i] = (num_temp % 10) + '0';
+		num_temp = num_temp / 10;
+	}
+	heredoc_num += 1;
+	return(name_buf);
 }
 
-int heredoc2(char *delimiter, pid_t *heredoc_pid)
+// change to name to /tmp
+static
+int	create_heredoc_fds(int fds[2])
 {
-	int pipe_fds[2];
-	pid_t pid;
-	
-	if (pipe(pipe_fds) == -1)
-	; // @TODO error cheking
-	
-	pid = fork();
-	if (pid == (pid_t)-1)
-		; // @TODO: error cheking
-	else if (pid == (pid_t)0)
+	const char *file_name = create_temp_file_name();;
+
+	printf("%s\n", file_name);
+	if (file_name == NULL)
+		perror("filename is NULL"); // @TODO: error cheking
+	fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
+	if (fds[1] == -1)
 	{
-		if (close(pipe_fds[STDIN_FILENO]) == -1)
-			; // @TODO: error cheking
-		heredoc_sub_process(pipe_fds[STDOUT_FILENO], delimiter);
+		perror("heredoc failure: write"); // @TODO: error shit
+		if (errno == EEXIST)
+			return (create_heredoc_fds(fds));
+		return (1); // @TODO: more error stuff
 	}
-	*heredoc_pid = pid;
-	if (close(pipe_fds[STDOUT_FILENO]) == -1)
-		; // @TODO: error cheking
-	return (pipe_fds[STDIN_FILENO]);
+	fds[0] = open(file_name, O_CLOEXEC | O_RDONLY);
+	if (fds[0] == -1)
+	{
+		perror("heredoc failure: read"); // @TODO: error shit
+	}
+	if (unlink(file_name) == -1)
+		return (1); // @TODO: more error stuff
+	return (0);
+}
+
+int heredoc(t_minishell *minishell, char *delimiter)
+{
+	int fds[2];
+	int errval; // delete
+
+	errval = create_heredoc_fds(fds);
+	printf("heredoc_fds r_val: %i\n" , errval); // delete
+	heredoc_write(minishell, fds[WRITE], delimiter);
+	store_redirects(&fds[READ], NULL, minishell);
+	return (errval); // maybe error value
 }
 
 //	Testing stuff
 /*
-cc heredoc.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o heredoc
-
+cc heredoc.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o heredoc -g
 */
 
-int main(int argc, char *argv[], char *envp[])
-{
-	(void)argc;
-	(void)argv;
-	int wstatus;
-	pid_t heredoc_pid;
-	//read_loop(envp);
-	pid_t pid = fork();
-	printf("%i\n", getpid());
-	if (pid == 0)
-	{
-		int in_fd = heredoc2("DELIM", &heredoc_pid);
-		dup2(in_fd, STDIN_FILENO);
-		close(in_fd);
-		pid = waitpid(heredoc_pid, &wstatus, 0);
-		printf("cat sub_process parent: 	%s\t%i\n", strerror(WEXITSTATUS(wstatus)), wstatus);
-		char *cat_argv[2] = {[0] = "cat", [1] = NULL};
-		execve("/bin/cat", cat_argv, envp);
-		exit(1);
-	}
-	pid = waitpid(pid, &wstatus, 0);
-	printf("%s\t%i\n", strerror(WEXITSTATUS(wstatus)), wstatus);
-	printf("exit\n");
-    return (0);
-}
+
+
+// int main(int argc, char *argv[], char *envp[])
+// {
+// 	pid_t pids[3] = {0};
+// 	t_minishell minishell;
+// 	init_minishell(&minishell);
+// 	(void)argc;
+// 	(void)argv;
+// 	int wstatus;
+// 	//read_loop(envp);
+// 	printf("%i\n", getpid());
+// 	while (minishell.command_count < 2)
+// 	{
+// 		heredoc(&minishell, "DELIM");
+// 		pid_t pid = fork();
+// 		if (pid == 0)
+// 		{
+// 			apply_redirect(&minishell);
+// 			char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+// 			printf("fd to cat \t%i\n", 17);
+// 			if (execve("/bin/cat", cat_argv, envp) == -1)
+// 				perror("execve fail");
+// 			exit(1);
+// 		}
+// 		reset_redirect(&minishell);
+// 		pids[minishell.command_count] = pid;
+// 		minishell.command_count += 1;
+// 	}
+// 	int exit_status = wait_for_sub_processes(&minishell, pids);
+// 	printf("last printf %s\t%i\n", strerror(exit_status), exit_status);
+// 	printf("exit\n");
+//     return (0);
+// }
 
 

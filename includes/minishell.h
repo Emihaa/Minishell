@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:03:58 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/11 18:34:07 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+#define _GNU_SOURCE
 
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
@@ -27,7 +29,9 @@
 #include <string.h>	// was for testing // might need for strerror or something else
 #include <linux/limits.h>	// linux max length stuff
 #include <stdbool.h>	// for bool data type
-#include <fcntl.h>
+#include <fcntl.h>		// open
+#include <sys/stat.h>
+
 
 // @question are these the only tokens needed?
 typedef enum e_type
@@ -53,6 +57,21 @@ typedef enum e_type
 #define WORD_NAME			"WORD"
 
 #define ERROR_NAME			"ERROR"
+
+// we should add
+typedef struct s_minishell
+{
+	uint32_t	line_counter;
+	uint32_t	command_count;
+	uint32_t	heredoc_count;
+	int			redir_fds[2];
+	pid_t			*pids;
+	int			exit_status;
+	t_arena		node_arena;
+	t_arena		scratch_arena;
+	char		**envp;
+}	t_minishell;
+
 
 // LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
 
@@ -105,6 +124,24 @@ typedef struct s_node
 	struct s_node *right; // struct on the under right 
 } t_node;
 
+
+// lexer stuff
 t_token *get_token_array(t_arena *arena, t_lexer *lexer);
+void print_tokens(t_lexer *lexer);
+
+//heredoc stuff
+#define HEREDOC_TEMP_NAME "./heredoc_temp"
+#define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
+// int a = NAME_BASE_LEN; // delete
+int heredoc(t_minishell *minishell, char *delimiter);
+
+
+// testing possible redirect stuff
+#define WRITE	1
+#define READ	0
+void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
+void apply_redirect(t_minishell *minishell);
+void reset_redirect(t_minishell *minishell);
+
 
 #endif
