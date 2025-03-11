@@ -51,7 +51,7 @@ t_node *insert_middle(t_node *root, t_node *node, t_token *token, t_arena *arena
 {
     t_node *new_node = create_node(root, token, arena);
     if (root)
-{
+    {
         if (root->token->type == PIPE && root->left)
             root->right = new_node;
         else
@@ -234,7 +234,7 @@ t_node *find_head_root(t_node *node)
 
 // Function to print the tree
 static void print_tree(t_node *node, int depth)
-{   
+{
     int i = 0;
     
     if (!node)
@@ -312,10 +312,10 @@ int main()
         lexer.line_index = 0; 
         t_token *token_array = get_token_array(&arena, &lexer);
         while (token_array[i].type != END_OF_LINE)
-    {
+        {
             tree = insert_node(tree, NULL, &token_array[i], &arena);
-        i++;
-    }
+            i++;
+        }
         printf("\n");
         tree = find_head_root(tree);
         print_tree(tree, 0);
