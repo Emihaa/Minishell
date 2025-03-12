@@ -177,7 +177,8 @@ t_token *get_token_array(t_arena *arena, t_lexer *lexer)
 		token_array_base[i] = get_next_token(lexer);
 		if (token_array_base[i].type == END_OF_LINE)
 			break ;
-		arena_realloc(arena, &token_array_base[i], sizeof(t_token));
+		arena_alloc(arena, sizeof(t_token);
+		//arena_realloc(arena, &token_array_base[i], sizeof(t_token));
 		i++;
 	}
 	return (token_array_base);
