@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:40:38 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/13 23:00:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, char *name, int to_skip)
 	while (1)
 	{
 		c = lexer->line[lexer->line_index + len];
-		len = match_quote(lexer, c, len);
+		len = match_quote(lexer, c, len); // if we hit a quote len will for sure be at least 1 so might break the len check 
 		if (is_delimiter(c))
 			break ;
 		len += 1;
