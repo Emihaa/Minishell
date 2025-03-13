@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:33:13 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/13 22:01:46 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ t_token	tokenize_pipe(t_lexer *lexer)
 	lexer->line_index += 1;
 	return ((t_token){
 		.type = PIPE,
-		.string = NULL,
-		.string_len = 0,
+		.string = &lexer->line[lexer->line_index - 1],
+		.string_len = 1,
 		.name = PIPE_NAME,
 	});
 }
@@ -265,11 +265,11 @@ void print_tokens(t_lexer *lexer)
 // }
 
 
-int main_test(int argc, char *argv[], char *envp[])
-{
-	(void)argc;
-	(void)argv;
-	read_loop(envp);
-	printf("exit\n");
-    return (0);
-}
+// int main_test(int argc, char *argv[], char *envp[])
+// {
+// 	(void)argc;
+// 	(void)argv;
+// 	// read_loop(envp);
+// 	printf("exit\n");
+//     return (0);
+// }

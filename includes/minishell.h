@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 18:34:07 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/13 22:34:55 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ typedef struct s_lexer
 ////// emilia nodetree stuff
 typedef struct s_node
 {
-	t_token *token; // t_token token
+	t_token token; // t_token token
 
 	struct s_node *root; // previous node this is connected to
 	struct s_node *left; // struct on the under left
@@ -126,7 +126,7 @@ typedef struct s_node
 
 
 // lexer stuff
-t_token *get_token_array(t_arena *arena, t_lexer *lexer);
+t_token	get_next_token(t_lexer *lexer);
 void print_tokens(t_lexer *lexer);
 
 //heredoc stuff
