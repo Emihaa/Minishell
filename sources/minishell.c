@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 22:43:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/13 20:19:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void print_token(t_token *token)
 }
 
 // prototypee
-void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_array)
+int minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_array)
 {
 	char **envp = minishell->envp;
 	int i;
@@ -144,12 +144,11 @@ void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_
 		if (token_array[i].type == WORD)
 		{
 			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
-				break;
+				return (1);
 		}
 		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
 		{
-			char *delimiter = remove_quotes(arena, &token_array[i]);
-			heredoc(minishell, delimiter); // delimiter will still have quotes removed
+			heredoc(minishell, &token_array[i]); // delimiter will still have quotes removed
 		}
 		else
 		{
@@ -174,6 +173,7 @@ void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_
 	minishell->command_count += 1;
 	wait_for_sub_processes(minishell);
 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
+	return (0);
 }
 // prototype for a read loop
 // this should probably call the parser which will call the lexer and return the tree
@@ -199,7 +199,8 @@ void read_loop(t_minishell *minishell)
 		lexer.line = line;
 		lexer.line_index = 0;
 		token_array = get_token_array(arena, &lexer);
-		minishell_exec_loop(minishell, arena, token_array);
+		if (minishell_exec_loop(minishell, arena, token_array) == 1)
+			break ;
 		arena_reset(arena);
 	}
 }
