@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 21:35:27 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/13 22:52:09 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,13 +155,27 @@ int	create_heredoc_fds(int fds[2])
 	return (0);
 }
 
-int heredoc(t_minishell *minishell, char *delimiter)
+int heredoc(t_minishell *minishell, t_token *data)
 {
 	int fds[2];
+	bool	quoted;
+	int		i;
 	int errval; // delete
+	char *delimiter;
 
+	i = 0;
+	quoted = false;
+	while (i < data->string_len)
+	{
+		if (data->string[i] == '"' || data->string[i] == '\'')
+		{
+			quoted = true;
+			break ;
+		}
+	}
 	errval = create_heredoc_fds(fds);
 	printf("heredoc_fds r_val: %i\n" , errval); // delete
+	delimiter = remove_quotes(&minishell->node_arena, data);
 	heredoc_write(minishell, fds[WRITE], delimiter);
 	store_redirects(&fds[READ], NULL, minishell);
 	return (errval); // maybe error value

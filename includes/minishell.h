@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 22:42:22 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/13 20:17:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,7 @@ void print_tokens(t_lexer *lexer);
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
 #define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
 // int a = NAME_BASE_LEN; // delete
-int heredoc(t_minishell *minishell, char *delimiter);
+int heredoc(t_minishell *minishell, t_token *data);
 
 
 // testing possible redirect stuff
