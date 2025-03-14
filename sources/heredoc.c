@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/13 22:52:09 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/14 18:03:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ ltaalas@c1r3p1:~/projects/minishell/sources$
 
 
 static
-void	heredoc_write(t_minishell *minishell, int write_fd, char *delimiter)
+void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char *line;
@@ -72,13 +72,15 @@ void	heredoc_write(t_minishell *minishell, int write_fd, char *delimiter)
 		minishell->line_counter += 1;
 		if (line == NULL)
 		{
-			perror("readline error"); // @TODO: error cheking
+			//perror("readline error"); // @TODO: error cheking
 			if (errno == EXIT_SUCCESS)
 			{
 				printf("minishell: warning: here-document at line %i \
 delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
+				break ;
 			}
-			break ;
+			perror("readline failure");
+			// panic;
 		}
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
@@ -92,19 +94,52 @@ delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
 	close(write_fd);
 }
 
-static inline
-uint8_t	num_len(uint32_t num)
+// this is going to be a "simple" prototype that uses getenv
+// will be replaced with our own env version
+// there will be no quote removal inside heredoc
+static
+void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
-	uint8_t i;
+	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
+	char *line;
+	uint32_t i;
 
-	i = 0;
-	while (num > 0)
+	printf("expanding heredoc\n");
+	return ;
+	while (1)
 	{
-		num = num / 10;
-		i++;
+		i = 0;
+		line = readline("> ");
+		minishell->line_counter += 1;
+		if (line == NULL)
+		{
+			//perror("readline error"); // @TODO: error cheking
+			if (errno == EXIT_SUCCESS)
+			{
+				printf("minishell: warning: here-document at line %i \
+delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
+				break ;
+			}
+			perror("readline failure");
+			// panic;
+		}
+		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
+			break ;
+		while (line[i] != '$' && line[i] != '\0')
+			i += 1;
+		if (line[i] == '$')
+			i -= 1;
+		if (write(write_fd, line, i) == -1)
+			perror("write line"); // error cheking
+		
+		if (write(write_fd, "\n", 1) == -1)
+			perror("write '\\n'"); // error cheking
+		free(line);
 	}
-	return (i);
+	free(line);
+	close(write_fd);
 }
+
 // @TODO: change to name to /tmp/...
 // we need some kind of global heredoc count to check if it is under 17
 static
@@ -159,24 +194,20 @@ int heredoc(t_minishell *minishell, t_token *data)
 {
 	int fds[2];
 	bool	quoted;
-	int		i;
 	int errval; // delete
 	char *delimiter;
+	uint32_t new_size;
 
-	i = 0;
-	quoted = false;
-	while (i < data->string_len)
-	{
-		if (data->string[i] == '"' || data->string[i] == '\'')
-		{
-			quoted = true;
-			break ;
-		}
-	}
 	errval = create_heredoc_fds(fds);
 	printf("heredoc_fds r_val: %i\n" , errval); // delete
-	delimiter = remove_quotes(&minishell->node_arena, data);
-	heredoc_write(minishell, fds[WRITE], delimiter);
+	delimiter = arena_alloc(&minishell->node_arena, sizeof(char) * data->string_len + 1); 
+	new_size = get_quote_removed_string(delimiter, data);
+	quoted = (new_size < data->string_len);
+	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
+	if (quoted == false)
+		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
+	else
+		heredoc_write_with_expansion(minishell, fds[WRITE], delimiter);
 	store_redirects(&fds[READ], NULL, minishell);
 	return (errval); // maybe error value
 }

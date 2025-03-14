@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 18:41:46 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 20:43:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/14 17:48:23 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	match_double_quote(t_arena *a, t_token *data, int index)
 
 int expand_variable(t_arena *a, t_token *data, int index)
 {
-	const t_arena_temp temp = arena_temp_begin(a);
+	t_arena_temp temp = arena_temp_begin(a);
 	int		i;
 	char	c;
 	char	*var;

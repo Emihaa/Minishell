@@ -6,50 +6,68 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/14 15:18:13 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/14 18:55:03 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-
-
-static 
-int	remove_quotes2(char *string, t_token *data)
+ 
+uint32_t	get_quote_removed_string(char *string, t_token *data)
 {
 	char quote;
-	size_t i;
-	int size;
+	size_t data_index;
+	size_t string_index;
 
-	i = 0;
-	size = 0;
-	while (i < data->string_len)
+	data_index = 0;
+	string_index = 0;
+	while (data_index < data->string_len)
 	{
-		if (data->string[i] == '"' || data->string[i] == '\'')
+		if (data->string[data_index] == '"' || data->string[data_index] == '\'')
 		{
-			quote = data->string[i++];
-			while (1)
+			quote = data->string[data_index++];
+			while (data_index < data->string_len)
 			{
-				if (data->string[i] == quote || data->string[i] == '\0')
+				if (data->string[data_index] == quote)
 				{
-					size -= 1; // maybe this is just when hitting a quote?
+					data_index += 1;
 					break ;
 				}
+				string[string_index++] = data->string[data_index++];
 			}
-			string[size++] = data->string[i++];
+			continue ;
 		}
-		string[size++] = data->string[i++];
+		string[string_index++] = data->string[data_index++];
 	}
-	return (size);
+	return (string_index);
 }
 
-char *remove_quotes(t_arena *arena, t_token *data)
+uint8_t	num_len(uint32_t num)
 {
-	char *string;
-	int	new_size;
+	uint8_t i;
 
-	string = arena_alloc(arena, sizeof(char) * data->string_len + 1);
-	new_size = remove_quotes2(string, data);
-	arena_unalloc(arena, data->string_len - new_size);
-	return (string);
+	i = 0;
+	if (num == 0)
+		return (1);
+	while (num > 0)
+	{	
+		num = num / 10;
+		i++;
+	}
+	return (i);
+}
+
+ssize_t write_cheking_thingy_asd(int fd, char *str, size_t str_len)
+{
+	size_t bytes_to_write;
+	ssize_t bytes_written;
+
+	bytes_to_write = str_len;
+	bytes_written = 0;
+	while (bytes_to_write > 0)
+	{
+		bytes_written = write(fd, str + bytes_written, bytes_to_write);
+		if (bytes_written == -1)
+			return (-1); // full error situation
+		bytes_to_write -= bytes_written;
+	}
 }

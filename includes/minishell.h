@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/14 15:47:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/14 17:32:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ typedef struct s_node
 
 // lexer stuff
 t_token	get_next_token(t_lexer *lexer);
+t_token *get_token_array(t_arena *arena, t_lexer *lexer);
 void print_tokens(t_lexer *lexer);
 
 //heredoc stuff
@@ -143,6 +144,7 @@ void apply_redirect(t_minishell *minishell);
 void reset_redirect(t_minishell *minishell);
 
 //general utils stuff
-char *remove_quotes(t_arena *arena, t_token *data);
+uint32_t get_quote_removed_string(char *string, t_token *data);
+uint8_t	num_len(uint32_t num);
 
 #endif
