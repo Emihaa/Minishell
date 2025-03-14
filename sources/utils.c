@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 22:44:46 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/14 15:18:13 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ char *remove_quotes(t_arena *arena, t_token *data)
 	char *string;
 	int	new_size;
 
-	string = arena_alloc(arena, sizeof(char) * data->string_len);
+	string = arena_alloc(arena, sizeof(char) * data->string_len + 1);
 	new_size = remove_quotes2(string, data);
 	arena_unalloc(arena, data->string_len - new_size);
 	return (string);
