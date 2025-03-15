@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:44:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/09 22:47:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/15 21:59:37 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,3 +63,11 @@ void reset_redirect(t_minishell *minishell)
 		minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	}
 }
+
+// prototyyype
+// int redirect_out(t_arena *arena, t_token *data)
+// {
+// 	t_arena_temp temp;
+
+// 	temp = arena_temp_begin
+// }

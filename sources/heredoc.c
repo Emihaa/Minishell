@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/14 18:03:54 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/15 22:00:34 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,7 @@ void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *deli
 			//perror("readline error"); // @TODO: error cheking
 			if (errno == EXIT_SUCCESS)
 			{
-				printf("minishell: warning: here-document at line %i \
-delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
+				printf(EOF_ERROR, minishell->line_counter, delimiter);
 				break ;
 			}
 			perror("readline failure");
@@ -94,6 +93,46 @@ delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
 	close(write_fd);
 }
 
+// will need to be replaced
+int		write_env_variable(char *str, int fd)
+{
+	//uint32_t len;
+	int i;
+
+	i = 0;
+	while(str[i] != '=' && str[i] != '\0')
+		i++;
+	if (str[i++] != '=')
+		return (-1);
+	write(fd, &str[i], ft_strlen(&str[i])); // @TODO: error checking
+	return (0);
+}
+
+int write_expanded_variable(char *string, const uint32_t start, int fd, t_minishell *m)
+{
+	int i;
+	uint32_t len;
+
+	if (string[start] != '$')
+		return (0);
+	len = 0;
+	if (ft_isalnum(string[start + 1 + len]) == false)
+		return (0);
+	while (ft_isalnum(string[start + 1 + len] == true))
+		len += 1;
+	i = 0;
+	while (m->envp[i] != NULL)
+	{
+		if (ft_strncmp(&string[start + 1], m->envp[i], len) == 0)
+		{
+			write_env_variable(m->envp[i], fd); // @TODO: error checking
+			break ;
+		}
+		i += 1;
+	}
+	return (len + 1);
+}
+
 // this is going to be a "simple" prototype that uses getenv
 // will be replaced with our own env version
 // there will be no quote removal inside heredoc
@@ -104,8 +143,6 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 	char *line;
 	uint32_t i;
 
-	printf("expanding heredoc\n");
-	return ;
 	while (1)
 	{
 		i = 0;
@@ -113,25 +150,22 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 		minishell->line_counter += 1;
 		if (line == NULL)
 		{
-			//perror("readline error"); // @TODO: error cheking
 			if (errno == EXIT_SUCCESS)
 			{
-				printf("minishell: warning: here-document at line %i \
-delimited by end-of-file (wanted `%s')\n", minishell->line_counter, delimiter);
+				printf(EOF_ERROR, minishell->line_counter, delimiter);
 				break ;
-			}
-			perror("readline failure");
-			// panic;
+			} perror("readline failure"); // panic;
 		}
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
-		while (line[i] != '$' && line[i] != '\0')
-			i += 1;
-		if (line[i] == '$')
-			i -= 1;
-		if (write(write_fd, line, i) == -1)
-			perror("write line"); // error cheking
-		
+		while (line[i] != '\0')
+		{
+			while (line[i] != '\0' && line[i] != '$')
+				i++;
+			if (write(write_fd, line, i - 1) == -1)
+				perror("write line"); // error cheking
+			i += write_expanded_variable(line, i, write_fd, minishell);
+		}
 		if (write(write_fd, "\n", 1) == -1)
 			perror("write '\\n'"); // error cheking
 		free(line);

@@ -6,13 +6,13 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 23:54:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/28 00:06:47 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/15 21:59:22 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/lt_alloc.h"
 
-t_arena arena_new(t_u64 cap)
+t_arena arena_new(uint64_t cap)
 {
 	t_arena a;
 

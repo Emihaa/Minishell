@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/14 17:32:19 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/15 19:27:32 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ typedef struct s_minishell
 	pid_t			*pids;
 	int			exit_status;
 	t_arena		node_arena;
+	t_arena		env_arena;
 	t_arena		scratch_arena;
 	char		**envp;
 }	t_minishell;
@@ -89,7 +90,7 @@ typedef union u_data
 // UNUSED 04.03.25 added to token struct
 typedef struct s_token_string
 {
-	t_u64	length;		// total size of the string
+	uint64_t	length;		// total size of the string
 	char	*pointer;	// where the string starts
 }	t_token_string;
 
@@ -98,10 +99,10 @@ typedef struct s_token_string
 // name should probably be created during parsing if the parser encounters a syntax error
 typedef struct s_token
 {
-	t_type	type;	// the type of the token
-	char	*string; 	// the string of the token | if applicable will be a filename a command name or an argument
-	size_t	string_len;	// length of the string
-	char	*name;	// added mostly for testing but might stay useful
+	t_type		type;	// the type of the token
+	char		*string; 	// the string of the token | if applicable will be a filename a command name or an argument
+	uint32_t	string_len;	// length of the string // changed from size_t to uint32_t. 15.03.2025
+	char		*name;	// added mostly for testing but might stay useful
 }	t_token; //@TODO: re oder struct to reduce size;
 
 // struct for any information the lexer might need
@@ -110,7 +111,7 @@ typedef struct s_token
 typedef struct s_lexer
 {
 	char *line;
-	t_u32 line_index;
+	uint32_t line_index;
 }	t_lexer;
 
 
@@ -132,6 +133,8 @@ void print_tokens(t_lexer *lexer);
 //heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
 #define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
+#define EOF_ERROR "minishell: warning: here-document at line %i \
+delimited by end-of-file (wanted `%s')\n"
 // int a = NAME_BASE_LEN; // delete
 int heredoc(t_minishell *minishell, t_token *data);
 
@@ -142,6 +145,9 @@ int heredoc(t_minishell *minishell, t_token *data);
 void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
 void apply_redirect(t_minishell *minishell);
 void reset_redirect(t_minishell *minishell);
+
+//environment stuff
+char 	*expand_variable(t_token *data, const uint32_t start, char **env);
 
 //general utils stuff
 uint32_t get_quote_removed_string(char *string, t_token *data);

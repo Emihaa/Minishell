@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/14 15:46:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/15 18:23:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,6 @@ t_token *get_token_array(t_arena *arena, t_lexer *lexer)
 		if (token_array_base[i].type == END_OF_LINE)
 			break ;
 		arena_alloc(arena, sizeof(t_token));
-		//arena_realloc(arena, &token_array_base[i], sizeof(t_token));
 		i++;
 	}
 	return (token_array_base);

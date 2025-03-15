@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/14 18:55:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/14 18:55:55 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,4 +70,5 @@ ssize_t write_cheking_thingy_asd(int fd, char *str, size_t str_len)
 			return (-1); // full error situation
 		bytes_to_write -= bytes_written;
 	}
+	return (0);
 }

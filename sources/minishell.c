@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/13 20:19:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/15 18:58:18 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,7 +226,11 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena.data == NULL)
 		; //@TODO: error cheking
+	minishell->env_arena = arena_new(ARG_MAX);
+	if (minishell->env_arena.data == NULL)
+		; //@TODO: error cheking
 	minishell->scratch_arena = (t_arena){0};
+	minishell->envp = envp;
 }
 
 int main(int argc, char *argv[], char *envp[])
