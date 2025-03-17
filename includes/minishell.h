@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/13 22:34:55 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/17 22:44:45 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,10 @@ typedef struct s_node
 t_token	get_next_token(t_lexer *lexer);
 void print_tokens(t_lexer *lexer);
 
-//heredoc stuff
+// tree stuff
+t_node *parser(t_arena *arena, char *line);
+
+// heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
 #define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
 // int a = NAME_BASE_LEN; // delete

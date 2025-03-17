@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/11 17:54:33 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/17 23:37:33 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,38 +133,136 @@ void print_token(t_token *token)
 }
 
 // prototypee
-void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_array)
+// void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_array)
+// {
+// 	char **envp = minishell->envp;
+// 	int i;
+// 	i = 0;
+// 	while (token_array[i].type != END_OF_LINE)
+// 	{
+// 		if (token_array[i].type == WORD)
+// 		{
+// 			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
+// 				break;
+// 		}
+// 		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
+// 		{
+// 			char *delimiter = calloc(1, token_array[i].string_len + 1);
+// 			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
+// 			heredoc(minishell, delimiter); // delimiter will still have quotes removed
+// 			free(delimiter);
+// 		}
+// 		else
+// 		{
+// 			print_token(&token_array[i]);
+// 		}
+// 		++i;
+// 	}
+// 	pid_t pid = fork();
+// 	if (pid == 0)
+// 	{
+// 		apply_redirect(minishell);
+// 		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+// 		printf("fd to cat \t%i\n", 17);
+// 		if (execve("/bin/cat", cat_argv, envp) == -1)
+// 			perror("execve fail");
+// 		exit(1);
+// 	}
+// 	reset_redirect(minishell);
+// 	minishell->pids = arena_alloc(arena, sizeof(minishell->pids));
+// 	minishell->pids[minishell->command_count] = pid;
+// 	minishell->command_count += 1;
+// 	wait_for_sub_processes(minishell);
+// 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
+// }
+// void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_node *tree)
+// {
+// 	char **envp = minishell->envp;
+// 	int i;
+// 	i = 0;
+// 	while (tree->left)
+// 	{
+// 		if (tree->token.type == PIPE)
+// 			// do pipe and do fork to child
+// 			// and child work
+// 			// call itself but tree->right
+// 			// that would be with recursion
+// 		if (token_array[i].type == WORD)
+// 		{
+// 			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
+// 				break;
+// 		}
+// 		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
+// 		{
+// 			char *delimiter = calloc(1, token_array[i].string_len + 1);
+// 			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
+// 			heredoc(minishell, delimiter); // delimiter will still have quotes removed
+// 			free(delimiter);
+// 		}
+// 		else
+// 		{
+// 			print_token(&token_array[i]);
+// 		}
+// 		++i;
+// 	}
+// 	pid_t pid = fork();
+// 	if (pid == 0)
+// 	{
+// 		apply_redirect(minishell);
+// 		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+// 		printf("fd to cat \t%i\n", 17);
+// 		if (execve("/bin/cat", cat_argv, envp) == -1)
+// 			perror("execve fail");
+// 		exit(1);
+// 	}
+// 	reset_redirect(minishell);
+// 	minishell->pids = arena_alloc(arena, sizeof(minishell->pids));
+// 	minishell->pids[minishell->command_count] = pid;
+// 	minishell->command_count += 1;
+// 	wait_for_sub_processes(minishell);
+// 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
+// }
+
+void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_node *tree)
 {
+	t_node *head;
 	char **envp = minishell->envp;
 	int i;
-
 	i = 0;
-	while (token_array[i].type != END_OF_LINE)
+
+	head = tree;
+	while (tree)
 	{
-		if (token_array[i].type == WORD)
+		if (tree->token.type == PIPE)
 		{
-			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
-				break;
+			int pipe_fds[2]; 
+			pipe(pipe_fds);
+			store_redirects(NULL , &pipe_fds[WRITE], minishell);
 		}
-		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
+		if (tree->token.type == WORD)
 		{
-			char *delimiter = calloc(1, token_array[i].string_len + 1);
-			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
+			if (ft_strncmp("exit", tree->token.string, tree->token.string_len) == 0)
+				return ;
+			print_token(&tree->token);
+		}
+		else if(tree->token.type == HERE_DOCUMENT) // fully temp stuff
+		{
+			char *delimiter = calloc(1, tree->token.string_len + 1);
+			ft_memmove(delimiter, tree->token.string, tree->token.string_len);
 			heredoc(minishell, delimiter); // delimiter will still have quotes removed
 			free(delimiter);
 		}
 		else
 		{
-			print_token(&token_array[i]);
+			print_token(&tree->token);
 		}
-		++i;
+		tree = tree->left;
 	}
-	
 	pid_t pid = fork();
 	if (pid == 0)
 	{
 		apply_redirect(minishell);
-		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
+		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL}; //@TODO <- do this to tree and expand it
 		printf("fd to cat \t%i\n", 17);
 		if (execve("/bin/cat", cat_argv, envp) == -1)
 			perror("execve fail");
@@ -177,32 +275,53 @@ void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_
 	wait_for_sub_processes(minishell);
 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
 }
+
 // prototype for a read loop
 // this should probably call the parser which will call the lexer and return the tree
 // that will then be passed to some execution prep function which will traverses the tree 
 // 		and do the necessary redirect ect.
 
 //this might need another nested loop to calculate the amount of command etc.
-void read_loop(t_minishell *minishell)
+// void read_loop(t_minishell *minishell)
+// {
+// 	char *line;
+// 	t_arena *arena = &minishell->node_arena;
+// 	t_token *token_array; // just for testing
+// 	t_lexer lexer; // to be definex in the parser
+// 	while (1)
+// 	{
+// 		minishell->command_count = 0;
+// 		line = readline("minishell> ");
+// 		if (line == NULL)
+// 			break ; // @TODO: error cheking
+// 		add_history(line);
+//     	//printf("%s", line);
+// 		minishell->line_counter += 1;
+// 		lexer.line = line;
+// 		lexer.line_index = 0;
+// 		token_array = get_token_array(arena, &lexer); //<--
+// 		minishell_exec_loop(minishell, arena, token_array);
+// 		arena_reset(arena);
+// 	}
+// }
+
+void read_loop(t_minishell *m)
 {
 	char *line;
-	t_arena *arena = &minishell->node_arena;
-	t_token *token_array; // just for testing
-	t_lexer lexer; // to be definex in the parser
+
 	while (1)
 	{
-		minishell->command_count = 0;
+		m->command_count = 0;
 		line = readline("minishell> ");
 		if (line == NULL)
 			break ; // @TODO: error cheking
 		add_history(line);
     	//printf("%s", line);
-		minishell->line_counter += 1;
-		lexer.line = line;
-		lexer.line_index = 0;
-		token_array = get_token_array(arena, &lexer);
-		minishell_exec_loop(minishell, arena, token_array);
-		arena_reset(arena);
+		m->line_counter += 1;
+		t_node *tree = parser(&m->node_arena, line);
+		if (tree)
+			minishell_exec_loop(m, &m->node_arena, tree);
+		arena_reset(&m->node_arena);
 	}
 }
 
