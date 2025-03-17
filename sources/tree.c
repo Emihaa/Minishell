@@ -6,11 +6,15 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/13 22:35:15 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/17 18:36:56 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
+
+// @TODO: Start working on the syntax errors inside the tree
+// there is examples on the Discord chat
+
 
 // @TODO: REMEMBER TO REMOVE THE GLOBAL VARIABLE USED FOR PRINTING
 int value = 1;
@@ -230,7 +234,7 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
             printf("   found ");
             print_token_type(&token->type);
             printf(" inserting node to middle\n");
-            if (node->root->token.type == WORD) //if after right branch, the first node is WORD, all ridirects should come first
+            if (node->root != NULL && node->root->token.type == WORD) //if after right branch, the first node is WORD, all redirects should come first
                 return(insert_middle(node->root->root, node->root, token, arena));
             else
                 return(insert_middle(node->root, node, token, arena));
@@ -250,23 +254,22 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 // token recognisation function
 void print_token_type(t_type *token_type)
 {
-    printf("token:");
     if (*token_type == PIPE)
-        printf(" | ");
+        printf("|");
     else if (*token_type == REDIRECT_IN)
-        printf(" < ");
+        printf("<");
     else if (*token_type == REDIRECT_OUT)
-        printf(" > ");
+        printf(">");
     else if (*token_type == HERE_DOCUMENT)
-        printf(" << ");
+        printf("<<");
     else if (*token_type == REDIRECT_APPEND)
-        printf(" >> ");
+        printf(">>");
     else if (*token_type == WORD)
-        printf(" WORD ");
+        printf("WORD");
     else if (*token_type == END_OF_LINE)
-        printf(" \n ");
+        printf("newline");
     else if (*token_type == ERROR)
-        printf(" error ");
+        printf("error");
 }
 
 t_node *find_head_root(t_node *node)
@@ -302,7 +305,7 @@ static void print_tree(t_node *node, int depth)
         print_tree(node->right, depth + 1);
     }
 }
-
+//echo
 //for now to test
 int main()
 {
@@ -312,6 +315,7 @@ int main()
     t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
     while (1)
 	{
+        main_loop:
         tree = NULL;
         i = 0;
         value = 1;
@@ -325,10 +329,13 @@ int main()
             t_token token = get_next_token(&lexer);
             if (token.type == END_OF_LINE)
                 break ;
-            if (token.string == NULL)
+            if (token.string_len == 0)
             {
-                printf("syntax error NULL string");
-                break ;
+                printf("syntax error near unexpected token '");
+                t_token token = get_next_token(&lexer);
+                print_token_type(&token.type);
+                printf("'\n");
+                goto main_loop;
             }
             tree = insert_node(tree, NULL, &token, &arena);
         }
