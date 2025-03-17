@@ -6,12 +6,15 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 15:29:44 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/27 23:20:50 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/17 22:17:27 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../includes/libft.h"
+
 int	ft_isalpha(int c)
 {
-	c = c | 0b00100000;
-	return ((c < 'a' || c > 'z'));
+	// c = (c | 0b00010000);
+	// return ((c >= 'A' && c <= 'Z'));
+	return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
 }

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/15 22:00:34 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/17 22:12:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,15 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 
 	if (string[start] != '$')
 		return (0);
-	len = 0;
-	if (ft_isalnum(string[start + 1 + len]) == false)
+	if (ft_isalnum(string[start + 1]) == false)
 		return (0);
-	while (ft_isalnum(string[start + 1 + len] == true))
+	len = 0;
+	while (ft_isalnum(string[start + 1 + len]) == true)
 		len += 1;
 	i = 0;
 	while (m->envp[i] != NULL)
 	{
-		if (ft_strncmp(&string[start + 1], m->envp[i], len) == 0)
+		if (ft_strncmp(&string[start + 1], m->envp[i], len - 1) == 0)
 		{
 			write_env_variable(m->envp[i], fd); // @TODO: error checking
 			break ;
@@ -156,15 +156,18 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 				break ;
 			} perror("readline failure"); // panic;
 		}
+		uint32_t line_len = ft_strlen(line);
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
-		while (line[i] != '\0')
+		while (i < line_len)
 		{
 			while (line[i] != '\0' && line[i] != '$')
 				i++;
-			if (write(write_fd, line, i - 1) == -1)
+			if (write(write_fd, line, i) == -1)
 				perror("write line"); // error cheking
-			i += write_expanded_variable(line, i, write_fd, minishell);
+			if (line[i] == '$')
+				i += write_expanded_variable(line, i, write_fd, minishell);
+			i++;
 		}
 		if (write(write_fd, "\n", 1) == -1)
 			perror("write '\\n'"); // error cheking
@@ -238,7 +241,7 @@ int heredoc(t_minishell *minishell, t_token *data)
 	new_size = get_quote_removed_string(delimiter, data);
 	quoted = (new_size < data->string_len);
 	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
-	if (quoted == false)
+	if (quoted == true)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
 	else
 		heredoc_write_with_expansion(minishell, fds[WRITE], delimiter);
