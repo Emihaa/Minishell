@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/15 19:27:32 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:34:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,10 @@ t_token	get_next_token(t_lexer *lexer);
 t_token *get_token_array(t_arena *arena, t_lexer *lexer);
 void print_tokens(t_lexer *lexer);
 
-//heredoc stuff
+// tree stuff
+t_node *parser(t_arena *arena, char *line);
+
+// heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
 #define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
 #define EOF_ERROR "minishell: warning: here-document at line %i \

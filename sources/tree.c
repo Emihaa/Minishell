@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/17 18:36:56 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/17 23:31:54 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ t_node *find_head_root(t_node *node);
 
 t_node *create_node(t_node *root, t_token *token, t_arena *arena)
 {
-    int i = 0;
+    t_node *new_node;
 
-    t_node *new_node = arena_alloc(arena, sizeof(t_node));
+    new_node = arena_alloc(arena, sizeof(t_node));
     if (!new_node) //this can be taken away later
     {
         printf("new_node creation failed\n Luka broke something AGAIN\n");
@@ -79,9 +79,9 @@ t_node *insert_middle(t_node *root, t_node *node, t_token *token, t_arena *arena
 
 t_node *insert_below(t_node *root, t_node *node, t_token *token, t_arena *arena)
 {
-    t_node *bottom_node = node;
+    t_node *new_node;
     
-    t_node *new_node = create_node(root, token, arena);
+    new_node = create_node(root, token, arena);
     node->left = new_node;
     printf("new node--> ");
     print_token_type(&token->type);
@@ -110,7 +110,7 @@ t_node *insert_bottom(t_node *node, t_token *token, t_arena *arena)
 // if token is pipe, we want the pipe to top of everything
 // if at the top there is already pipe then we want the new pipe at the
 // left side of the old pipe
-t_node *insert_top(t_node *root, t_node *node, t_token *token, t_arena *arena)
+t_node *insert_top(t_node *node, t_token *token, t_arena *arena)
 {
     t_node *head_node = find_head_root(node);
     t_node *new_node;
@@ -210,7 +210,7 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
         printf("   found pipe ");
         print_token_type(&token->type);
         printf(" creating node to top\n");
-        return (insert_top(root, node, token, arena)); 
+        return (insert_top(node, token, arena)); 
     }
     else // its something different and it comes in the middle of root and current bottom node
     {
@@ -255,21 +255,21 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 void print_token_type(t_type *token_type)
 {
     if (*token_type == PIPE)
-        printf("|");
+        ft_putstr_fd("|", 2);
     else if (*token_type == REDIRECT_IN)
-        printf("<");
+        ft_putstr_fd("<", 2);
     else if (*token_type == REDIRECT_OUT)
-        printf(">");
+        ft_putstr_fd(">", 2);
     else if (*token_type == HERE_DOCUMENT)
-        printf("<<");
+        ft_putstr_fd("<<", 2);
     else if (*token_type == REDIRECT_APPEND)
-        printf(">>");
+        ft_putstr_fd(">>", 2);
     else if (*token_type == WORD)
-        printf("WORD");
+        ft_putstr_fd("WORD", 2);
     else if (*token_type == END_OF_LINE)
-        printf("newline");
+        ft_putstr_fd("newline", 2);
     else if (*token_type == ERROR)
-        printf("error");
+        ft_putstr_fd("error", 2);
 }
 
 t_node *find_head_root(t_node *node)
@@ -280,70 +280,99 @@ t_node *find_head_root(t_node *node)
 }
 
 // Function to print the tree
-static void print_tree(t_node *node, int depth)
-{
-    int i = 0;
+// static void print_tree(t_node *node, int depth)
+// {
+//     int i = 0;
     
-    if (!node)
-        return ;
-    while (i++ < depth)
-        printf("  ");
-    // Print current node
-    printf("[-- ");
-    print_token_type(&node->token.type);
-    printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
-    // Print left subtree
-    if (node->left)
+//     if (!node)
+//         return ;
+//     while (i++ < depth)
+//         printf("  ");
+//     // Print current node
+//     printf("[-- ");
+//     print_token_type(&node->token.type);
+//     printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
+//     // Print left subtree
+//     if (node->left)
+//     {
+//         printf(" L ");
+//         print_tree(node->left, depth + 1);
+//     }
+//     // Print right subtree
+//     if (node->right)
+//     {
+//         printf(" R ");
+//         print_tree(node->right, depth + 1);
+//     }
+// }
+
+t_node *parser(t_arena *arena, char *line)
+{
+    t_node *tree;
+    t_lexer lexer;
+    
+    tree = NULL;
+    lexer.line = line;
+    lexer.line_index = 0; 
+    while (1)
     {
-        printf(" L ");
-        print_tree(node->left, depth + 1);
+        t_token token = get_next_token(&lexer);
+        if (token.type == END_OF_LINE)
+            break ;
+        if (token.string_len == 0)
+        {
+            ft_putstr_fd("minitalk: syntax error near unexpected token `", 2);
+            t_token token = get_next_token(&lexer);
+            print_token_type(&token.type);
+            ft_putstr_fd("'\n", 2);
+            return (NULL);
+        }
+        tree = insert_node(tree, NULL, &token, arena);
     }
-    // Print right subtree
-    if (node->right)
-    {
-        printf(" R ");
-        print_tree(node->right, depth + 1);
-    }
+    tree = find_head_root(tree);
+    return (tree);
 }
+
+
 //echo
 //for now to test
-int main()
-{
-    int i;
+// int main()
+// {
+//     int i;
     
-    t_node *tree = NULL;
-    t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
-    while (1)
-	{
-        main_loop:
-        tree = NULL;
-        i = 0;
-        value = 1;
-        char *line = readline("minishell >");
-        add_history(line);
-        t_lexer lexer;
-        lexer.line = line;
-        lexer.line_index = 0; 
-        while (1)
-        {
-            t_token token = get_next_token(&lexer);
-            if (token.type == END_OF_LINE)
-                break ;
-            if (token.string_len == 0)
-            {
-                printf("syntax error near unexpected token '");
-                t_token token = get_next_token(&lexer);
-                print_token_type(&token.type);
-                printf("'\n");
-                goto main_loop;
-            }
-            tree = insert_node(tree, NULL, &token, &arena);
-        }
-        printf("\n");
-        tree = find_head_root(tree);
-        print_tree(tree, 0);
-        free(line);
-        arena_reset(&arena);
-    } 
-    return (0);
-}
+//     t_node *tree = NULL;
+//     t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
+//     while (1)
+// 	{
+//         main_loop:
+//         tree = NULL;
+//         i = 0;
+//         value = 1;
+//         char *line = readline("minishell >");
+//         add_history(line);
+//         t_lexer lexer;
+//         lexer.line = line;
+//         lexer.line_index = 0; 
+//         while (1)
+//         {
+//             t_token token = get_next_token(&lexer);
+//             if (token.type == END_OF_LINE)
+//                 break ;
+//             if (token.string_len == 0)
+//             {
+//                 ft_putstr_fd("minitalk: syntax error near unexpected token `", 2);
+//                 t_token token = get_next_token(&lexer);
+//                 print_token_type(&token.type);
+//                 ft_putstr_fd("'\n", 2);
+//                 goto main_loop;
+//             }
+//             tree = insert_node(tree, NULL, &token, &arena);
+//         }
+//         printf("\n");
+//         tree = find_head_root(tree);
+//         print_tree(tree, 0);
+//         free(line);
+//         arena_reset(&arena);
+//     } 
+//     return (0);
+// }
