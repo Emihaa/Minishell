@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 16:34:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 20:10:05 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@
 // @question are these the only tokens needed?
 typedef enum e_type
 {
+	PIPE			=	'|',
 	REDIRECT_IN		=	'<',
 	REDIRECT_OUT	=	'>',
-	PIPE			=	'|',
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	257, // >>
 	// COMMAND		=	258,
@@ -47,16 +47,6 @@ typedef enum e_type
 	END_OF_LINE		=	-1,		// first WORD before a pipe is the command and the following ones are arguments
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
-
-#define REDIRECT_IN_NAME	"<"
-#define REDIRECT_OUT_NAME	">"
-#define APPEND_NAME			">>"
-#define HEREDOC_NAME		"<<"
-#define PIPE_NAME			"|"
-#define EOL_NAME			"newline"
-#define WORD_NAME			"WORD"
-
-#define ERROR_NAME			"ERROR"
 
 // we should add
 typedef struct s_minishell
@@ -102,7 +92,7 @@ typedef struct s_token
 	t_type		type;	// the type of the token
 	char		*string; 	// the string of the token | if applicable will be a filename a command name or an argument
 	uint32_t	string_len;	// length of the string // changed from size_t to uint32_t. 15.03.2025
-	char		*name;	// added mostly for testing but might stay useful
+	//char		*name;	// added mostly for testing but might stay useful
 }	t_token; //@TODO: re oder struct to reduce size;
 
 // struct for any information the lexer might need
@@ -125,6 +115,9 @@ typedef struct s_node
 	struct s_node *right; // struct on the under right 
 } t_node;
 
+// minishell main stuff
+void minishell_cleanup(t_minishell *minishell);
+
 // lexer stuff
 t_token	get_next_token(t_lexer *lexer);
 t_token *get_token_array(t_arena *arena, t_lexer *lexer);
@@ -145,15 +138,15 @@ int heredoc(t_minishell *minishell, t_token *data);
 // testing possible redirect stuff
 #define WRITE	1
 #define READ	0
-void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
-void apply_redirect(t_minishell *minishell);
-void reset_redirect(t_minishell *minishell);
+int		store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
+void	apply_redirect(t_minishell *minishell);
+void	reset_redirect(t_minishell *minishell);
 
 //environment stuff
 char 	*expand_variable(t_token *data, const uint32_t start, char **env);
 
 //general utils stuff
-uint32_t get_quote_removed_string(char *string, t_token *data);
+uint32_t set_quote_removed_string(char *string, t_token *data);
 uint8_t	num_len(uint32_t num);
 
 #endif

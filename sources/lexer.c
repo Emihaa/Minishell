@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/15 18:23:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 18:29:27 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ t_token	tokenize_pipe(t_lexer *lexer)
 		.type = PIPE,
 		.string = &lexer->line[lexer->line_index - 1],
 		.string_len = 1,
-		.name = PIPE_NAME,
 	});
 }
 
@@ -90,14 +89,13 @@ t_token	tokenize_end_of_line(void)
 			.type = END_OF_LINE,
 			.string = NULL,
 			.string_len = 0,
-			.name = EOL_NAME,
 		});
 }
 
 // creates a token matching the input parameters
 // for tokens that can have a string
 // @TODO: rename
-t_token	tokenize_stuffs(t_lexer *lexer, t_type type, char *name, int to_skip)
+t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 {
 	t_token	token;
 	char	c;
@@ -120,7 +118,6 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, char *name, int to_skip)
 		.type = type,
 		token.string = &lexer->line[lexer->line_index],
 		token.string_len = len,
-		token.name = name,
 	};
 	lexer->line_index += len;
 	return (token);
@@ -147,18 +144,18 @@ t_token	get_next_token(t_lexer *lexer)
 	while (is_space(lexer->line[lexer->line_index]))
 		lexer->line_index += 1;
 	if (ft_strncmp(&lexer->line[lexer->line_index], ">>", 2) == 0)
-		return (tokenize_stuffs(lexer, REDIRECT_APPEND, APPEND_NAME, 2));
+		return (tokenize_stuffs(lexer, REDIRECT_APPEND, 2));
 	if (ft_strncmp(&lexer->line[lexer->line_index], "<<", 2) == 0)
-		return (tokenize_stuffs(lexer, HERE_DOCUMENT, HEREDOC_NAME, 2));
+		return (tokenize_stuffs(lexer, HERE_DOCUMENT, 2));
 	if (lexer->line[lexer->line_index] == '|')
 		return (tokenize_pipe(lexer));
 	if (lexer->line[lexer->line_index] == '<')
-		return (tokenize_stuffs(lexer, REDIRECT_IN, REDIRECT_IN_NAME, 1));
+		return (tokenize_stuffs(lexer, REDIRECT_IN, 1));
 	if (lexer->line[lexer->line_index] == '>')
-		return (tokenize_stuffs(lexer, REDIRECT_OUT, REDIRECT_OUT_NAME, 1));
+		return (tokenize_stuffs(lexer, REDIRECT_OUT, 1));
 	if (lexer->line[lexer->line_index] == '\0')
 		return (tokenize_end_of_line());
-	return (tokenize_stuffs(lexer, WORD, WORD_NAME, 0));
+	return (tokenize_stuffs(lexer, WORD, 0));
 	//return ((t_token){.type = ERROR, .string = {0}}); // error	
 }
 
@@ -188,20 +185,20 @@ t_token *get_token_array(t_arena *arena, t_lexer *lexer)
 // and delete when ready to submit
 // cc lexer.c -l readline ../libs/libft/build/libft.a
 //testing main
-void print_tokens(t_lexer *lexer)
-{
-	while (1)
-	{
-		t_token token = get_next_token(lexer);
+// void print_tokens(t_lexer *lexer)
+// {
+// 	while (1)
+// 	{
+// 		t_token token = get_next_token(lexer);
 
-		char *token_string = calloc(1, token.string_len + 1);
-		ft_memmove(token_string, token.string, token.string_len);
-		printf("token number: %i\ttoken name: %s\ttoken string: %s\n", token.type, token.name, token_string);
-		free(token_string);
-		if (token.type == END_OF_LINE || token.type == ERROR)
-			break ;
-	}
-}
+// 		char *token_string = calloc(1, token.string_len + 1);
+// 		ft_memmove(token_string, token.string, token.string_len);
+// 		printf("token number: %i\ttoken name: %s\ttoken string: %s\n", token.type, token.name, token_string);
+// 		free(token_string);
+// 		if (token.type == END_OF_LINE || token.type == ERROR)
+// 			break ;
+// 	}
+// }
 
 // void print_token_array(t_arena *arena, t_lexer *lexer)
 // {

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 17:55:01 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 20:41:36 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void echo(int argc, char *argv[])
 		printf("%s", argv[i]);
 		i++;
 	}
-	if (strncmp(argv[0], "-n", 3))
+	if (ft_strncmp(argv[0], "-n", 3) == 0)
 		return ;
 	printf("\n");
 }
@@ -125,11 +125,29 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	}
 }
 
+char *get_token_name(t_token *token)
+{
+	if (token->type == PIPE)
+		return("|");
+	if (token->type == REDIRECT_IN)
+		return("<");
+	if (token->type == REDIRECT_OUT)
+		return(">");
+	if (token->type == REDIRECT_APPEND)
+		return(">>");
+	if (token->type == HERE_DOCUMENT)
+		return("<<");
+	if (token->type == WORD)
+		return("word");
+	if (token->type == END_OF_LINE)
+		return ("newline");
+	return ("ERROR");
+}
 
 void print_token(t_token *token)
 {
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
-			token->type, token->name, (int)token->string_len, token->string);
+			token->type, get_token_name(token), (int)token->string_len, token->string);
 }
 
 // prototypee
@@ -223,59 +241,104 @@ void print_token(t_token *token)
 // 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
 // }
 
-void minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
+int	create_and_store_pipe(t_minishell *m, bool side)
+{
+	static int pipe_fds[2];
+
+	if (side == WRITE)
+	{
+		if (pipe(pipe_fds) == -1)
+			return (666); //@TODO: error cheking
+		return (store_redirects(NULL , &pipe_fds[WRITE], m));
+	}
+	else if (side == READ)
+	{
+		return (store_redirects(&pipe_fds[READ], NULL, m));
+	}
+	return (0);
+}
+// in the future this will actually need the argv inside the tree node
+pid_t	handle_word(t_minishell *m, t_node *data, int status) // rename probably
 {
 	pid_t pid;
-	t_node *head;
-	int i;
-	i = 0;
 
+	print_token(&data->token);
+	pid = fork();
+	if (pid == (pid_t)(-1))
+		; // @TODO: error cheking
+	if (pid == 0)
+	{
+		if (status != 0)
+		{
+			minishell_cleanup(m);
+			exit(status);
+		}
+		printf("fd to cat \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
+		apply_redirect(m);
+		printf("fd to cat \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
+		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL}; //@TODO <- do this to tree and expand it
+		if (execve("/bin/cat", cat_argv, m->envp) == -1)
+			perror("execve fail");
+		exit(1);
+	}
+	m->command_count += 1;
+	return (pid);
+}
+
+int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
+{
+	(void)arena;
+	bool pipe_side;
+	int status;
+	pid_t pid;
+	t_node *current_head;
+	
+	pipe_side = WRITE;
+	status = 0;
+	// temp test stuff;
+	m->pids = malloc(sizeof(*m->pids) * 20);
 	while (tree)
 	{
-		head = tree;
+		current_head = tree;
 		while (tree)
 		{
 			if (tree->token.type == PIPE)
 			{
-				int pipe_fds[2]; 
-				pipe(pipe_fds);
-				store_redirects(NULL , &pipe_fds[WRITE], m);
+				status = create_and_store_pipe(m, pipe_side);
+				pipe_side = !pipe_side;
 			}
-			if(tree->token.type == HERE_DOCUMENT) // fully temp stuff
+			else if(tree->token.type == HERE_DOCUMENT) // maybe temp stuff
 			{
 				heredoc(m, &tree->token); // delimiter will still have quotes removed
 			}
+			else if (tree->token.type == WORD)
+			{
+				if (ft_strncmp("exit", tree->token.string, tree->token.string_len) == 0) // doesn't work the same as bash
+					return (EXIT_SUCCESS);
+				pid = handle_word(m, tree, status);
+				break ;
+			}
 			else
 			{
-				print_token(&tree->token);
-			}
-			if (tree->token.type == WORD)
-			{
-				if (ft_strncmp("exit", tree->token.string, tree->token.string_len) == 0)
-				return ;
-				print_token(&tree->token);
-				pid = fork();
-				if (pid == 0)
-				{
-					apply_redirect(m);
-					char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL}; //@TODO <- do this to tree and expand it
-					printf("fd to cat \t%i\n", 17);
-					if (execve("/bin/cat", cat_argv, m->envp) == -1)
-					perror("execve fail");
-					exit(1);
-				}
-				break ;
+				print_token(&tree->token); // for testing
 			}
 			tree = tree->left;
 		}
 		reset_redirect(m);
-		m->pids = arena_alloc(arena, sizeof(m->pids));
-		m->pids[m->command_count] = pid;
-		m->command_count += 1;
-		tree = head->right;
+		if (pipe_side == READ)
+		{
+			create_and_store_pipe(m, pipe_side);
+			pipe_side = !pipe_side;
+		}
+		//m->pids = arena_alloc(arena, sizeof(m->pids));
+		m->pids[m->command_count - 1] = pid;
+		tree = current_head->right;
 	}
 	wait_for_sub_processes(m);
-	printf("last printf %s\t%i\n", strerror(m->exit_status), m->exit_status);
+	free(m->pids);
+	m->pids = NULL;
+	printf("last print of loop %s\t%i\n", strerror(m->exit_status), m->exit_status);
+	return (42);
 }
 
 // prototype for a read loop
@@ -321,8 +384,9 @@ void read_loop(t_minishell *m)
     	//printf("%s", line);
 		m->line_counter += 1;
 		t_node *tree = parser(&m->node_arena, line);
-		if (tree)
-			minishell_exec_loop(m, &m->node_arena, tree);
+		if (tree != NULL)
+			if (minishell_exec_loop(m, &m->node_arena, tree) == EXIT_SUCCESS)
+				break ;
 		arena_reset(&m->node_arena);
 	}
 }
@@ -331,6 +395,7 @@ void minishell_cleanup(t_minishell *minishell)
 {
 	arena_delete(&minishell->node_arena);
 	arena_delete(&minishell->scratch_arena);
+	arena_delete(&minishell->env_arena);
 }
 // set default values for the minishell struct
 // the struct is going to work as a kind of storage for globally needef alues

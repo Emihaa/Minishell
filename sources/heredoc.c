@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 16:50:59 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 19:15:34 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,7 @@ int heredoc(t_minishell *minishell, t_token *data)
 	errval = create_heredoc_fds(fds);
 	printf("heredoc_fds r_val: %i\n" , errval); // delete
 	delimiter = arena_alloc(&minishell->node_arena, sizeof(char) * data->string_len + 1); 
-	new_size = get_quote_removed_string(delimiter, data);
+	new_size = set_quote_removed_string(delimiter, data);
 	quoted = (new_size < data->string_len);
 	printf("quoted: %i\n", quoted);
 	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
