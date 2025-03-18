@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 16:44:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 17:55:01 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,54 +223,59 @@ void print_token(t_token *token)
 // 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
 // }
 
-void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_node *tree)
+void minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 {
+	pid_t pid;
 	t_node *head;
-	char **envp = minishell->envp;
 	int i;
 	i = 0;
 
-	head = tree;
 	while (tree)
 	{
-		if (tree->token.type == PIPE)
+		head = tree;
+		while (tree)
 		{
-			int pipe_fds[2]; 
-			pipe(pipe_fds);
-			store_redirects(NULL , &pipe_fds[WRITE], minishell);
-		}
-		if (tree->token.type == WORD)
-		{
-			if (ft_strncmp("exit", tree->token.string, tree->token.string_len) == 0)
+			if (tree->token.type == PIPE)
+			{
+				int pipe_fds[2]; 
+				pipe(pipe_fds);
+				store_redirects(NULL , &pipe_fds[WRITE], m);
+			}
+			if(tree->token.type == HERE_DOCUMENT) // fully temp stuff
+			{
+				heredoc(m, &tree->token); // delimiter will still have quotes removed
+			}
+			else
+			{
+				print_token(&tree->token);
+			}
+			if (tree->token.type == WORD)
+			{
+				if (ft_strncmp("exit", tree->token.string, tree->token.string_len) == 0)
 				return ;
-			print_token(&tree->token);
+				print_token(&tree->token);
+				pid = fork();
+				if (pid == 0)
+				{
+					apply_redirect(m);
+					char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL}; //@TODO <- do this to tree and expand it
+					printf("fd to cat \t%i\n", 17);
+					if (execve("/bin/cat", cat_argv, m->envp) == -1)
+					perror("execve fail");
+					exit(1);
+				}
+				break ;
+			}
+			tree = tree->left;
 		}
-		else if(tree->token.type == HERE_DOCUMENT) // fully temp stuff
-		{
-			heredoc(minishell, &tree->token); // delimiter will still have quotes removed
-		}
-		else
-		{
-			print_token(&tree->token);
-		}
-		tree = tree->left;
+		reset_redirect(m);
+		m->pids = arena_alloc(arena, sizeof(m->pids));
+		m->pids[m->command_count] = pid;
+		m->command_count += 1;
+		tree = head->right;
 	}
-	pid_t pid = fork();
-	if (pid == 0)
-	{
-		apply_redirect(minishell);
-		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL}; //@TODO <- do this to tree and expand it
-		printf("fd to cat \t%i\n", 17);
-		if (execve("/bin/cat", cat_argv, envp) == -1)
-			perror("execve fail");
-		exit(1);
-	}
-	reset_redirect(minishell);
-	minishell->pids = arena_alloc(arena, sizeof(minishell->pids));
-	minishell->pids[minishell->command_count] = pid;
-	minishell->command_count += 1;
-	wait_for_sub_processes(minishell);
-	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
+	wait_for_sub_processes(m);
+	printf("last printf %s\t%i\n", strerror(m->exit_status), m->exit_status);
 }
 
 // prototype for a read loop
