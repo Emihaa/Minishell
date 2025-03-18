@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/17 22:12:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:50:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,8 +115,10 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 
 	if (string[start] != '$')
 		return (0);
+	printf("test1\n");
 	if (ft_isalnum(string[start + 1]) == false)
 		return (0);
+	printf("test2\n");
 	len = 0;
 	while (ft_isalnum(string[start + 1 + len]) == true)
 		len += 1;
@@ -240,6 +242,7 @@ int heredoc(t_minishell *minishell, t_token *data)
 	delimiter = arena_alloc(&minishell->node_arena, sizeof(char) * data->string_len + 1); 
 	new_size = get_quote_removed_string(delimiter, data);
 	quoted = (new_size < data->string_len);
+	printf("quoted: %i\n", quoted);
 	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
 	if (quoted == true)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);

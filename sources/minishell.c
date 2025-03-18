@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 16:34:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:44:43 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,7 +271,6 @@ void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_node *tree)
 	minishell->command_count += 1;
 	wait_for_sub_processes(minishell);
 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
-	return (0);
 }
 
 // prototype for a read loop
