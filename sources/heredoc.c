@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 16:50:59 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 18:23:25 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,9 +241,9 @@ int heredoc(t_minishell *minishell, t_token *data)
 	printf("heredoc_fds r_val: %i\n" , errval); // delete
 	delimiter = arena_alloc(&minishell->node_arena, sizeof(char) * data->string_len + 1); 
 	new_size = get_quote_removed_string(delimiter, data);
+	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
 	quoted = (new_size < data->string_len);
 	printf("quoted: %i\n", quoted);
-	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
 	if (quoted == true)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
 	else

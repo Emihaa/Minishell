@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/17 23:31:54 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/19 22:13:08 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,40 +280,47 @@ t_node *find_head_root(t_node *node)
 }
 
 // Function to print the tree
-// static void print_tree(t_node *node, int depth)
-// {
-//     int i = 0;
-    
-//     if (!node)
-//         return ;
-//     while (i++ < depth)
-//         printf("  ");
-//     // Print current node
-//     printf("[-- ");
-//     print_token_type(&node->token.type);
-//     printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
-//     // Print left subtree
-//     if (node->left)
-//     {
-//         printf(" L ");
-//         print_tree(node->left, depth + 1);
-//     }
-//     // Print right subtree
-//     if (node->right)
-//     {
-//         printf(" R ");
-//         print_tree(node->right, depth + 1);
-//     }
-// }
+static void print_tree(t_node *node, int depth)
+{
+    int i = 0; 
+    if (!node)
+        return ;
+    while (i++ < depth)
+        printf("  ");
+    // Print current node
+    printf("[-- ");
+    print_token_type(&node->token.type);
+    printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
+    // Print left subtree
+    if (node->left)
+    {
+        printf(" L ");
+        print_tree(node->left, depth + 1);
+    }
+    // Print right subtree
+    if (node->right)
+    {
+        printf(" R ");
+        print_tree(node->right, depth + 1);
+    }
+}
 
+
+// @TODO: fix the tree if only one pipe
+// have pointer to previous token that check that
+// to get the syntax error for pipe
+// if > |
+// bash: syntax error near unexpected token `|'
+// @TODO: 
+// 
+// @TODO: signals in the end
 t_node *parser(t_arena *arena, char *line)
 {
     t_node *tree;
     t_lexer lexer;
     
     tree = NULL;
-    lexer.line = line;
-    lexer.line_index = 0; 
+    lexer = (t_lexer){.line = line, .line_index = 0};
     while (1)
     {
         t_token token = get_next_token(&lexer);
@@ -321,7 +328,7 @@ t_node *parser(t_arena *arena, char *line)
             break ;
         if (token.string_len == 0)
         {
-            ft_putstr_fd("minitalk: syntax error near unexpected token `", 2);
+            ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
             t_token token = get_next_token(&lexer);
             print_token_type(&token.type);
             ft_putstr_fd("'\n", 2);
@@ -329,6 +336,8 @@ t_node *parser(t_arena *arena, char *line)
         }
         tree = insert_node(tree, NULL, &token, arena);
     }
+    tree = find_head_root(tree);
+    print_tree(tree, 0);
     tree = find_head_root(tree);
     return (tree);
 }
@@ -338,8 +347,7 @@ t_node *parser(t_arena *arena, char *line)
 //for now to test
 // int main()
 // {
-//     int i;
-    
+//     int i; 
 //     t_node *tree = NULL;
 //     t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
 //     while (1)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 17:55:01 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 21:42:47 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,12 @@ void print_working_directory(void)
 	printf("%s\n", current_path);
 }
 
-void print_export(void)
+void export(void)
 {
 	char *s = "vegenakki";
 	printf("%s\n", s);
+
+	//should return something?
 }
 
 void print_expansion(char *line)
