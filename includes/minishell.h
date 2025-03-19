@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 16:58:59 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 23:32:39 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 #include <linux/limits.h>	// linux max length stuff
 #include <stdbool.h>	// for bool data type
 #include <fcntl.h>		// open
-#include <sys/stat.h>
+#include <sys/stat.h>	// lstat !!! might not be used WATCH OUTTTTTAMSL:MF:ALMSG:LMA
 
 
 // @question are these the only tokens needed?
@@ -50,7 +50,8 @@ typedef enum e_type
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
 
-// we should add
+// we should add globally needed stuff here
+// @TODO: restucture to reduce memory footprint
 typedef struct s_minishell
 {
 	uint32_t	line_counter;
