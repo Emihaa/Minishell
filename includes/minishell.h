@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 20:10:05 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 16:58:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define MINISHELL_H
 
 #define _GNU_SOURCE
+
+#define ANTIKRISTA 666
 
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
@@ -55,6 +57,7 @@ typedef struct s_minishell
 	uint32_t	command_count;
 	uint32_t	heredoc_count;
 	int			redir_fds[2];
+	int			pipe[2];
 	pid_t			*pids;
 	int			exit_status;
 	t_arena		node_arena;
@@ -138,7 +141,8 @@ int heredoc(t_minishell *minishell, t_token *data);
 // testing possible redirect stuff
 #define WRITE	1
 #define READ	0
-int		store_redirects(int *in_fd, int *out_fd, t_minishell *minishell);
+int store_write_fd(int write_fd, t_minishell *minishell);
+int store_read_fd(int read_fd, t_minishell *minishell);
 void	apply_redirect(t_minishell *minishell);
 void	reset_redirect(t_minishell *minishell);
 

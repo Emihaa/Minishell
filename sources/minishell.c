@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 20:41:36 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 16:56:38 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -249,11 +249,11 @@ int	create_and_store_pipe(t_minishell *m, bool side)
 	{
 		if (pipe(pipe_fds) == -1)
 			return (666); //@TODO: error cheking
-		return (store_redirects(NULL , &pipe_fds[WRITE], m));
+		return (store_write_fd(pipe_fds[WRITE], m));
 	}
 	else if (side == READ)
 	{
-		return (store_redirects(&pipe_fds[READ], NULL, m));
+		return (store_read_fd(pipe_fds[READ], m));
 	}
 	return (0);
 }
@@ -416,7 +416,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->env_arena = arena_new(ARG_MAX);
 	if (minishell->env_arena.data == NULL)
 		; //@TODO: error cheking
-	minishell->scratch_arena = (t_arena){0};
+	minishell->scratch_arena = (t_arena){.capacity = 124, .data = NULL, .size = 0};
 	minishell->envp = envp;
 }
 
