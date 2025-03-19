@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/19 22:13:08 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/19 23:47:27 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ t_node *insert_bottom(t_node *node, t_token *token, t_arena *arena)
 
 // if token is pipe, we want the pipe to top of everything
 // if at the top there is already pipe then we want the new pipe at the
-// left side of the old pipe
+// right side of the old pipe
 t_node *insert_top(t_node *node, t_token *token, t_arena *arena)
 {
     t_node *head_node = find_head_root(node);
@@ -311,7 +311,9 @@ static void print_tree(t_node *node, int depth)
 // to get the syntax error for pipe
 // if > |
 // bash: syntax error near unexpected token `|'
-// @TODO: 
+//
+// @TODO: create argument vector for nodes
+// Luka needs to think about the arena malloc for that
 // 
 // @TODO: signals in the end
 t_node *parser(t_arena *arena, char *line)

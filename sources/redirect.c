@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:44:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 16:53:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 22:26:02 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,5 @@ void reset_redirect(t_minishell *minishell)
 // int redirect_out(t_arena *arena, t_token *data)
 // {
 // 	t_arena_temp temp;
-
 // 	temp = arena_temp_begin
 // }

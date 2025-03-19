@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 22:23:51 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/19 22:25:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,7 +347,6 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 // this should probably call the parser which will call the lexer and return the tree
 // that will then be passed to some execution prep function which will traverses the tree 
 // 		and do the necessary redirect ect.
-
 //this might need another nested loop to calculate the amount of command etc.
 // void read_loop(t_minishell *minishell)
 // {
