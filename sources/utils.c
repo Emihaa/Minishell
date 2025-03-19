@@ -6,20 +6,24 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/14 18:55:55 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/18 19:53:11 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
- 
-uint32_t	get_quote_removed_string(char *string, t_token *data)
+
+
+// give an allocated dest pointer that is atleast the size of {data->string_len + 1}
+// will return the new size of the string that has quotes removed
+// the 
+uint32_t	set_quote_removed_string(char *dest, t_token *data)
 {
 	char quote;
-	size_t data_index;
-	size_t string_index;
+	uint32_t data_index; // feel like this or these should be renamde
+	uint32_t dest_index;
 
-	data_index = 0;
-	string_index = 0;
+	data_index = 0; 
+	dest_index = 0;
 	while (data_index < data->string_len)
 	{
 		if (data->string[data_index] == '"' || data->string[data_index] == '\'')
@@ -32,13 +36,13 @@ uint32_t	get_quote_removed_string(char *string, t_token *data)
 					data_index += 1;
 					break ;
 				}
-				string[string_index++] = data->string[data_index++];
+				dest[dest_index++] = data->string[data_index++];
 			}
 			continue ;
 		}
-		string[string_index++] = data->string[data_index++];
+		dest[dest_index++] = data->string[data_index++];
 	}
-	return (string_index);
+	return (dest_index);
 }
 
 uint8_t	num_len(uint32_t num)

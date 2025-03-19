@@ -6,28 +6,28 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:44:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/15 21:59:37 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 16:53:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void store_redirects(int *in_fd, int *out_fd, t_minishell *minishell)
+int store_write_fd(int out_fd, t_minishell *minishell)
 {
-	if (in_fd != NULL)
-	{
-		if (minishell->redir_fds[READ] != STDIN_FILENO)
-			if (close(minishell->redir_fds[READ]) == -1)
-				; // @TODO: error cheking
-		minishell->redir_fds[READ] = *in_fd;
-	}
-	if (out_fd != NULL)
-	{
-		if (minishell->redir_fds[WRITE] != STDOUT_FILENO)
-			if (close(minishell->redir_fds[WRITE]) == -1)
-				; // @TODO: error cheking
-		minishell->redir_fds[WRITE] = *out_fd;
-	}
+	if (minishell->redir_fds[WRITE] != STDOUT_FILENO)
+		if (close(minishell->redir_fds[WRITE]) == -1)
+			return (666); // @TODO: error cheking
+	minishell->redir_fds[WRITE] = out_fd;
+	return (0);
+}
+
+int store_read_fd(int in_fd, t_minishell *minishell)
+{
+	if (minishell->redir_fds[READ] != STDIN_FILENO)
+		if (close(minishell->redir_fds[READ]) == -1)
+			return (666); // @TODO: error cheking
+	minishell->redir_fds[READ] = in_fd;
+	return (0);
 }
 
 void apply_redirect(t_minishell *minishell)
@@ -38,6 +38,7 @@ void apply_redirect(t_minishell *minishell)
 			; // @TODO: error cheking
 		if (close(minishell->redir_fds[READ]) == -1)
 			; // @TODO: error cheking;
+		minishell->redir_fds[READ] = STDIN_FILENO;
 	}
 	if (minishell->redir_fds[WRITE] != STDOUT_FILENO)
 	{
@@ -45,6 +46,7 @@ void apply_redirect(t_minishell *minishell)
 			; // @TODO: error cheking
 		if (close(minishell->redir_fds[WRITE]) == -1)
 			; // @TODO: error cheking
+		minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	}
 }
 
