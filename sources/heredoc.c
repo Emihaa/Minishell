@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 16:57:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 23:32:41 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,14 +72,11 @@ void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *deli
 		minishell->line_counter += 1;
 		if (line == NULL)
 		{
-			//perror("readline error"); // @TODO: error cheking
 			if (errno == EXIT_SUCCESS)
 			{
 				printf(EOF_ERROR, minishell->line_counter, delimiter);
 				break ;
-			}
-			perror("readline failure");
-			// panic;
+			} perror("readline failure"); // panic;
 		}
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
@@ -113,11 +110,17 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 	int i;
 	uint32_t len;
 
-	if (string[start] != '$')
-		return (0);
 	printf("test1\n");
 	if (ft_isalnum(string[start + 1]) == false)
+	{
+		if (string[start + 1] == '?')
+		{
+			ft_putnbr_fd(m->exit_status, fd);
+			return (1);
+		}
+		write(fd, &string[start], 1);
 		return (0);
+	}
 	printf("test2\n");
 	len = 0;
 	while (ft_isalnum(string[start + 1 + len]) == true)
@@ -132,7 +135,7 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 		}
 		i += 1;
 	}
-	return (len + 1);
+	return (len);
 }
 
 // this is going to be a "simple" prototype that uses getenv
@@ -143,11 +146,11 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 {
 	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char *line;
+	uint32_t len;
 	uint32_t i;
 
 	while (1)
 	{
-		i = 0;
 		line = readline("> ");
 		minishell->line_counter += 1;
 		if (line == NULL)
@@ -161,15 +164,20 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 		uint32_t line_len = ft_strlen(line);
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
+		i = 0;
 		while (i < line_len)
 		{
-			while (line[i] != '\0' && line[i] != '$')
-				i++;
-			if (write(write_fd, line, i) == -1)
+			len = 0;
+			while (line[i + len] != '\0' && line[i + len] != '$')
+				len += 1;
+			if (write(write_fd, line + i, len) == -1)
 				perror("write line"); // error cheking
-			if (line[i] == '$')
-				i += write_expanded_variable(line, i, write_fd, minishell);
-			i++;
+			printf("[1] i: %i\t len: %i\n", i, len); // testing stuff
+			if (line[i + len] == '$')
+				len += write_expanded_variable(line, i + len, write_fd, minishell);
+			printf("[2] i: %i\t len: %i\n", i, len); // testing stuff
+			i += len + 1;
+			printf("[3] i: %i\t len: %i\n", i, len); // testing stuff
 		}
 		if (write(write_fd, "\n", 1) == -1)
 			perror("write '\\n'"); // error cheking
@@ -186,7 +194,7 @@ char	*create_temp_file_name(void)
 {
 	static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
 									// also should be reset whenever starting a new command reading loop
-	static char name_buf[30] = HEREDOC_TEMP_NAME; // len is 15
+	static char name_buf[30] = HEREDOC_TEMP_NAME;
 	uint32_t num_temp;
 	uint8_t i;
 
@@ -241,9 +249,9 @@ int heredoc(t_minishell *minishell, t_token *data)
 	printf("heredoc_fds r_val: %i\n" , errval); // delete
 	delimiter = arena_alloc(&minishell->node_arena, sizeof(char) * data->string_len + 1); 
 	new_size = set_quote_removed_string(delimiter, data);
+	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
 	quoted = (new_size < data->string_len);
 	printf("quoted: %i\n", quoted);
-	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
 	if (quoted == true)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
 	else

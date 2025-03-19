@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 16:56:38 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/19 22:11:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ int	create_and_store_pipe(t_minishell *m, bool side)
 	if (side == WRITE)
 	{
 		if (pipe(pipe_fds) == -1)
-			return (666); //@TODO: error cheking
+			return (ANTIKRISTA); //@TODO: error cheking
 		return (store_write_fd(pipe_fds[WRITE], m));
 	}
 	else if (side == READ)
@@ -273,10 +273,10 @@ pid_t	handle_word(t_minishell *m, t_node *data, int status) // rename probably
 			minishell_cleanup(m);
 			exit(status);
 		}
-		printf("fd to cat \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
+		printf("fds to apply \t\t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
 		apply_redirect(m);
-		printf("fd to cat \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
-		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL}; //@TODO <- do this to tree and expand it
+		printf("fds after application \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
+		char *cat_argv[3] = {[0] = "cat", [1] = NULL, [2] = NULL}; //@TODO <- do this to tree and expand it
 		if (execve("/bin/cat", cat_argv, m->envp) == -1)
 			perror("execve fail");
 		exit(1);
@@ -290,7 +290,6 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 	(void)arena;
 	bool pipe_side;
 	int status;
-	pid_t pid;
 	t_node *current_head;
 	
 	pipe_side = WRITE;
@@ -315,7 +314,7 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 			{
 				if (ft_strncmp("exit", tree->token.string, tree->token.string_len) == 0) // doesn't work the same as bash
 					return (EXIT_SUCCESS);
-				pid = handle_word(m, tree, status);
+				m->pids[m->command_count - 1] = handle_word(m, tree, status);
 				break ;
 			}
 			else
@@ -331,7 +330,6 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 			pipe_side = !pipe_side;
 		}
 		//m->pids = arena_alloc(arena, sizeof(m->pids));
-		m->pids[m->command_count - 1] = pid;
 		tree = current_head->right;
 	}
 	wait_for_sub_processes(m);
@@ -402,6 +400,16 @@ void minishell_cleanup(t_minishell *minishell)
 // we might want to pre allocate the arenas that will be used here to make cleanup easier
 void init_minishell(t_minishell *minishell, char **envp)
 {
+	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
+	if (minishell->node_arena.data == NULL)
+		; //@TODO: error cheking
+	minishell->env_arena = arena_new(ARG_MAX);
+	if (minishell->env_arena.data == NULL)
+		; //@TODO: error cheking
+	minishell->scratch_arena = arena_new(1024);
+	if (minishell->scratch_arena.data == NULL)
+		; //@TODO: error cheking
+	minishell->envp = envp;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
 	minishell->exit_status = 0;
@@ -410,14 +418,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pids = NULL;
-	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
-	if (minishell->node_arena.data == NULL)
-		; //@TODO: error cheking
-	minishell->env_arena = arena_new(ARG_MAX);
-	if (minishell->env_arena.data == NULL)
-		; //@TODO: error cheking
-	minishell->scratch_arena = (t_arena){.capacity = 124, .data = NULL, .size = 0};
-	minishell->envp = envp;
+
 }
 
 int main(int argc, char *argv[], char *envp[])

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/17 23:31:54 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/20 00:05:18 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ t_node *insert_top(t_node *node, t_token *token, t_arena *arena)
 {
     t_node *head_node = find_head_root(node);
     t_node *new_node;
-    t_node *temp;
+   // t_node *temp;
     t_node *temp_root;
     
     if (head_node->token.type != PIPE) //at top there isnt any pipes so pipe will be the new top
@@ -126,11 +126,10 @@ t_node *insert_top(t_node *node, t_token *token, t_arena *arena)
     else //there is one or more pipes
     {
         temp_root = head_node;
-        temp = head_node->right;
-        while (temp && temp->token.type == PIPE) //if multiple pipes, then find the last pipe that
+        //temp = head_node->right;
+        while (temp_root->right && temp_root->right->token.type == PIPE) //if multiple pipes, then find the last pipe that
         { // that doesnt have anything on the rigth side
-            temp_root = temp;
-            temp = temp->right;
+            temp_root = temp_root->right;
         }
         new_node = create_node(temp_root, token, arena);
         new_node->left = temp_root->right;
@@ -274,37 +273,37 @@ void print_token_type(t_type *token_type)
 
 t_node *find_head_root(t_node *node)
 {
-    if (node->root)
+    if (node && node->root)
         return (find_head_root(node->root));
     return(node);  
 }
 
 // Function to print the tree
-// static void print_tree(t_node *node, int depth)
-// {
-//     int i = 0;
+static void print_tree(t_node *node, int depth)
+{
+    int i = 0;
     
-//     if (!node)
-//         return ;
-//     while (i++ < depth)
-//         printf("  ");
-//     // Print current node
-//     printf("[-- ");
-//     print_token_type(&node->token.type);
-//     printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
-//     // Print left subtree
-//     if (node->left)
-//     {
-//         printf(" L ");
-//         print_tree(node->left, depth + 1);
-//     }
-//     // Print right subtree
-//     if (node->right)
-//     {
-//         printf(" R ");
-//         print_tree(node->right, depth + 1);
-//     }
-// }
+    if (!node)
+        return ;
+    while (i++ < depth)
+        printf("  ");
+    // Print current node
+    printf("[-- ");
+    print_token_type(&node->token.type);
+    printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
+    // Print left subtree
+    if (node->left)
+    {
+        printf(" L ");
+        print_tree(node->left, depth + 1);
+    }
+    // Print right subtree
+    if (node->right)
+    {
+        printf(" R ");
+        print_tree(node->right, depth + 1);
+    }
+}
 
 t_node *parser(t_arena *arena, char *line)
 {
@@ -330,6 +329,8 @@ t_node *parser(t_arena *arena, char *line)
         tree = insert_node(tree, NULL, &token, arena);
     }
     tree = find_head_root(tree);
+	print_tree(tree, 1);
+	
     return (tree);
 }
 
