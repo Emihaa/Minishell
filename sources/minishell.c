@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 00:12:21 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:47:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ char *get_token_name(t_token *token)
 void print_token(t_token *token)
 {
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
-			token->type, get_token_name(token), (int)token->string_len, token->string);
+			token->type, get_token_name(token), (int)token->string_len, token->u_data.string);
 }
 
 // prototypee
@@ -314,7 +314,7 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 			}
 			else if (tree->token.type == WORD)
 			{
-				if (ft_strncmp("exit", tree->token.string, tree->token.string_len) == 0) // doesn't work the same as bash
+				if (ft_strncmp("exit", tree->token.u_data.string, tree->token.string_len) == 0) // doesn't work the same as bash
 					return (EXIT_SUCCESS);
 				m->pids[m->command_count - 1] = handle_word(m, tree, status);
 				break ;

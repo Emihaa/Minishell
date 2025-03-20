@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 18:29:27 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/20 19:49:11 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ t_token	tokenize_pipe(t_lexer *lexer)
 	lexer->line_index += 1;
 	return ((t_token){
 		.type = PIPE,
-		.string = &lexer->line[lexer->line_index - 1],
+		.u_data.string = &lexer->line[lexer->line_index - 1],
 		.string_len = 1,
 	});
 }
@@ -87,7 +87,7 @@ t_token	tokenize_end_of_line(void)
 	return ((t_token)
 		{
 			.type = END_OF_LINE,
-			.string = NULL,
+			.u_data.string = NULL,
 			.string_len = 0,
 		});
 }
@@ -116,7 +116,7 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 	token = (t_token)
 	{
 		.type = type,
-		token.string = &lexer->line[lexer->line_index],
+		{token.u_data.string = &lexer->line[lexer->line_index]},
 		token.string_len = len,
 	};
 	lexer->line_index += len;
