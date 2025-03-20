@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 00:12:05 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:10:35 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 	int i;
 	uint32_t len;
 
-	printf("test1\n");
 	if (ft_isalnum(string[start + 1]) == false)
 	{
 		if (string[start + 1] == '?')
@@ -121,7 +120,6 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 		write(fd, &string[start], 1);
 		return (0);
 	}
-	printf("test2\n");
 	len = 0;
 	while (ft_isalnum(string[start + 1 + len]) == true)
 		len += 1;
@@ -172,12 +170,9 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 				len += 1;
 			if (write(write_fd, line + i, len) == -1)
 				perror("write line"); // error cheking
-			printf("[1] i: %i\t len: %i\n", i, len); // testing stuff
 			if (line[i + len] == '$')
 				len += write_expanded_variable(line, i + len, write_fd, minishell);
-			printf("[2] i: %i\t len: %i\n", i, len); // testing stuff
 			i += len + 1;
-			printf("[3] i: %i\t len: %i\n", i, len); // testing stuff
 		}
 		if (write(write_fd, "\n", 1) == -1)
 			perror("write '\\n'"); // error cheking

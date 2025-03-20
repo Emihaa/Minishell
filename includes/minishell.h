@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 23:32:39 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/20 19:30:24 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ typedef struct s_minishell
 // 
 typedef union u_data 
 {
-	char	*filename;
+	char	*string;
 	char	**command_argv;
 }	t_data;
 
@@ -93,8 +93,12 @@ typedef struct s_token_string
 // name should probably be created during parsing if the parser encounters a syntax error
 typedef struct s_token
 {
-	t_type		type;	// the type of the token
-	char		*string; 	// the string of the token | if applicable will be a filename a command name or an argument
+	t_type		type;	// the type of the toke
+	union
+	{
+		char *string;
+		char **argv; 	// the string of the token | if applicable will be a filename a command name or an argument
+	} u_data;
 	uint32_t	string_len;	// length of the string // changed from size_t to uint32_t. 15.03.2025
 	//char		*name;	// added mostly for testing but might stay useful
 }	t_token; //@TODO: re oder struct to reduce size;
