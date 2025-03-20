@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/20 00:14:33 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/20 18:15:46 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,6 +339,7 @@ t_node *parser(t_arena *arena, char *line)
     }
     tree = find_head_root(tree);
     print_tree(tree, 1);
+    expand(arena, tree);
     return (tree);
 }
 

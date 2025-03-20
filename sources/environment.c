@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:36:59 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/15 19:59:23 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/20 19:48:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 // {
 // 	int i;
 // 	uint32_t len;
-
 // 	if (env == NULL)
 // 		return (NULL);
 // 	ret = NULL;

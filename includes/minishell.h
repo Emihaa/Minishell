@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 23:32:39 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/20 17:55:44 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,8 @@ typedef struct s_minishell
 
 
 // LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
+// EMILIA handles these
+
 
 // LUKA: maybe use this? idunno probably  not
 // 
@@ -108,7 +110,6 @@ typedef struct s_lexer
 	uint32_t line_index;
 }	t_lexer;
 
-
 ////// emilia nodetree stuff
 typedef struct s_node
 {
@@ -129,6 +130,9 @@ void print_tokens(t_lexer *lexer);
 
 // tree stuff
 t_node *parser(t_arena *arena, char *line);
+
+// expand stuff
+void expand(t_arena *arena, t_node *tree);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
