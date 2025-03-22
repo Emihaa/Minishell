@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/22 21:44:26 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/22 23:54:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,14 @@ ssize_t write_cheking_thingy_asd(int fd, char *str, size_t str_len)
 bool	is_space(char c)
 {
 	return (c == ' ' || c == '\t'); // || c == '\n' maybe?
+}
+
+t_minishell *get_minishell(t_minishell *m)
+{
+	static t_minishell *minishell;
+
+	if (m == NULL)
+		return (minishell);
+	minishell = m;
+	return (NULL);
 }

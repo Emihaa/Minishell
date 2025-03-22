@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/21 00:25:04 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/23 00:18:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,6 +265,10 @@ pid_t	handle_word(t_minishell *m, t_node *data, int status) // rename probably
 	pid_t pid;
 
 	print_token(&data->token);
+	for (int i = 0; data->token.u_data.argv[i] != NULL; ++i)
+	{
+		printf("argv[%i]: %s\n", i, data->token.u_data.argv[i]);
+	}
 	pid = fork();
 	if (pid == (pid_t)(-1))
 		; // @TODO: error cheking
@@ -416,10 +420,11 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->line_counter = 0;
 	minishell->exit_status = 0;
 	minishell->heredoc_count = 0;
-	minishell->envp = envp;
+	minishell->envp = envp; // need to be our own env etc.. bla bla bal
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pids = NULL;
+	get_minishell(minishell);
 
 }
 
