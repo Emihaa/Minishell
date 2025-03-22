@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/22 23:36:00 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/22 23:43:38 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,12 +182,12 @@ int quote_stuffs(t_node *node, t_expand_vars *v, char *str)
 		return (0) ; // no field split, spaces and tabs are spaces and tabs and dollar dollar
 	}
 	// else need to do more additional recursions and tabs and spaces are '\0'
-	if (ft_isalnum(node->token.u_data.string[v->i + 1]) == false)
+	if (ft_isalnum(node->token.u_data.string[v->i]) == false)
 	{
-		if (node->token.u_data.string[v->i + 1] == '?')
+		if (node->token.u_data.string[v->i] == '?')
 		{
 			// write m->exit_status;
-			v->i += 2;
+			v->i += 1;
 			return (0); // stuff????
 		}
 		str[v->len++] = node->token.u_data.string[v->i++];
