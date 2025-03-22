@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 19:49:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/22 23:44:34 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,6 @@ cc lexer.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_all
 // LUKA: should the lexer care about syntax errors or not
 // seems like probably not
 // probably makes more sense to detect syntax error in parser when getting tokens in unexpected order
-
-static inline
-bool	is_space(char c)
-{
-	return (c == ' ' || c == '\t'); // || c == '\n' maybe?
-}
 
 // does the current character delimit a word
 static inline

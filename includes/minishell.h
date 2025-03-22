@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 19:52:36 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/22 23:44:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,5 +161,6 @@ char 	*expand_variable(t_token *data, const uint32_t start, char **env);
 //general utils stuff
 uint32_t set_quote_removed_string(char *string, t_token *data);
 uint8_t	num_len(uint32_t num);
+bool	is_space(char c);
 
 #endif
