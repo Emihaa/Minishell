@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 19:58:11 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/22 21:44:26 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,9 @@ ssize_t write_cheking_thingy_asd(int fd, char *str, size_t str_len)
 		bytes_to_write -= bytes_written;
 	}
 	return (0);
+}
+
+bool	is_space(char c)
+{
+	return (c == ' ' || c == '\t'); // || c == '\n' maybe?
 }

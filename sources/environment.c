@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:36:59 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 19:54:29 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/22 21:45:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,15 +40,14 @@
 // 	return (0);
 // }
 
-char	*expand_variable(t_token *data, const uint32_t start, char **env)
+char	*find_env_var(t_token *data, const uint32_t start)
 {
-	char *ret;
-	int i;
+	const char **env = get_env(NULL);
+	uint32_t i;
 	uint32_t len;
 
 	if (env == NULL)
 		return (NULL);
-	ret = NULL;
 	while (start + len < data->string_len)
 	{
 		if (ft_isalnum(data->u_data.string[start + len]) == false)
@@ -60,10 +59,9 @@ char	*expand_variable(t_token *data, const uint32_t start, char **env)
 	{
 		if (ft_strncmp(&data->u_data.string[start], env[i], len) == 0)
 		{
-			ret = env[i];
-			break ;
+			return(env[i]);
 		}
 		i += 1;
 	}
-	return (ret);
+	return (NULL);
 }
