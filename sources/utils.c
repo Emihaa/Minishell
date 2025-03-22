@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/18 19:53:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/20 19:58:11 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 
-// give an allocated dest pointer that is atleast the size of {data->string_len + 1}
+// give an allocated dest pointer that is atleast the size of {data->u_data.string_len + 1}
 // will return the new size of the string that has quotes removed
 // the 
 uint32_t	set_quote_removed_string(char *dest, t_token *data)
@@ -26,21 +26,21 @@ uint32_t	set_quote_removed_string(char *dest, t_token *data)
 	dest_index = 0;
 	while (data_index < data->string_len)
 	{
-		if (data->string[data_index] == '"' || data->string[data_index] == '\'')
+		if (data->u_data.string[data_index] == '"' || data->u_data.string[data_index] == '\'')
 		{
-			quote = data->string[data_index++];
+			quote = data->u_data.string[data_index++];
 			while (data_index < data->string_len)
 			{
-				if (data->string[data_index] == quote)
+				if (data->u_data.string[data_index] == quote)
 				{
 					data_index += 1;
 					break ;
 				}
-				dest[dest_index++] = data->string[data_index++];
+				dest[dest_index++] = data->u_data.string[data_index++];
 			}
 			continue ;
 		}
-		dest[dest_index++] = data->string[data_index++];
+		dest[dest_index++] = data->u_data.string[data_index++];
 	}
 	return (dest_index);
 }

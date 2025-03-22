@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:36:59 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 19:48:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:54:29 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ char	*expand_variable(t_token *data, const uint32_t start, char **env)
 	ret = NULL;
 	while (start + len < data->string_len)
 	{
-		if (ft_isalnum(data->string[start + len]) == false)
+		if (ft_isalnum(data->u_data.string[start + len]) == false)
 			break ;
 		len += 1;
 	}
 	i = 0;
 	while (env[i] != NULL)
 	{
-		if (ft_strncmp(&data->string[start], env[i], len) == 0)
+		if (ft_strncmp(&data->u_data.string[start], env[i], len) == 0)
 		{
 			ret = env[i];
 			break ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 19:47:54 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/21 00:25:04 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,6 +386,7 @@ void read_loop(t_minishell *m)
 		if (tree != NULL)
 			if (minishell_exec_loop(m, &m->node_arena, tree) == EXIT_SUCCESS)
 				break ;
+		free(line);
 		arena_reset(&m->node_arena);
 	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/20 19:10:35 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/21 00:45:14 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ int		write_env_variable(char *str, int fd)
 	write(fd, &str[i], ft_strlen(&str[i])); // @TODO: error checking
 	return (0);
 }
-
+// check which characters are valid + alnum
 int write_expanded_variable(char *string, const uint32_t start, int fd, t_minishell *m)
 {
 	int i;
@@ -126,7 +126,7 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 	i = 0;
 	while (m->envp[i] != NULL)
 	{
-		if (ft_strncmp(&string[start + 1], m->envp[i], len - 1) == 0)
+		if (ft_strncmp(&string[start + 1], m->envp[i], len - 1) == 0) // this does not work for some reason $PAT still expands
 		{
 			write_env_variable(m->envp[i], fd); // @TODO: error checking
 			break ;
@@ -168,7 +168,7 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 			len = 0;
 			while (line[i + len] != '\0' && line[i + len] != '$')
 				len += 1;
-			if (write(write_fd, line + i, len) == -1)
+			if (write(write_fd, line + i, len) == -1) 
 				perror("write line"); // error cheking
 			if (line[i + len] == '$')
 				len += write_expanded_variable(line, i + len, write_fd, minishell);
