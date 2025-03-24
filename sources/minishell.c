@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 00:50:59 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/25 01:06:53 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,29 +103,6 @@ void print_expansion(char *line)
 // 			return ;
 // 	}
 // }
-
-static
-void	wait_for_sub_processes(t_minishell *minishell)
-{
-	uint32_t	i;
-	int			wstatus;
-	pid_t		pid;
-
-	i = 0;
-	printf("command count: %o\n", minishell->command_count);
-	while (i < minishell->command_count)
-	{
-		pid = wait(&wstatus);
-		if (pid == (pid_t)(-1))
-			perror("wait issue");
-		if (pid == minishell->last_pid)
-		{
-			printf("pid == %i\n", pid);
-			minishell->exit_status = WEXITSTATUS(wstatus);
-		}
-		i++;
-	}
-}
 
 char *get_token_name(t_token *token)
 {
@@ -276,12 +253,11 @@ pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 {
 	pid_t pid;
 
-	// print_token(&data->token);
-	// for (int i = 0; argv[i] != NULL; ++i)
-	// {
-	// 	printf("i: %i\n", i);
-	// 	printf("argv[%i]: %s\n", i, argv[i]);
-	// }
+	for (int i = 0; argv[i] != NULL; ++i)
+	{
+		printf("i: %i\n", i);
+		printf("argv[%i]: %s\n", i, argv[i]);
+	}
 	pid = fork();
 	if (pid == (pid_t)(-1))
 		; // @TODO: error cheking
@@ -302,10 +278,38 @@ pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 		char *path = ft_strjoin("/usr/bin/", argv[0]);
 		if (execve(path, argv, m->envp) == -1)
 			perror("execve fail");
-		exit_minishell(m, errno);
+		printf("errno: %i\n", errno);
+		if (errno == ENOENT)
+			status = 127;
+		exit_minishell(m, status);
 	}
 	m->command_count += 1;
 	return (pid);
+}
+
+static
+void	wait_for_sub_processes(t_minishell *minishell)
+{
+	uint32_t	i;
+	int			wstatus;
+	pid_t		pid;
+
+	i = 0;
+	printf("command count: %o\n", minishell->command_count);
+	printf("last_pid = %i\n", minishell->last_pid);
+	while (i < minishell->command_count)
+	{
+		pid = wait(&wstatus);
+		if (pid == (pid_t)(-1))
+			perror("wait issue");
+		if (pid == minishell->last_pid)
+		{
+			printf("pid == %i\n", pid);
+			printf("exit_status = %i\n", minishell->exit_status);
+			minishell->exit_status = WEXITSTATUS(wstatus);
+		}
+		i++;
+	}
 }
 
 int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
@@ -439,6 +443,8 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->envp = envp; // need to be our own env etc.. bla bla bal
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
+	minishell->pipe[READ] = -1;
+	minishell->pipe[WRITE] = -1;
 	minishell->pids = NULL;
 	get_minishell(minishell);
 
