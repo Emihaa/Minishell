@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/23 00:14:48 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/24 21:30:10 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,12 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 // char **get_env(char **env)
 // {
 // 	static char **envp;
-
 // 	if (env == NULL)
 // 		return (envp);
 // 	envp = env;
 // 	return (NULL);
 // }
+
 
 char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index)
 {
@@ -84,11 +84,12 @@ char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index)
 			break ;
 	}
 	if (env == NULL || env[0] == NULL || len == 0)
-	{
+	{	
+		*index += len;
 		return (NULL);
 	}
 	i = 0;
-	printf("string = %.*s\n", len, &data->u_data.string[start]);
+	printf("string = %.*s, len = %u\n", len, &data->u_data.string[start], len);
 	while (env[i] != NULL)
 	{
 		if (ft_strncmp(&data->u_data.string[start], env[i], len) == 0)
@@ -119,7 +120,7 @@ static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int 
 		if (is_space(env_node->token.u_data.string[i]) == true)
 		{
 			str[len++] = '\0';
-			arena_alloc(arena, sizeof(char) * len);
+			arena_alloc_no_zero(arena, sizeof(char) * len);
 			while (is_space(env_node->token.u_data.string[i]) == true)
 				i++;
 			if (env_node->token.u_data.string[i] == '\0')
@@ -135,12 +136,21 @@ static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int 
 	i = 0;
 	while (i < env_node->right->token.string_len)
 	{
+		if (env_node->right->token.u_data.string[i] == '$')
+		{
+			arena_alloc_no_zero(arena, len);
+			env_node->right->token.u_data.string += i;
+			env_node->right->token.string_len -= i;
+			argv_pntr = travel_tree(arena, env_node->right, &str[len], count);
+			argv_pntr[count] = str;
+			return (argv_pntr);
+		}
 		str[len++] = env_node->right->token.u_data.string[i++];
 	}
 	str[len++] = '\0';
-	arena_alloc(arena, len);
+	arena_alloc_no_zero(arena, len);
 	// update the arena with new string len info
-	//arena_alloc(arena, sizeof(char) * len); //after i know how much info i got i reserve that
+	//arena_alloc_no_zero(arena, sizeof(char) * len); //after i know how much info i got i reserve that
 	argv_pntr = travel_tree(arena, env_node->left, &str[len], count + 1);
 	// when there is no more to go from branch we return
 	// and start picking up the pointers   
@@ -171,9 +181,22 @@ typedef struct s_expand_vars
 
 int quote_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
-	
+	if (ft_isalnum(node->token.u_data.string[v->i + 1]) == false)
+	{
+		printf("alnum is false\n");
+		if (node->token.u_data.string[v->i + 1] == '?')
+		{
+			// write m->exit_status;
+			v->i += 1;
+			return (0); // stuff????
+		}
+		str[v->len++] = node->token.u_data.string[v->i++];
+		return (0);
+	}
+	printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
 	v->env_var = find_env_var(&node->token, ++v->i, &v->i);
 	printf("env_var: %s\n", v->env_var);
+	printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
 	if (v->quote == '"')
 	{
 		while (v->env_var != NULL && *v->env_var != '\0')
@@ -185,20 +208,9 @@ int quote_stuffs(t_node *node, t_expand_vars *v, char *str)
 	// else need to do more additional recursions and tabs and spaces are '\0'
 	if (v->env_var == NULL)
 		return (0);
-	if (ft_isalnum(node->token.u_data.string[v->i]) == false)
-	{
-		if (node->token.u_data.string[v->i] == '?')
-		{
-			// write m->exit_status;
-			v->i += 1;
-			return (0); // stuff????
-		}
-		str[v->len++] = node->token.u_data.string[v->i++];
-		return (0);
-	}
 	while (*v->env_var != '\0' && is_space(*v->env_var) == false)
 	{
-		printf("teeest%u\n", v->len);
+		// printf("teeest%u\n", v->len);
 		str[v->len++] = *v->env_var++;
 	}
 	if (*v->env_var == '\0')
@@ -213,16 +225,19 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	char	 **argv_pntr;
 
 	v = (t_expand_vars){0};
-
+	
 	if (node == NULL)
 	{
-		argv_pntr = arena_alloc(arena, sizeof(char) * (count + 1));
+		printf("Starting to return!\n");
+		argv_pntr = arena_alloc(arena, sizeof(*argv_pntr) * (count + 1));
 		argv_pntr[count] = NULL;
 		return (argv_pntr);
 	}
 	// on the way to leaf ------>
 	// travel left subtree
-	printf("%s\n", node->token.u_data.string);
+	// printf("%s\n", node->token.u_data.string);
+	// printf("string_len: %d\n", node->token.string_len);
+	
 	// what is the order? write stuff to the string if $ then expand
 	// keep track of quates but jump over them
 	while (v.i < node->token.string_len)
@@ -234,6 +249,11 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				v.quote = node->token.u_data.string[v.i];
 			else if (v.quote == node->token.u_data.string[v.i])
 				v.quote = '\0';
+			else
+			{
+				str[v.len++] = node->token.u_data.string[v.i++];
+				continue ;
+			}
 			v.i++;
 		}
 		// then check if there are $ signs inside the word
@@ -243,7 +263,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 			if (quote_stuffs(node, &v, str) == 0)
 				continue ;
 			str[v.len++] = '\0';
-			arena_alloc(arena, v.len);
+			arena_alloc_no_zero(arena, v.len);
 			while (is_space(*v.env_var) == true)
 				v.env_var++;
 			node->token.u_data.string += v.i;
@@ -265,7 +285,9 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 			// if $? do different stuff
 		}
 		else
+		{
 			str[v.len++] = node->token.u_data.string[v.i++];
+		}
 		// then remove the quates
 		// take the quates away from the arena alloc?
 		// in utils there is set_quote_removed_string, and i would like to use that maybe?
@@ -274,12 +296,15 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	}
 	str[v.len++] = '\0';
 	// update the arena with new string len info
-	arena_alloc(arena, sizeof(char) * v.len); //after i know how much info i got i reserve that
+	arena_alloc_no_zero(arena, sizeof(*str) * v.len);
+	// arena_alloc_no_zero(arena, sizeof(char) * v.len); //after i know how much info i got i reserve that
 	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + 1);
 	// when there is no more to go from branch we return
 	// and start picking up the pointers   
 	// on the way back <-----
 
+	// printf("count2: %d\n", count);
+	// printf("str: %s\n", str);
 	argv_pntr[count] = str;
 	
 	return(argv_pntr); //should return the WORD node for ARGV
@@ -298,18 +323,18 @@ void expand(t_arena *arena, t_node *tree)
 	t_node *tree_root;
 	
 	tree_root = tree;
-	printf("---- starting tree expansion ----\n");
+	printf("\n---- starting tree expansion ----\n");
 	
 	//loop here so that we send the first word node of branch
 	//come ut of branch, return argv to first word node and then go to another branch loop
-	int i = 0;
+	// int i = 0;
 	while (1)
 	{
 		while (tree->token.type != WORD) //find the first WORD node
 			tree = tree->left;
-		str = arena_alloc(arena, sizeof(char) * 1); //alloc only the first pointer
+		str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
 		tree->token.u_data.argv = travel_tree(arena, tree, str, 0);
-		printf("%i\n", i++);
+		// printf("test stuff: %i\n", i++);
 		//back track to the next branch (if any)
 		if (tree_root->right)
 		{
@@ -319,5 +344,5 @@ void expand(t_arena *arena, t_node *tree)
 		else
 			break ;
 	}
-	printf("---- tree expanded ----\n");
+	printf("\n---- tree expanded ----\n\n\n");
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lt_alloc.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:59:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/19 23:18:55 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/24 18:04:05 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ t_arena			arena_new(uint64_t cap);
 void			arena_delete(t_arena *a);
 
 void			*arena_alloc(t_arena *a, uint64_t size);
+void			*arena_alloc_no_zero(t_arena *a, uint64_t size);
 int				arena_unalloc(t_arena *a, uint64_t size);
 void			arena_reset(t_arena *a);
 

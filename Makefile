@@ -6,7 +6,7 @@
 #    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/03/20 17:52:07 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/03/24 17:39:34 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ HEADERS = $(addprefix $(INC_DIR)/, minishell.h)
 
 LINKS = $(addprefix -l, readline) # make this make any sense
 
-CC_FLAGS = -Wall -Wextra -Werror
+CC_FLAGS = -Wall -Wextra -Werror -ggdb3 -gdwarf
 
 all: $(NAME)
 

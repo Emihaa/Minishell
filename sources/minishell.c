@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/23 00:18:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/24 20:13:53 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,14 +260,15 @@ int	create_and_store_pipe(t_minishell *m, bool side)
 	return (0);
 }
 // in the future this will actually need the argv inside the tree node
-pid_t	handle_word(t_minishell *m, t_node *data, int status) // rename probably
+pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 {
 	pid_t pid;
 
-	print_token(&data->token);
-	for (int i = 0; data->token.u_data.argv[i] != NULL; ++i)
+	// print_token(&data->token);
+	for (int i = 0; argv[i] != NULL; ++i)
 	{
-		printf("argv[%i]: %s\n", i, data->token.u_data.argv[i]);
+		printf("i: %i\n", i);
+		printf("argv[%i]: %s\n", i, argv[i]);
 	}
 	pid = fork();
 	if (pid == (pid_t)(-1))
@@ -282,8 +283,9 @@ pid_t	handle_word(t_minishell *m, t_node *data, int status) // rename probably
 		printf("fds to apply \t\t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
 		apply_redirect(m);
 		printf("fds after application \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
-		char *cat_argv[3] = {[0] = "cat", [1] = NULL, [2] = NULL}; //@TODO <- do this to tree and expand it
-		if (execve("/bin/cat", cat_argv, m->envp) == -1)
+		//char *cat_argv[3] = {[0] = "cat", [1] = NULL, [2] = NULL}; //@TODO <- do this to tree and expand it
+		char *path = ft_strjoin("/usr/bin/", argv[0]);
+		if (execve(path, argv, m->envp) == -1)
 			perror("execve fail");
 		exit(1);
 	}
@@ -320,7 +322,7 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 			{
 				if (ft_strncmp("exit", tree->token.u_data.string, tree->token.string_len) == 0) // doesn't work the same as bash
 					return (EXIT_SUCCESS);
-				m->pids[m->command_count - 1] = handle_word(m, tree, status);
+				m->pids[m->command_count - 1] = handle_word(m, tree->token.u_data.argv, status);
 				break ;
 			}
 			else

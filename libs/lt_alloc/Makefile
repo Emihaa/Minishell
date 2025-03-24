@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
+#    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 16:02:01 by ltaalas           #+#    #+#              #
-#    Updated: 2025/02/28 00:17:48 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/03/24 17:39:21 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
