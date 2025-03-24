@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/24 22:06:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/24 23:01:13 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ t_node *insert_middle(t_node *root, t_node *node, t_token *token, t_arena *arena
 		new_node->left = node;
 	else
 		new_node->right = node;
-	printf("new node--> ");
-	print_token_type(&token->type);
-	// printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	printf("\n");
+	// printf("new node--> ");
+	// print_token_type(&token->type);
+	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
+	// printf("\n");
 	return(node);
 }
 
@@ -83,10 +83,10 @@ t_node *insert_below(t_node *root, t_node *node, t_token *token, t_arena *arena)
 	
 	new_node = create_node(root, token, arena);
 	node->left = new_node;
-	printf("new node--> ");
-	print_token_type(&token->type);
-	// printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	printf("\n");
+	// printf("new node--> ");
+	// print_token_type(&token->type);
+	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
+	// printf("\n");
 	return(new_node);
 }
 
@@ -100,10 +100,10 @@ t_node *insert_bottom(t_node *node, t_token *token, t_arena *arena)
 	// then create new node to bottom and connect the old bottom with new
 	t_node *new_node = create_node(bottom_node, token, arena);
 	bottom_node->left = new_node;
-	printf("new node--> ");
-	print_token_type(&token->type);
-	// printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	printf("\n");
+	// printf("new node--> ");
+	// print_token_type(&token->type);
+	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
+	// printf("\n");
 	return(new_node);
 }
 
@@ -137,10 +137,10 @@ t_node *insert_top(t_node *node, t_token *token, t_arena *arena)
 		if (new_node->left)
 			new_node->left->root = new_node;   
 	}
-	printf("new node--> ");
-	print_token_type(&token->type);
-	// printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	printf("\n");
+	// printf("new node--> ");
+	// print_token_type(&token->type);
+	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
+	// printf("\n");
 	return (new_node);
 }
 
@@ -181,58 +181,58 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 {
 	if (!node) // always create new node
 	{
-		printf("new node--> ");
-		print_token_type(&token->type);
-		// printf(" %s", token->string);
-		printf("\n");
+		// printf("new node--> ");
+		// print_token_type(&token->type);
+		// // printf(" %s", token->string);
+		// printf("\n");
 		return (create_node(root, token, arena));
 	}
 	else if (token->type == WORD) // command or word type
 	{ // always comes to the bottom of the branch
-		printf("   found ");
-		print_token_type(&token->type);
+		// printf("   found ");
+		// print_token_type(&token->type);
 		// printf(" %s", token->string);
 		if (node->token.type == PIPE) //or the previous token was pipe and we start new brach
 		{
-			printf(" creating new brach to right if previous node pipe\n");
-			printf("new node--> ");
-			print_token_type(&token->type);
-			// printf(" %s", token->string);
-			printf("\n");
+			// printf(" creating new brach to right if previous node pipe\n");
+			// printf("new node--> ");
+			// print_token_type(&token->type);
+			// // printf(" %s", token->string);
+			// printf("\n");
 			return (node->right = create_node(node, token, arena)); 
 		}
-		printf(" adding to bottom\n");
+		// printf(" adding to bottom\n");
 		return (insert_bottom(node, token, arena));
 	}
 	else if (token->type == PIPE) // if it is pipe it always comes to the top, 
 	{ //or underneath previous pipe
-		printf("   found pipe ");
-		print_token_type(&token->type);
-		printf(" creating node to top\n");
+		// printf("   found pipe ");
+		// print_token_type(&token->type);
+		// printf(" creating node to top\n");
 		return (insert_top(node, token, arena)); 
 	}
 	else // its something different and it comes in the middle of root and current bottom node
 	{
-		printf("    this is the current node type:");
-		print_token_type(&node->token.type);
-		// printf(" %s", token->string);
-		printf("\n");
+		// printf("    this is the current node type:");
+		// print_token_type(&node->token.type);
+		// // printf(" %s", token->string);
+		// printf("\n");
 		if (node->token.type == PIPE) //or the previous token was pipe and we start new brach
 		{
-			printf("   found ");
-			print_token_type(&token->type);
-			printf(" creating new brach to right if previous node pipe\n");
-			printf("new node--> ");
-			print_token_type(&token->type);
-			// printf(" %s", token->string);
-			printf("\n");
+			// printf("   found ");
+			// print_token_type(&token->type);
+			// printf(" creating new brach to right if previous node pipe\n");
+			// printf("new node--> ");
+			// print_token_type(&token->type);
+			// // printf(" %s", token->string);
+			// printf("\n");
 			return (node->right = create_node(node, token, arena)); 
 		}
 		else if (node->token.type == WORD)
 		{
-			printf("   found ");
-			print_token_type(&token->type);
-			printf(" inserting node to middle\n");
+			// printf("   found ");
+			// print_token_type(&token->type);
+			// printf(" inserting node to middle\n");
 			if (node->root != NULL && node->root->token.type == WORD) //if after right branch, the first node is WORD, all redirects should come first
 				return(insert_middle(node->root->root, node->root, token, arena));
 			else
@@ -240,10 +240,10 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 		}
 		else
 		{
-			printf("   found ");
-			print_token_type(&token->type);
-			// printf(" %s", token->string);
-			printf(" creating node to under current\n");
+			// printf("   found ");
+			// print_token_type(&token->type);
+			// // printf(" %s", token->string);
+			// printf(" creating node to under current\n");
 			return (insert_below(node, node, token, arena));
 		}
 	}   
@@ -253,23 +253,24 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 // token recognisation function
 void print_token_type(t_type *token_type)
 {
+	(void)token_type;
 	return ;
-	if (*token_type == PIPE)
-		ft_putstr_fd("|", 2);
-	else if (*token_type == REDIRECT_IN)
-		ft_putstr_fd("<", 2);
-	else if (*token_type == REDIRECT_OUT)
-		ft_putstr_fd(">", 2);
-	else if (*token_type == HERE_DOCUMENT)
-		ft_putstr_fd("<<", 2);
-	else if (*token_type == REDIRECT_APPEND)
-		ft_putstr_fd(">>", 2);
-	else if (*token_type == WORD)
-		ft_putstr_fd("WORD", 2);
-	else if (*token_type == END_OF_LINE)
-		ft_putstr_fd("newline", 2);
-	else if (*token_type == ERROR)
-		ft_putstr_fd("error", 2);
+	// if (*token_type == PIPE)
+	// 	ft_putstr_fd("|", 2);
+	// else if (*token_type == REDIRECT_IN)
+	// 	ft_putstr_fd("<", 2);
+	// else if (*token_type == REDIRECT_OUT)
+	// 	ft_putstr_fd(">", 2);
+	// else if (*token_type == HERE_DOCUMENT)
+	// 	ft_putstr_fd("<<", 2);
+	// else if (*token_type == REDIRECT_APPEND)
+	// 	ft_putstr_fd(">>", 2);
+	// else if (*token_type == WORD)
+	// 	ft_putstr_fd("WORD", 2);
+	// else if (*token_type == END_OF_LINE)
+	// 	ft_putstr_fd("newline", 2);
+	// else if (*token_type == ERROR)
+	// 	ft_putstr_fd("error", 2);
 }
 
 t_node *find_head_root(t_node *node)
@@ -320,18 +321,19 @@ t_node *parser(t_arena *arena, char *line)
 {
 	t_node *tree;
 	t_lexer lexer;
+	t_token token;
 	
 	tree = NULL;
 	lexer = (t_lexer){.line = line, .line_index = 0};
 	while (1)
 	{
-		t_token token = get_next_token(&lexer);
+		token = get_next_token(&lexer);
 		if (token.type == END_OF_LINE)
 			break ;
 		if (token.string_len == 0)
 		{
 			ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-			t_token token = get_next_token(&lexer);
+			token = get_next_token(&lexer);
 			print_token_type(&token.type);
 			ft_putstr_fd("'\n", 2);
 			return (NULL);

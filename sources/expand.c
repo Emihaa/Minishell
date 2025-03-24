@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/24 21:58:50 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/25 00:51:48 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index)
 		return (NULL);
 	}
 	i = 0;
-	// printf("string = %.*s, len = %u\n", len, &data->u_data.string[start], len);
+	printf("string = %.*s, len = %u\n", len, &data->u_data.string[start], len);
 	while (env[i] != NULL)
 	{
 		if (ft_strncmp(&data->u_data.string[start], env[i], len) == 0)
@@ -113,7 +113,7 @@ static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int 
 	i = 0;
 	len = 0;
 
-	// printf("%s\n", env_node->token.u_data.string);
+	printf("%s\n", env_node->token.u_data.string);
 
 	while (i < env_node->token.string_len)
 	{
@@ -183,7 +183,7 @@ int quote_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
 	if (ft_isalnum(node->token.u_data.string[v->i + 1]) == false)
 	{
-		// printf("alnum is false\n");
+		printf("alnum is false\n");
 		if (node->token.u_data.string[v->i + 1] == '?')
 		{
 			// write m->exit_status;
@@ -193,10 +193,10 @@ int quote_stuffs(t_node *node, t_expand_vars *v, char *str)
 		str[v->len++] = node->token.u_data.string[v->i++];
 		return (0);
 	}
-	// printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
+	printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
 	v->env_var = find_env_var(&node->token, ++v->i, &v->i);
-	// printf("env_var: %s\n", v->env_var);
-	// printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
+	printf("env_var: %s\n", v->env_var);
+	printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
 	if (v->quote == '"')
 	{
 		while (v->env_var != NULL && *v->env_var != '\0')
@@ -228,7 +228,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	
 	if (node == NULL)
 	{
-		//printf("Starting to return!\n");
+		printf("Starting to return!\n");
 		argv_pntr = arena_alloc(arena, sizeof(*argv_pntr) * (count + 1));
 		argv_pntr[count] = NULL;
 		return (argv_pntr);
@@ -323,7 +323,7 @@ void expand(t_arena *arena, t_node *tree)
 	t_node *tree_root;
 	
 	tree_root = tree;
-	//printf("\n---- starting tree expansion ----\n");
+	printf("\n---- starting tree expansion ----\n");
 	
 	//loop here so that we send the first word node of branch
 	//come ut of branch, return argv to first word node and then go to another branch loop
@@ -344,5 +344,5 @@ void expand(t_arena *arena, t_node *tree)
 		else
 			break ;
 	}
-	//printf("\n---- tree expanded ----\n\n\n");
+	printf("\n---- tree expanded ----\n\n\n");
 }

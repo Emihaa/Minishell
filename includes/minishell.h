@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/22 23:55:25 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/25 00:47:44 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ typedef struct s_minishell
 	int			redir_fds[2];
 	int			pipe[2];
 	pid_t			*pids;
+	pid_t			last_pid;
 	int			exit_status;
 	t_arena		node_arena;
 	t_arena		env_arena;

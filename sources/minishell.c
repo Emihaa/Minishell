@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/24 22:31:42 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/25 00:50:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		pid = wait(&wstatus);
 		if (pid == (pid_t)(-1))
 			perror("wait issue");
-		if (pid == minishell->pids[0])
+		if (pid == minishell->last_pid)
 		{
 			printf("pid == %i\n", pid);
 			minishell->exit_status = WEXITSTATUS(wstatus);
@@ -243,20 +243,33 @@ void print_token(t_token *token)
 // 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
 // }
 
-int	create_and_store_pipe(t_minishell *m, bool side)
+int	create_and_store_pipe(t_minishell *m, bool *side)
 {
+	int return_val;
 
-	if (side == WRITE)
+	if (*side == WRITE)
 	{
 		if (pipe(m->pipe) == -1)
 			return (ANTIKRISTA); //@TODO: error cheking
-		return (store_write_fd(m->pipe[WRITE], m));
+		return_val = store_write_fd(m->pipe[WRITE], m);
+		m->pipe[WRITE] = -1;
+		*side = READ;
+		return (return_val);
 	}
-	else if (side == READ)
+	else if (*side == READ)
 	{
-		return (store_read_fd(m->pipe[READ], m));
+		return_val = store_read_fd(m->pipe[READ], m);
+		m->pipe[READ] = -1;
+		*side = WRITE;
+		return (return_val);
 	}
 	return (0);
+}
+
+void exit_minishell(t_minishell *m, int exit_status)
+{
+	minishell_cleanup(m);
+	exit(exit_status);
 }
 // in the future this will actually need the argv inside the tree node
 pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
@@ -275,20 +288,21 @@ pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 	if (pid == 0)
 	{
 		if (status != 0)
-		{
-			minishell_cleanup(m);
-			exit(status);
-		}
+			exit_minishell(m, status);
 		// printf("fds to apply \t\t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
 		apply_redirect(m);
-		close(m->pipe[WRITE]);
-		close(m->pipe[READ]);
+		if (m->pipe[WRITE] != -1)
+			if (close(m->pipe[WRITE]))
+				perror("pipe[WRITE] close");
+		if (m->pipe[READ] != -1)
+			if (close(m->pipe[READ]))
+				perror("pipe[READ] close");
 		// printf("fds after application \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
 		//char *cat_argv[3] = {[0] = "cat", [1] = NULL, [2] = NULL}; //@TODO <- do this to tree and expand it
 		char *path = ft_strjoin("/usr/bin/", argv[0]);
 		if (execve(path, argv, m->envp) == -1)
 			perror("execve fail");
-		exit(1);
+		exit_minishell(m, errno);
 	}
 	m->command_count += 1;
 	return (pid);
@@ -303,47 +317,40 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 	
 	pipe_side = WRITE;
 	status = 0;
-	// temp test stuff;
-	m->pids = malloc(sizeof(*m->pids) * 20);
 	while (tree)
 	{
 		current_head = tree;
+		if (pipe_side == READ)
+			status = create_and_store_pipe(m, &pipe_side);
+		if (tree->token.type == PIPE)
+			status = create_and_store_pipe(m, &pipe_side);
 		while (tree)
 		{
-			if (tree->token.type == PIPE)
-			{
-				status = create_and_store_pipe(m, pipe_side);
-				pipe_side = !pipe_side;
-			}
-			else if(tree->token.type == HERE_DOCUMENT) // maybe temp stuff
+			if(tree->token.type == HERE_DOCUMENT) // maybe temp stuff
 			{
 				heredoc(m, &tree->token); // delimiter will still have quotes removed
 			}
+			// else if (tree->token.type == REDIRECT_OUT)
+			// {
+				
+			// }
 			else if (tree->token.type == WORD)
 			{
 				if (ft_strncmp("exit", tree->token.u_data.string, tree->token.string_len) == 0) // doesn't work the same as bash
 					return (EXIT_SUCCESS);
-				m->pids[0] = handle_word(m, tree->token.u_data.argv, status);
+				m->last_pid = handle_word(m, tree->token.u_data.argv, status);
 				break ;
 			}
 			else
 			{
 				print_token(&tree->token); // for testing
 			}
-			tree = tree->left;
+			tree = tree->left;	
 		}
 		reset_redirect(m);
-		if (pipe_side == READ)
-		{
-			create_and_store_pipe(m, pipe_side);
-			pipe_side = !pipe_side;
-		}
-		//m->pids = arena_alloc(arena, sizeof(m->pids));
 		tree = current_head->right;
 	}
 	wait_for_sub_processes(m);
-	free(m->pids);
-	m->pids = NULL;
 	// printf("last print of loop %s\t%i\n", strerror(m->exit_status), m->exit_status);
 	return (42);
 }
@@ -390,6 +397,8 @@ void read_loop(t_minishell *m)
 			perror("readline in read_loop");
 			break ; // @TODO: error cheking
 		}
+		if (*line == '\0')
+			continue ;
 		add_history(line);
     	//printf("%s", line);
 		m->line_counter += 1;
