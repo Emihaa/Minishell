@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/24 20:13:53 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/24 22:31:42 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		pid = wait(&wstatus);
 		if (pid == (pid_t)(-1))
 			perror("wait issue");
-		if (pid == minishell->pids[minishell->command_count - 1])
+		if (pid == minishell->pids[0])
 		{
 			printf("pid == %i\n", pid);
 			minishell->exit_status = WEXITSTATUS(wstatus);
@@ -245,17 +245,16 @@ void print_token(t_token *token)
 
 int	create_and_store_pipe(t_minishell *m, bool side)
 {
-	static int pipe_fds[2];
 
 	if (side == WRITE)
 	{
-		if (pipe(pipe_fds) == -1)
+		if (pipe(m->pipe) == -1)
 			return (ANTIKRISTA); //@TODO: error cheking
-		return (store_write_fd(pipe_fds[WRITE], m));
+		return (store_write_fd(m->pipe[WRITE], m));
 	}
 	else if (side == READ)
 	{
-		return (store_read_fd(pipe_fds[READ], m));
+		return (store_read_fd(m->pipe[READ], m));
 	}
 	return (0);
 }
@@ -265,11 +264,11 @@ pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 	pid_t pid;
 
 	// print_token(&data->token);
-	for (int i = 0; argv[i] != NULL; ++i)
-	{
-		printf("i: %i\n", i);
-		printf("argv[%i]: %s\n", i, argv[i]);
-	}
+	// for (int i = 0; argv[i] != NULL; ++i)
+	// {
+	// 	printf("i: %i\n", i);
+	// 	printf("argv[%i]: %s\n", i, argv[i]);
+	// }
 	pid = fork();
 	if (pid == (pid_t)(-1))
 		; // @TODO: error cheking
@@ -280,9 +279,11 @@ pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 			minishell_cleanup(m);
 			exit(status);
 		}
-		printf("fds to apply \t\t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
+		// printf("fds to apply \t\t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
 		apply_redirect(m);
-		printf("fds after application \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
+		close(m->pipe[WRITE]);
+		close(m->pipe[READ]);
+		// printf("fds after application \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
 		//char *cat_argv[3] = {[0] = "cat", [1] = NULL, [2] = NULL}; //@TODO <- do this to tree and expand it
 		char *path = ft_strjoin("/usr/bin/", argv[0]);
 		if (execve(path, argv, m->envp) == -1)
@@ -322,7 +323,7 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 			{
 				if (ft_strncmp("exit", tree->token.u_data.string, tree->token.string_len) == 0) // doesn't work the same as bash
 					return (EXIT_SUCCESS);
-				m->pids[m->command_count - 1] = handle_word(m, tree->token.u_data.argv, status);
+				m->pids[0] = handle_word(m, tree->token.u_data.argv, status);
 				break ;
 			}
 			else
@@ -343,7 +344,7 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 	wait_for_sub_processes(m);
 	free(m->pids);
 	m->pids = NULL;
-	printf("last print of loop %s\t%i\n", strerror(m->exit_status), m->exit_status);
+	// printf("last print of loop %s\t%i\n", strerror(m->exit_status), m->exit_status);
 	return (42);
 }
 
@@ -384,7 +385,11 @@ void read_loop(t_minishell *m)
 		m->command_count = 0;
 		line = readline("minishell> ");
 		if (line == NULL)
+		{
+			printf("readline returned NULL: errno = %i\n", errno);
+			perror("readline in read_loop");
 			break ; // @TODO: error cheking
+		}
 		add_history(line);
     	//printf("%s", line);
 		m->line_counter += 1;
