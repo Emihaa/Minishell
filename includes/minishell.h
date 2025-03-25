@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 00:47:44 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/25 23:28:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ typedef enum e_type
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	257, // >>
 	// COMMAND		=	258,
-	// ARGUMENT		=	259, // @question with argv or not?
+	// ARGUMENT		=	259,	 // @question with argv or not?
 	WORD			=	260,	// generic word, could be command name or argument 
-	END_OF_LINE		=	-1,		// first WORD before a pipe is the command and the following ones are arguments
+	END_OF_LINE		=	0,		// first WORD before a pipe is the command and the following ones are arguments
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
 
@@ -59,9 +59,10 @@ typedef struct s_minishell
 	uint32_t	heredoc_count;
 	int			redir_fds[2];
 	int			pipe[2];
-	pid_t			*pids;
+	pid_t			*pids;  // maybe needed
 	pid_t			last_pid;
 	int			exit_status;
+	char		*line;
 	t_arena		node_arena;
 	t_arena		env_arena;
 	t_arena		scratch_arena;
@@ -155,6 +156,12 @@ int store_write_fd(int write_fd, t_minishell *minishell);
 int store_read_fd(int read_fd, t_minishell *minishell);
 void	apply_redirect(t_minishell *minishell);
 void	reset_redirect(t_minishell *minishell);
+int		redirect_out(char **file_name, t_minishell *m);
+int		redirect_in(char **file_name, t_minishell *m);
+int		redirect_append(char **file_name, t_minishell *m);
+
+
+
 
 //environment stuff
 char 	*expand_variable(t_token *data, const uint32_t start, char **env);

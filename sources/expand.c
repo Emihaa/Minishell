@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/25 21:02:37 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/25 22:06:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,6 +210,8 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 	}
 	if (*v->env_var == '\0')
 		return (0);
+	while (is_space(*v->env_var) == true)
+		v->env_var++;
 	return (1);
 }
 
@@ -228,13 +230,28 @@ bool	is_quote(char c)
 	return ((c == '"' || c == '\''));
 }
 
+/*
+	if (is_quote(node->token.u_data.string[v.i]) &&
+		(v.quote == '\0' || v.quote == node->token.u_data.string[v.i]))
+	{
+		if (v.quote == '\0')
+			v.quote = node->token.u_data.string[v.i];
+		else if (v.quote = node->token.u_data.string[v.i])
+			v.quote = '\0';
+		v.i++;
+	}
+*/
+
 // add the string to the first word node and break the connection
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 {
 	static t_expand_vars v;
-	char	 **argv_pntr;
+	static char	 **argv_pntr;
 
-	v = (t_expand_vars){0};
+	v.env_var = NULL;
+	v.i = 0;
+	v.len = 0;
+	v.quote = '\0';
 	if (node == NULL)
 	{
 		argv_pntr = arena_alloc(arena, sizeof(*argv_pntr) * (count + 1));
@@ -244,17 +261,13 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	while (v.i < node->token.string_len)
 	{
 		// if we find quates, flag it? and also what type of quate flag
-		if (is_quote(node->token.u_data.string[v.i]))
+		if (is_quote(node->token.u_data.string[v.i]) &&
+			(v.quote == '\0' || v.quote == node->token.u_data.string[v.i]))
 		{
 			if (v.quote == '\0')
 				v.quote = node->token.u_data.string[v.i];
 			else if (v.quote == node->token.u_data.string[v.i])
 				v.quote = '\0';
-			else
-			{
-				str[v.len++] = node->token.u_data.string[v.i++];
-				continue ;
-			}
 			v.i++;
 		}
 		else if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
@@ -263,11 +276,9 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				continue ;
 			str[v.len++] = '\0';
 			arena_alloc_no_zero(arena, v.len);
-			while (is_space(*v.env_var) == true)
-				v.env_var++;
 			node->token.u_data.string += v.i;
 			node->token.string_len -= v.i;
-			argv_pntr = travel_expansion(arena, 
+			argv_pntr = travel_expansion(arena,
 				&(t_node){
 					.left = node->left, .right = node, .root = NULL,
 					.token = {

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 18:50:10 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 00:53:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,11 +129,11 @@ void print_token(t_token *token)
 			token->type, get_token_name(token), (int)token->string_len, token->u_data.string);
 }
 
-int	create_and_store_pipe(t_minishell *m, bool *side)
+int	create_and_store_pipe(t_minishell *m, int8_t *side)
 {
 	int return_val;
 
-	if (*side == WRITE)
+	if (*side == WRITE || *side == -1)
 	{
 		if (pipe(m->pipe) == -1)
 			return (ANTIKRISTA); //@TODO: error cheking
@@ -160,10 +160,39 @@ void error_exit(t_minishell *m, int exit_status)
 // in the future this will actually need the argv inside the tree node
 // rename probably
 
-pid_t	handle_word(t_minishell *m, char **argv, int status) 
+static inline
+void close_pipe(t_minishell *m)
+{
+	if (m->pipe[WRITE] != -1)
+		if (close(m->pipe[WRITE]))
+			error_exit(m, 1);
+	if (m->pipe[READ] != -1)
+		if (close(m->pipe[READ]))
+			error_exit(m, 1);
+}
+
+void builtin_exit(char **argv, t_minishell *m, bool in_main_process)
+{
+	(void)argv;
+	minishell_cleanup(m);
+	if (in_main_process)
+		write(2, "exit\n", 5);
+	exit(m->exit_status);
+}
+
+int	execute_builtin(t_minishell *m, char **argv, int8_t pipe_side)
+{
+	if (ft_strncmp(argv[0], "exit", 5) == 0)
+	{
+		builtin_exit(argv, m, pipe_side);
+	}
+	return (0);
+}
+
+pid_t	execute_subprocess(t_minishell *m, char **argv)
 {
 	pid_t	pid;
-
+	int		status = 1;
 	for (int i = 0; argv[i] != NULL; ++i)
 	{
 		printf("i: %i\n", i);
@@ -174,28 +203,44 @@ pid_t	handle_word(t_minishell *m, char **argv, int status)
 		; // @TODO: error cheking
 	if (pid == 0)
 	{
-		if (status != 0)
-			error_exit(m, status);
-		// printf("fds to apply \t\t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
+		execute_builtin(m, argv, 0);
 		apply_redirect(m);
-		if (m->pipe[WRITE] != -1)
-			if (close(m->pipe[WRITE]))
-				perror("pipe[WRITE] close");
-		if (m->pipe[READ] != -1)
-			if (close(m->pipe[READ]))
-				perror("pipe[READ] close");
-		// printf("fds after application \t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
-		//char *cat_argv[3] = {[0] = "cat", [1] = NULL, [2] = NULL}; //@TODO <- do this to tree and expand it
+		close_pipe(m);
 		char *path = ft_strjoin("/usr/bin/", argv[0]);
 		if (execve(path, argv, m->envp) == -1)
 			perror("execve fail");
 		printf("errno: %i\n", errno);
 		if (errno == ENOENT)
 			status = 127;
+		perror(argv[0]);
 		error_exit(m, status);
 	}
 	m->command_count += 1;
 	return (pid);
+}
+
+void execute_command(t_minishell *m, char **argv, int8_t pipe_side, int status)
+{
+	pid_t pid;
+
+	if (status != 0)
+	{
+		pid = fork();
+		if (pid == -1)
+			; // @TODO: error cheking
+		if (pid == 0)
+			error_exit(m, status);
+		m->command_count += 1;
+		m->last_pid = pid;
+		return ;
+	}
+	printf("\n\n\npipe_side = [%i]\n\n\n", pipe_side);
+	if (pipe_side == -1)
+	{
+		if (execute_builtin(m, argv, 1))
+			return ;
+	}
+	m->last_pid = execute_subprocess(m, argv);
 }
 
 static
@@ -225,14 +270,13 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	}
 }
 
-int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
+int minishell_exec_loop(t_minishell *m, t_node *tree)
 {
-	(void)arena;
-	bool pipe_side;
-	int status;
 	t_node *current_head;
+	int8_t pipe_side;
+	int status;
 	
-	pipe_side = WRITE;
+	pipe_side = -1;
 	status = 0;
 	while (tree)
 	{
@@ -244,59 +288,46 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 		while (tree)
 		{
 			if(tree->token.type == HERE_DOCUMENT) // maybe temp stuff
-			{
-				heredoc(m, &tree->token); // delimiter will still have quotes removed
-			}
-			// else if (tree->token.type == REDIRECT_OUT)
-			// {
-				
-			// }
+				status = heredoc(m, &tree->token); // delimiter will still have quotes removed
+			else if (tree->token.type == REDIRECT_OUT)
+				status = redirect_out(tree->token.u_data.argv, m);
+			else if (tree->token.type == REDIRECT_IN)
+				status = redirect_in(tree->token.u_data.argv, m);
+			else if (tree->token.type == REDIRECT_APPEND)
+				status = redirect_append(tree->token.u_data.argv, m);
 			else if (tree->token.type == WORD)
 			{
-				//if (ft_strncmp("exit", tree->token.u_data.string, tree->token.string_len) == 0) // doesn't work the same as bash
-					//return (EXIT_SUCCESS);
-				m->last_pid = handle_word(m, tree->token.u_data.argv, status);
-				break ;
-			}
-			else
-			{
-				print_token(&tree->token); // for testing
+				execute_command(m, tree->token.u_data.argv, pipe_side, status);
 			}
 			tree = tree->left;	
 		}
 		reset_redirect(m);
 		tree = current_head->right;
 	}
-	wait_for_sub_processes(m);
-	printf("arena size: %lu", arena->size);
-	// printf("last print of loop %s\t%i\n", strerror(m->exit_status), m->exit_status);
+	printf("arena_size: %lu", m->node_arena.size);
 	return (42);
 }
 
 void read_loop(t_minishell *m)
 {
-	char *line;
+	t_node *tree;
 
 	while (1)
 	{
 		m->command_count = 0;
-		line = readline("minishell> ");
-		if (line == NULL)
-		{
-			printf("readline returned NULL: errno = %i\n", errno);
-			perror("readline in read_loop");
-			break ; // @TODO: error cheking
-		}
-		if (*line == '\0')
+		m->line = readline("minishell> ");
+		if (m->line == NULL)
+			break ;
+		if (*m->line == '\0')
 			continue ;
-		add_history(line);
-    	//printf("%s", line);
+		add_history(m->line);
 		m->line_counter += 1;
-		t_node *tree = parser(&m->node_arena, line);
+		tree = parser(&m->node_arena, m->line);
 		if (tree != NULL)
-			if (minishell_exec_loop(m, &m->node_arena, tree) == EXIT_SUCCESS)
-				break ;
-		free(line);
+			minishell_exec_loop(m, tree);
+		wait_for_sub_processes(m);
+		free(m->line);
+		m->line = NULL;
 		arena_reset(&m->node_arena);
 	}
 }
@@ -306,6 +337,7 @@ void minishell_cleanup(t_minishell *minishell)
 	arena_delete(&minishell->node_arena);
 	arena_delete(&minishell->scratch_arena);
 	arena_delete(&minishell->env_arena);
+	free(minishell->line);
 }
 // set default values for the minishell struct
 // the struct is going to work as a kind of storage for globally needef alues
@@ -321,6 +353,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->scratch_arena = arena_new(1024);
 	if (minishell->scratch_arena.data == NULL)
 		; //@TODO: error cheking
+	minishell->line = NULL;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
 	minishell->exit_status = 0;
