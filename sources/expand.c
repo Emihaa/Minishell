@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/25 18:43:30 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/25 21:02:37 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int 
 	
 	i = 0;
 	len = 0;
-
 	printf("%s\n", env_node->token.u_data.string);
 
 	while (i < env_node->token.string_len)
@@ -143,19 +142,6 @@ static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int 
 		argv_pntr[count] = str;
 		return (argv_pntr);
 	}
-	// while (i < env_node->right->token.string_len) // maybe this could just be a call to travel tree
-	// {
-	// 	if (env_node->right->token.u_data.string[i] == '$')
-	// 	{
-	// 		arena_alloc_no_zero(arena, len);
-	// 		env_node->right->token.u_data.string += i;
-	// 		env_node->right->token.string_len -= i;
-	// 		argv_pntr = travel_tree(arena, env_node->right, &str[len], count);
-	// 		argv_pntr[count] = str;
-	// 		return (argv_pntr);
-	// 	}
-	// 	str[len++] = env_node->right->token.u_data.string[i++];
-	// }
 	str[len++] = '\0';
 	arena_alloc_no_zero(arena, sizeof(*str) * len);
 	// update the arena with new string len info
@@ -236,7 +222,11 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 
 */
 
-
+static inline
+bool	is_quote(char c)
+{
+	return ((c == '"' || c == '\''));
+}
 
 // add the string to the first word node and break the connection
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
@@ -245,26 +235,16 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	char	 **argv_pntr;
 
 	v = (t_expand_vars){0};
-	
 	if (node == NULL)
 	{
-		printf("Starting to return!\n");
-		printf("count: %i\n", count);
 		argv_pntr = arena_alloc(arena, sizeof(*argv_pntr) * (count + 1));
 		argv_pntr[count] = NULL;
 		return (argv_pntr);
 	}
-	// on the way to leaf ------>
-	// travel left subtree
-	// printf("%s\n", node->token.u_data.string);
-	// printf("string_len: %d\n", node->token.string_len);
-	
-	// what is the order? write stuff to the string if $ then expand
-	// keep track of quates but jump over them
 	while (v.i < node->token.string_len)
 	{
 		// if we find quates, flag it? and also what type of quate flag
-		if ((node->token.u_data.string[v.i] == '\'') || (node->token.u_data.string[v.i] == '"'))
+		if (is_quote(node->token.u_data.string[v.i]))
 		{
 			if (v.quote == '\0')
 				v.quote = node->token.u_data.string[v.i];
@@ -277,8 +257,6 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 			}
 			v.i++;
 		}
-		// then check if there are $ signs inside the word
-		// but also if $ inside ' ' expansion doesnt happen at all
 		else if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
@@ -289,48 +267,21 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				v.env_var++;
 			node->token.u_data.string += v.i;
 			node->token.string_len -= v.i;
-				// .root = node
 			argv_pntr = travel_expansion(arena, 
 				&(t_node){
 					.left = node->left, .right = node, .root = NULL,
 					.token = {
-						.type = WORD, .u_data.string = v.env_var, .string_len = ft_strlen(v.env_var)
-					},
-				},
-				&str[v.len],
-				count + 1);
+						.type = WORD, .u_data.string = v.env_var, .string_len = ft_strlen(v.env_var)},
+						}, &str[v.len], count + 1);
 			argv_pntr[count] = str;
 			return(argv_pntr); //should return the WORD node for ARGV
-			// if you find $ expand it from env
-			// what char are acceptable? alphanum and '_'
-			// if $? do different stuff
 		}
-		else
-		{
-			str[v.len++] = node->token.u_data.string[v.i++];
-		}
-		// then remove the quates
-		// take the quates away from the arena alloc?
-		// in utils there is set_quote_removed_string, and i would like to use that maybe?
-		// i++;
-		// len++;
+		str[v.len++] = node->token.u_data.string[v.i++];
 	}
 	str[v.len++] = '\0';
-	arena_alloc_no_zero(arena, sizeof(*str) * v.len);
-	printf("str: %s\n", str);
-	// update the arena with new string len info
-	// arena_alloc_no_zero(arena, sizeof(char) * v.len); //after i know how much info i got i reserve that
+	arena_alloc_no_zero(arena, v.len);
 	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + 1);
-	printf("str: %s\n", str);
-	// when there is no more to go from branch we return
-	// and start picking up the pointers   
-	// on the way back <-----
-
-	// printf("count2: %d\n", count);
-	// printf("str: %s\n", str);
 	argv_pntr[count] = str;
-	printf("argv_pntr[%i] = %s\n", count, argv_pntr[count]);
-	
 	return(argv_pntr); //should return the WORD node for ARGV
 }
 
@@ -341,34 +292,35 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 // go through the tree second time and gather all the words of same branch under same string
 // separated by \0
 // then create an array of pointers that point to the starting points of the string
+
 void expand(t_arena *arena, t_node *tree)
 {
 	char *str;
 	t_node *tree_root;
 	
-	tree_root = tree;
+	
 	printf("\n---- starting tree expansion ----\n");
 	
 	//loop here so that we send the first word node of branch
 	//come ut of branch, return argv to first word node and then go to another branch loop
 	// int i = 0;
-	while (1)
+	while (tree)
 	{
-		while (tree != NULL && tree->token.type != WORD) //find the first WORD node
-			tree = tree->left;
-		if (tree == NULL)
-			break ;
-		str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer
-		tree->token.u_data.argv = travel_tree(arena, tree, str, 0);
-		// printf("test stuff: %i\n", i++);
-		//back track to the next branch (if any)
-		if (tree_root->right)
+		tree_root = tree;
+		//find the first WORD node
+		while (tree)
 		{
-			tree_root = tree_root->right;
-			tree = tree_root; 
+			if (tree->token.type == WORD)
+			{
+				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
+				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);
+				break ;
+			}
+			tree = tree->left;
 		}
-		else
-			break ;
+		// printf("test stuff: %i\n", i++);
+		// back track to the next branch (if any)
+		tree = tree_root->right;
 	}
 	printf("arena size: %lu\n", arena->size);
 	printf("\n---- tree expanded ----\n\n\n");

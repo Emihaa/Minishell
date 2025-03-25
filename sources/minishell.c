@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 18:47:23 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/25 18:50:10 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,97 +128,6 @@ void print_token(t_token *token)
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
 			token->type, get_token_name(token), (int)token->string_len, token->u_data.string);
 }
-
-// prototypee
-// void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_token *token_array)
-// {
-// 	char **envp = minishell->envp;
-// 	int i;
-// 	i = 0;
-// 	while (token_array[i].type != END_OF_LINE)
-// 	{
-// 		if (token_array[i].type == WORD)
-// 		{
-// 			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
-// 				break;
-// 		}
-// 		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
-// 		{
-// 			char *delimiter = calloc(1, token_array[i].string_len + 1);
-// 			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
-// 			heredoc(minishell, delimiter); // delimiter will still have quotes removed
-// 			free(delimiter);
-// 		}
-// 		else
-// 		{
-// 			print_token(&token_array[i]);
-// 		}
-// 		++i;
-// 	}
-// 	pid_t pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		apply_redirect(minishell);
-// 		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
-// 		printf("fd to cat \t%i\n", 17);
-// 		if (execve("/bin/cat", cat_argv, envp) == -1)
-// 			perror("execve fail");
-// 		exit(1);
-// 	}
-// 	reset_redirect(minishell);
-// 	minishell->pids = arena_alloc(arena, sizeof(minishell->pids));
-// 	minishell->pids[minishell->command_count] = pid;
-// 	minishell->command_count += 1;
-// 	wait_for_sub_processes(minishell);
-// 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
-// }
-// void minishell_exec_loop(t_minishell *minishell, t_arena *arena, t_node *tree)
-// {
-// 	char **envp = minishell->envp;
-// 	int i;
-// 	i = 0;
-// 	while (tree->left)
-// 	{
-// 		if (tree->token.type == PIPE)
-// 			// do pipe and do fork to child
-// 			// and child work
-// 			// call itself but tree->right
-// 			// that would be with recursion
-// 		if (token_array[i].type == WORD)
-// 		{
-// 			if (ft_strncmp("exit", token_array[i].string, token_array[i].string_len) == 0)
-// 				break;
-// 		}
-// 		else if(token_array[i].type == HERE_DOCUMENT) // fully temp stuff
-// 		{
-// 			char *delimiter = calloc(1, token_array[i].string_len + 1);
-// 			ft_memmove(delimiter, token_array[i].string, token_array[i].string_len);
-// 			heredoc(minishell, delimiter); // delimiter will still have quotes removed
-// 			free(delimiter);
-// 		}
-// 		else
-// 		{
-// 			print_token(&token_array[i]);
-// 		}
-// 		++i;
-// 	}
-// 	pid_t pid = fork();
-// 	if (pid == 0)
-// 	{
-// 		apply_redirect(minishell);
-// 		char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
-// 		printf("fd to cat \t%i\n", 17);
-// 		if (execve("/bin/cat", cat_argv, envp) == -1)
-// 			perror("execve fail");
-// 		exit(1);
-// 	}
-// 	reset_redirect(minishell);
-// 	minishell->pids = arena_alloc(arena, sizeof(minishell->pids));
-// 	minishell->pids[minishell->command_count] = pid;
-// 	minishell->command_count += 1;
-// 	wait_for_sub_processes(minishell);
-// 	printf("last printf %s\t%i\n", strerror(minishell->exit_status), minishell->exit_status);
-// }
 
 int	create_and_store_pipe(t_minishell *m, bool *side)
 {
@@ -364,34 +273,6 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 	return (42);
 }
 
-// prototype for a read loop
-// this should probably call the parser which will call the lexer and return the tree
-// that will then be passed to some execution prep function which will traverses the tree 
-// 		and do the necessary redirect ect.
-//this might need another nested loop to calculate the amount of command etc.
-// void read_loop(t_minishell *minishell)
-// {
-// 	char *line;
-// 	t_arena *arena = &minishell->node_arena;
-// 	t_token *token_array; // just for testing
-// 	t_lexer lexer; // to be definex in the parser
-// 	while (1)
-// 	{
-// 		minishell->command_count = 0;
-// 		line = readline("minishell> ");
-// 		if (line == NULL)
-// 			break ; // @TODO: error cheking
-// 		add_history(line);
-//     	//printf("%s", line);
-// 		minishell->line_counter += 1;
-// 		lexer.line = line;
-// 		lexer.line_index = 0;
-// 		token_array = get_token_array(arena, &lexer); //<--
-// 		minishell_exec_loop(minishell, arena, token_array);
-// 		arena_reset(arena);
-// 	}
-// }
-
 void read_loop(t_minishell *m)
 {
 	char *line;
@@ -466,39 +347,3 @@ int main(int argc, char *argv[], char *envp[])
 	printf("exit\n");
     return (0);
 }
-
-
-// heredoc testing main
-// currently using as reference
-// int main(int argc, char *argv[], char *envp[])
-// {
-// 	pid_t pids[3] = {0};
-// 	t_minishell minishell;
-// 	init_minishell(&minishell);
-// 	(void)argc;
-// 	(void)argv;
-// 	int wstatus;
-// 	//read_loop(envp);
-// 	printf("%i\n", getpid());
-// 	while (minishell.command_count < 2)
-// 	{
-// 		heredoc(&minishell, "DELIM");
-// 		pid_t pid = fork();
-// 		if (pid == 0)
-// 		{
-// 			apply_redirect(&minishell);
-// 			char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
-// 			printf("fd to cat \t%i\n", 17);
-// 			if (execve("/bin/cat", cat_argv, envp) == -1)
-// 				perror("execve fail");
-// 			exit(1);
-// 		}
-// 		reset_redirect(&minishell);
-// 		pids[minishell.command_count] = pid;
-// 		minishell.command_count += 1;
-// 	}
-// 	int exit_status = wait_for_sub_processes(&minishell, pids);
-// 	printf("last printf %s\t%i\n", strerror(exit_status), exit_status);
-// 	printf("exit\n");
-//     return (0);
-// }
