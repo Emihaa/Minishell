@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 01:06:53 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/25 18:47:23 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,15 +243,17 @@ int	create_and_store_pipe(t_minishell *m, bool *side)
 	return (0);
 }
 
-void exit_minishell(t_minishell *m, int exit_status)
+void error_exit(t_minishell *m, int exit_status)
 {
 	minishell_cleanup(m);
 	exit(exit_status);
 }
 // in the future this will actually need the argv inside the tree node
-pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
+// rename probably
+
+pid_t	handle_word(t_minishell *m, char **argv, int status) 
 {
-	pid_t pid;
+	pid_t	pid;
 
 	for (int i = 0; argv[i] != NULL; ++i)
 	{
@@ -264,7 +266,7 @@ pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 	if (pid == 0)
 	{
 		if (status != 0)
-			exit_minishell(m, status);
+			error_exit(m, status);
 		// printf("fds to apply \t\t%i\t%i\n", m->redir_fds[READ], m->redir_fds[WRITE]);
 		apply_redirect(m);
 		if (m->pipe[WRITE] != -1)
@@ -281,7 +283,7 @@ pid_t	handle_word(t_minishell *m, char **argv, int status) // rename probably
 		printf("errno: %i\n", errno);
 		if (errno == ENOENT)
 			status = 127;
-		exit_minishell(m, status);
+		error_exit(m, status);
 	}
 	m->command_count += 1;
 	return (pid);
@@ -305,8 +307,10 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		if (pid == minishell->last_pid)
 		{
 			printf("pid == %i\n", pid);
-			printf("exit_status = %i\n", minishell->exit_status);
+			printf("exit_status before = %i\n", minishell->exit_status);
 			minishell->exit_status = WEXITSTATUS(wstatus);
+			printf("exit_status after = %i\n", minishell->exit_status);
+
 		}
 		i++;
 	}
@@ -340,8 +344,8 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 			// }
 			else if (tree->token.type == WORD)
 			{
-				if (ft_strncmp("exit", tree->token.u_data.string, tree->token.string_len) == 0) // doesn't work the same as bash
-					return (EXIT_SUCCESS);
+				//if (ft_strncmp("exit", tree->token.u_data.string, tree->token.string_len) == 0) // doesn't work the same as bash
+					//return (EXIT_SUCCESS);
 				m->last_pid = handle_word(m, tree->token.u_data.argv, status);
 				break ;
 			}
@@ -355,6 +359,7 @@ int minishell_exec_loop(t_minishell *m, t_arena *arena, t_node *tree)
 		tree = current_head->right;
 	}
 	wait_for_sub_processes(m);
+	printf("arena size: %lu", arena->size);
 	// printf("last print of loop %s\t%i\n", strerror(m->exit_status), m->exit_status);
 	return (42);
 }
@@ -435,7 +440,6 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->scratch_arena = arena_new(1024);
 	if (minishell->scratch_arena.data == NULL)
 		; //@TODO: error cheking
-	minishell->envp = envp;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
 	minishell->exit_status = 0;
@@ -445,6 +449,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
 	minishell->pipe[WRITE] = -1;
+	minishell->last_pid = 0; 
 	minishell->pids = NULL;
 	get_minishell(minishell);
 

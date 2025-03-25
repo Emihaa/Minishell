@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
+#    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/03/24 17:39:34 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/03/25 17:40:36 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ LT_ALLOC = $(LIB_DIR)/$(LT_ALLOC_DIR)/build/lt_alloc.a
 
 NAME = minishell
 
-SOURCES = minishell.c redirect.c lexer.c heredoc.c tree.c utils.c expand.c
+SOURCES = minishell.c redirect_utils.c lexer.c heredoc.c tree.c utils.c expand.c
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
