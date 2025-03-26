@@ -6,53 +6,71 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 22:57:17 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 18:34:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 //static char stump[1] = "\0";
 
+
+// @TODO: restructure this
+static inline
+void ambigous_redirect(char *file_name)
+{
+	ft_putstr_fd("minishell: ", 2);
+	if (file_name != NULL)
+		ft_putstr_fd(file_name, 2);
+	ft_putendl_fd(": ambigous redirect", 2);
+}
+
+
 int redirect_out(char **file_name, t_minishell *m)
 {
 	int fd;
+
 	if (file_name[1] != NULL)
 	{
-		printf("minishell: %s: ambiguous redirect", file_name[0]);
+		ambigous_redirect(file_name[0]);
 		return (1);
 	}
 	fd = open(file_name[0], O_CLOEXEC	| O_CREAT	| O_WRONLY	| O_TRUNC,
 							S_IWUSR		| S_IRUSR	| S_IRGRP	| S_IROTH);
 	if (fd == -1)
-		; // @TODO: open failure
-	return(store_write_fd(fd, m));
+		return (1); // @TODO: open failure
+	store_write_fd(fd, m);
+	return(0);
 }
 
 int redirect_append(char **file_name, t_minishell *m)
 {
-	int fd;
+	int	fd;
+
 	if (file_name[1] != NULL)
 	{
-		printf("minishell: %s: ambiguous redirect", file_name[0]);
+		ambigous_redirect(file_name[0]);
 		return (1);
 	}
 	fd = open(file_name[0], O_CLOEXEC	| O_CREAT	| O_WRONLY	| O_APPEND,
 							S_IWUSR		| S_IRUSR	| S_IRGRP	| S_IROTH);
 	if (fd == -1)
 		return (1); // @TODO: open failure
-	return(store_write_fd(fd, m));
+	store_write_fd(fd, m);
+	return(0);
 }
 
-int redirect_in(char **file_name, t_minishell *m)
+int	redirect_in(char **file_name, t_minishell *m)
 {
-	int fd;
+	int	fd;
+
 	if (file_name[1] != NULL)
 	{
-		printf("minishell: %s: ambiguous redirect", file_name[0]);
+		ambigous_redirect(file_name[0]);
 		return (1);
 	}
 	fd = open(file_name[0], O_CLOEXEC | O_RDONLY);
 	if (fd == -1)
 		return (1); // @TODO: open failure
-	return(store_read_fd(fd, m));
+	store_read_fd(fd, m);
+	return(0);
 }

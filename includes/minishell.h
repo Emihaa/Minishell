@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 23:28:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 18:50:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,15 +152,16 @@ int heredoc(t_minishell *minishell, t_token *data);
 // testing possible redirect stuff
 #define WRITE	1
 #define READ	0
-int store_write_fd(int write_fd, t_minishell *minishell);
-int store_read_fd(int read_fd, t_minishell *minishell);
+void	store_write_fd(int write_fd, t_minishell *minishell);
+void	store_read_fd(int read_fd, t_minishell *minishell);
 void	apply_redirect(t_minishell *minishell);
 void	reset_redirect(t_minishell *minishell);
 int		redirect_out(char **file_name, t_minishell *m);
 int		redirect_in(char **file_name, t_minishell *m);
 int		redirect_append(char **file_name, t_minishell *m);
 
-
+void	syscall_failure(t_minishell *m);
+void	wait_for_sub_processes(t_minishell *minishell);
 
 
 //environment stuff
@@ -171,5 +172,6 @@ uint32_t set_quote_removed_string(char *string, t_token *data);
 uint8_t	num_len(uint32_t num);
 bool	is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
+void error_exit(t_minishell *m, int exit_status);
 
 #endif

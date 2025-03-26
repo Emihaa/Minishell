@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 00:53:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 18:55:49 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,31 +131,23 @@ void print_token(t_token *token)
 
 int	create_and_store_pipe(t_minishell *m, int8_t *side)
 {
-	int return_val;
-
 	if (*side == WRITE || *side == -1)
 	{
 		if (pipe(m->pipe) == -1)
-			return (ANTIKRISTA); //@TODO: error cheking
-		return_val = store_write_fd(m->pipe[WRITE], m);
+			syscall_failure(m); //@TODO: error cheking
+		store_write_fd(m->pipe[WRITE], m);
 		m->pipe[WRITE] = -1;
 		*side = READ;
-		return (return_val);
+		return (0);
 	}
 	else if (*side == READ)
 	{
-		return_val = store_read_fd(m->pipe[READ], m);
+		store_read_fd(m->pipe[READ], m);
 		m->pipe[READ] = -1;
 		*side = WRITE;
-		return (return_val);
+		return (0);
 	}
 	return (0);
-}
-
-void error_exit(t_minishell *m, int exit_status)
-{
-	minishell_cleanup(m);
-	exit(exit_status);
 }
 // in the future this will actually need the argv inside the tree node
 // rename probably
@@ -182,6 +174,8 @@ void builtin_exit(char **argv, t_minishell *m, bool in_main_process)
 
 int	execute_builtin(t_minishell *m, char **argv, int8_t pipe_side)
 {
+	static int i = 1;
+	printf("visit count int execute_builtin = %i\n", i++);
 	if (ft_strncmp(argv[0], "exit", 5) == 0)
 	{
 		builtin_exit(argv, m, pipe_side);
@@ -195,7 +189,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv)
 	int		status = 1;
 	for (int i = 0; argv[i] != NULL; ++i)
 	{
-		printf("i: %i\n", i);
+		//printf("i: %i\n", i);
 		printf("argv[%i]: %s\n", i, argv[i]);
 	}
 	pid = fork();
@@ -206,8 +200,8 @@ pid_t	execute_subprocess(t_minishell *m, char **argv)
 		execute_builtin(m, argv, 0);
 		apply_redirect(m);
 		close_pipe(m);
-		char *path = ft_strjoin("/usr/bin/", argv[0]);
-		if (execve(path, argv, m->envp) == -1)
+		char *path = ft_strjoin("/usr/bin/", argv[0]); // replace with proper command finding function
+		if (execve(path, argv, m->envp) == -1) // just have execve catch most error values
 			perror("execve fail");
 		printf("errno: %i\n", errno);
 		if (errno == ENOENT)
@@ -243,7 +237,6 @@ void execute_command(t_minishell *m, char **argv, int8_t pipe_side, int status)
 	m->last_pid = execute_subprocess(m, argv);
 }
 
-static
 void	wait_for_sub_processes(t_minishell *minishell)
 {
 	uint32_t	i;
@@ -298,6 +291,7 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 			else if (tree->token.type == WORD)
 			{
 				execute_command(m, tree->token.u_data.argv, pipe_side, status);
+				break ;
 			}
 			tree = tree->left;	
 		}
