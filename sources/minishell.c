@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 19:25:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 21:48:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,7 +216,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 	int		status = 1;
 	for (int i = 0; argv[i] != NULL; ++i)
 	{
-		//printf("i: %i\n", i);
+		printf("i: %i\n", i);
 		printf("argv[%i]: %s\n", i, argv[i]);
 	}
 	pid = fork();
@@ -246,6 +246,8 @@ void execute_command(t_minishell *m, char **argv, int8_t pipe_side, int status)
 	pid_t pid;
 	t_builtin builtin;
 
+	if (argv == NULL)
+		return ;
 	if (status != 0)
 	{
 		pid = fork();
@@ -389,7 +391,6 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->last_pid = 0; 
 	minishell->pids = NULL;
 	get_minishell(minishell);
-
 }
 
 int main(int argc, char *argv[], char *envp[])

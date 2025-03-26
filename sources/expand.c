@@ -6,11 +6,14 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/25 22:06:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 22:00:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
+
+// jos ekasta expansionista tulee tyhjaa ni se argv skipataan
+
 
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 
@@ -70,7 +73,6 @@ char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index)
 {
 	char **env;
 	uint32_t len;
-	uint32_t i;
 	char c;
 	
 	env = get_minishell(NULL)->envp;
@@ -88,17 +90,15 @@ char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index)
 		*index += len;
 		return (NULL);
 	}
-	i = 0;
-	printf("string = %.*s, len = %u\n", len, &data->u_data.string[start], len);
-	while (env[i] != NULL)
+	while (*env != NULL)
 	{
-		if (ft_strncmp(&data->u_data.string[start], env[i], len) == 0)
+		if (ft_strncmp(&data->u_data.string[start], *env, len) == 0 &&
+						(*env)[len] == '=')
 		{
-			
 			*index += len;
-			return(ft_strchr(env[i], '=') + 1); // watch out maybe problem
+			return(&(*env)[len + 1]); // watch out maybe problem
 		}
-		i += 1;
+		env++;
 	}
 	*index += len;
 	return (NULL);
@@ -139,20 +139,23 @@ static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int 
 		env_node->right->token.u_data.string += i;
 		env_node->right->token.string_len -= i;
 		argv_pntr = travel_tree(arena, env_node->right, &str[len], count);
-		argv_pntr[count] = str;
+		if (argv_pntr != NULL)
+			argv_pntr[count] = str;
 		return (argv_pntr);
 	}
-	str[len++] = '\0';
-	arena_alloc_no_zero(arena, sizeof(*str) * len);
+	if (len > 0)
+	{
+		str[len++] = '\0';
+		arena_alloc_no_zero(arena, sizeof(*str) * len);
+	}
 	// update the arena with new string len info
 	//arena_alloc_no_zero(arena, sizeof(char) * len); //after i know how much info i got i reserve that
-	argv_pntr = travel_tree(arena, env_node->left, &str[len], count + 1);
+	argv_pntr = travel_tree(arena, env_node->left, &str[len], count + (len || 0));
 	// when there is no more to go from branch we return
 	// and start picking up the pointers   
 	// on the way back <-----
-
-	argv_pntr[count] = str;
-	
+	if (argv_pntr != NULL)
+		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV
 }
 
@@ -181,7 +184,7 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 		printf("alnum is false\n");
 		if (node->token.u_data.string[v->i + 1] == '?')
 		{
-			// write m->exit_status;
+			// write m->exit_status; @TODO: <--
 			v->i += 1;
 			return (0); // stuff????
 		}
@@ -192,20 +195,21 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 	v->env_var = find_env_var(&node->token, ++v->i, &v->i);
 	printf("env_var: %s\n", v->env_var);
 	printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
+	if (v->env_var == NULL)
+		return (0);
 	if (v->quote == '"')
 	{
-		while (v->env_var != NULL && *v->env_var != '\0')
+		while (*v->env_var != '\0')
 		{
 			str[v->len++] = *v->env_var++;
 		}
 		return (0) ; // no field split, spaces and tabs are spaces and tabs and dollar dollar
 	}
 	// else need to do more additional recursions and tabs and spaces are '\0'
-	if (v->env_var == NULL)
-		return (0);
+	while (is_space(*v->env_var) == true)
+		v->env_var++;
 	while (*v->env_var != '\0' && is_space(*v->env_var) == false)
 	{
-		// printf("teeest%u\n", v->len);
 		str[v->len++] = *v->env_var++;
 	}
 	if (*v->env_var == '\0')
@@ -254,6 +258,8 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	v.quote = '\0';
 	if (node == NULL)
 	{
+		if (count == 0)
+			return (NULL);
 		argv_pntr = arena_alloc(arena, sizeof(*argv_pntr) * (count + 1));
 		argv_pntr[count] = NULL;
 		return (argv_pntr);
@@ -274,8 +280,11 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
 				continue ;
-			str[v.len++] = '\0';
-			arena_alloc_no_zero(arena, v.len);
+			if (v.len > 0)
+			{
+				str[v.len++] = '\0';
+				arena_alloc_no_zero(arena, v.len);
+			}
 			node->token.u_data.string += v.i;
 			node->token.string_len -= v.i;
 			argv_pntr = travel_expansion(arena,
@@ -283,16 +292,22 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 					.left = node->left, .right = node, .root = NULL,
 					.token = {
 						.type = WORD, .u_data.string = v.env_var, .string_len = ft_strlen(v.env_var)},
-						}, &str[v.len], count + 1);
-			argv_pntr[count] = str;
+						}, &str[v.len], count + (v.len || 0));
+			if (argv_pntr != NULL)
+				argv_pntr[count] = str;
 			return(argv_pntr); //should return the WORD node for ARGV
 		}
 		str[v.len++] = node->token.u_data.string[v.i++];
 	}
-	str[v.len++] = '\0';
-	arena_alloc_no_zero(arena, v.len);
-	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + 1);
-	argv_pntr[count] = str;
+	if (v.len > 0)
+	{
+		str[v.len++] = '\0';
+		arena_alloc_no_zero(arena, sizeof(*str) * v.len);
+	}
+	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + (v.len || 0));
+	printf("str: %s\n", str);
+	if (argv_pntr != NULL)
+		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV
 }
 
