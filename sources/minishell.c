@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 18:55:49 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 19:25:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,33 +157,60 @@ void close_pipe(t_minishell *m)
 {
 	if (m->pipe[WRITE] != -1)
 		if (close(m->pipe[WRITE]))
-			error_exit(m, 1);
+			syscall_failure(m);
 	if (m->pipe[READ] != -1)
 		if (close(m->pipe[READ]))
-			error_exit(m, 1);
+			syscall_failure(m);
 }
 
-void builtin_exit(char **argv, t_minishell *m, bool in_main_process)
+void builtin_exit(char **argv, t_minishell *m)
 {
 	(void)argv;
 	minishell_cleanup(m);
-	if (in_main_process)
+	if (m->pipe_side != -1)
 		write(2, "exit\n", 5);
 	exit(m->exit_status);
 }
 
-int	execute_builtin(t_minishell *m, char **argv, int8_t pipe_side)
+t_builtin check_for_builtin(char *command)
 {
-	static int i = 1;
-	printf("visit count int execute_builtin = %i\n", i++);
-	if (ft_strncmp(argv[0], "exit", 5) == 0)
-	{
-		builtin_exit(argv, m, pipe_side);
-	}
+	if (ft_strncmp(command, "exit", 5) == 0)
+		return(BUILTIN_EXIT);
+	if (ft_strncmp(command, "echo", 5) == 0)
+		return(BUILTIN_ECHO);
+	if (ft_strncmp(command, "cd", 3) == 0)
+		return(BUILTIN_CD);
+	if (ft_strncmp(command, "pwd", 4) == 0)
+		return(BUILTIN_PWD);
+	if (ft_strncmp(command, "env", 4) == 0)
+		return(BUILTIN_ENV);
+	if (ft_strncmp(command, "unset", 5) == 0)
+		return(BUILTIN_UNSET);
+	if (ft_strncmp(command, "export", 5) == 0)
+		return(BUILTIN_EXPORT);
+	return (BUILTIN_FALSE);
+}
+
+int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
+{
+	if (command == BUILTIN_EXIT)
+		builtin_exit(argv, m);
+	if (command == BUILTIN_ECHO)
+		; // @TODO: add command
+	if (command == BUILTIN_CD)
+		; // @TODO: add command
+	if (command == BUILTIN_PWD)
+		; // @TODO: add command
+	if (command == BUILTIN_ENV)
+		; // @TODO: add command
+	if (command == BUILTIN_UNSET)
+		; // @TODO: add command
+	if (command == BUILTIN_EXPORT)
+		; // @TODO: add command
 	return (0);
 }
 
-pid_t	execute_subprocess(t_minishell *m, char **argv)
+pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 {
 	pid_t	pid;
 	int		status = 1;
@@ -197,7 +224,8 @@ pid_t	execute_subprocess(t_minishell *m, char **argv)
 		; // @TODO: error cheking
 	if (pid == 0)
 	{
-		execute_builtin(m, argv, 0);
+		if (builtin != BUILTIN_FALSE)
+			execute_builtin(m, argv, builtin);
 		apply_redirect(m);
 		close_pipe(m);
 		char *path = ft_strjoin("/usr/bin/", argv[0]); // replace with proper command finding function
@@ -216,6 +244,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv)
 void execute_command(t_minishell *m, char **argv, int8_t pipe_side, int status)
 {
 	pid_t pid;
+	t_builtin builtin;
 
 	if (status != 0)
 	{
@@ -228,13 +257,13 @@ void execute_command(t_minishell *m, char **argv, int8_t pipe_side, int status)
 		m->last_pid = pid;
 		return ;
 	}
-	printf("\n\n\npipe_side = [%i]\n\n\n", pipe_side);
+	builtin = check_for_builtin(argv[0]);
 	if (pipe_side == -1)
 	{
-		if (execute_builtin(m, argv, 1))
+		if (execute_builtin(m, argv, builtin))
 			return ;
 	}
-	m->last_pid = execute_subprocess(m, argv);
+	m->last_pid = execute_subprocess(m, argv, builtin);
 }
 
 void	wait_for_sub_processes(t_minishell *minishell)

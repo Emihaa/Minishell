@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/21 00:45:14 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/26 19:38:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,11 +153,8 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 		minishell->line_counter += 1;
 		if (line == NULL)
 		{
-			if (errno == EXIT_SUCCESS)
-			{
-				printf(EOF_ERROR, minishell->line_counter, delimiter);
-				break ;
-			} perror("readline failure"); // panic;
+			printf(EOF_ERROR, minishell->line_counter, delimiter); // should this be on stderror?
+			break ;
 		}
 		uint32_t line_len = ft_strlen(line);
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)

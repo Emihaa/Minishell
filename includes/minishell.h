@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 18:50:33 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 19:26:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct s_minishell
 	uint32_t	heredoc_count;
 	int			redir_fds[2];
 	int			pipe[2];
+	int8_t		pipe_side;
 	pid_t			*pids;  // maybe needed
 	pid_t			last_pid;
 	int			exit_status;
@@ -173,5 +174,22 @@ uint8_t	num_len(uint32_t num);
 bool	is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
 void error_exit(t_minishell *m, int exit_status);
+
+
+//builtin stuff
+
+typedef enum e_builtin
+{
+	BUILTIN_FALSE = 0,
+	BUILTIN_EXIT,
+	BUILTIN_ECHO,
+	BUILTIN_CD,
+	BUILTIN_PWD,
+	BUILTIN_ENV,
+	BUILTIN_UNSET,
+	BUILTIN_EXPORT,
+} t_builtin;
+
+t_builtin check_for_builtin(char *command);
 
 #endif
