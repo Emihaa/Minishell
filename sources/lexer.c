@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 14:27:30 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 23:36:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,8 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 	token = (t_token)
 	{
 		.type = type,
+		.string_len = len,
 		.u_data.string = &lexer->line[lexer->line_index],
-		token.string_len = len,
 	};
 	lexer->line_index += len;
 	return (token);

@@ -6,14 +6,16 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 19:26:33 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/27 23:45:53 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
+//@TODO: heredocuments have to be opened before any forking happens
+
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
-
-#define _GNU_SOURCE
 
 #define ANTIKRISTA 666
 
@@ -34,7 +36,7 @@
 #include <fcntl.h>		// open
 #include <sys/stat.h>	// lstat !!! might not be used WATCH OUTTTTTAMSL:MF:ALMSG:LMA
 
-
+// maybe have all token types be negative except heredoc so that the type can be replace with an fd
 // @question are these the only tokens needed?
 typedef enum e_type
 {
@@ -99,14 +101,13 @@ typedef struct s_token_string
 typedef struct s_token
 {
 	t_type		type;	// the type of the toke
+	uint32_t	string_len;	// length of the string // changed from size_t to uint32_t. 15.03.2025
 	union
 	{
 		char *string;
 		char **argv; 	// the string of the token | if applicable will be a filename a command name or an argument
 	} u_data;
-	uint32_t	string_len;	// length of the string // changed from size_t to uint32_t. 15.03.2025
-	//char		*name;	// added mostly for testing but might stay useful
-}	t_token; //@TODO: re oder struct to reduce size;
+}	t_token;
 
 // struct for any information the lexer might need
 // currently only the line string and the index seem to be required
@@ -132,8 +133,8 @@ void minishell_cleanup(t_minishell *minishell);
 
 // lexer stuff
 t_token	get_next_token(t_lexer *lexer);
-t_token *get_token_array(t_arena *arena, t_lexer *lexer);
-void print_tokens(t_lexer *lexer);
+t_token *get_token_array(t_arena *arena, t_lexer *lexer); // not used currently @TODO: remove this
+void print_tokens(t_lexer *lexer); // for debugging in the lexer
 
 // tree stuff
 t_node *parser(t_arena *arena, char *line);
@@ -166,15 +167,15 @@ void	wait_for_sub_processes(t_minishell *minishell);
 
 
 //environment stuff
-char 	*expand_variable(t_token *data, const uint32_t start, char **env);
+// char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
+char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 //general utils stuff
 uint32_t set_quote_removed_string(char *string, t_token *data);
 uint8_t	num_len(uint32_t num);
 bool	is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
-void error_exit(t_minishell *m, int exit_status);
-
+void error_exit(t_minishell *m, int exit_status); // probably not used
 
 //builtin stuff
 

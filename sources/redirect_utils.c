@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:44:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 18:50:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/27 23:04:07 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 // static inline
 void	syscall_failure(t_minishell *m)
 {
-	perror("Syscall failed. Trying to wait for subprocesses");
+	stdout = stderr;
+	printf("minishell: syscall failed with [%s]\n\
+	Trying to wait for subprocesses and exiting\n", strerror(errno));
+	// perror("Syscall failed. Trying to wait for subprocesses and exiting");
 	wait_for_sub_processes(m);
 	error_exit(m, 1);
 }
