@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/27 22:42:14 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 15:06:06 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,7 +316,6 @@ void expand(t_arena *arena, t_node *tree)
 	char *str;
 	t_node *tree_root;
 	
-	
 	printf("\n---- starting tree expansion ----\n");
 	
 	//loop here so that we send the first word node of branch
@@ -328,6 +327,8 @@ void expand(t_arena *arena, t_node *tree)
 		//find the first WORD node
 		while (tree)
 		{
+			if (tree->token.type == REDIRECT_OUT)
+				expand_out(arena, tree);
 			if (tree->token.type == WORD)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
