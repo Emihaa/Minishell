@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/27 23:45:53 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 17:10:53 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# define _GNU_SOURCE
 
 #define ANTIKRISTA 666
 
@@ -40,14 +42,14 @@
 // @question are these the only tokens needed?
 typedef enum e_type
 {
-	PIPE			=	'|',
-	REDIRECT_IN		=	'<',
-	REDIRECT_OUT	=	'>',
+	PIPE			=	-'|',
+	REDIRECT_IN		=	-'<',
+	REDIRECT_OUT	=	-'>',
 	HERE_DOCUMENT	=	256, // <<
-	REDIRECT_APPEND	=	257, // >>
+	REDIRECT_APPEND	=	-257, // >>
 	// COMMAND		=	258,
 	// ARGUMENT		=	259,	 // @question with argv or not?
-	WORD			=	260,	// generic word, could be command name or argument 
+	WORD			=	-260,	// generic word, could be command name or argument 
 	END_OF_LINE		=	0,		// first WORD before a pipe is the command and the following ones are arguments
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
@@ -59,6 +61,7 @@ typedef struct s_minishell
 	uint32_t	line_counter;
 	uint32_t	command_count;
 	uint32_t	heredoc_count;
+	int			*heredoc_fds;
 	int			redir_fds[2];
 	int			pipe[2];
 	int8_t		pipe_side;

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/27 23:36:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 17:12:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,8 +230,9 @@ int heredoc(t_minishell *minishell, t_token *data)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
 	else
 		heredoc_write_with_expansion(minishell, fds[WRITE], delimiter);
-	store_read_fd(fds[READ], minishell);
-	return (errval); // maybe error value
+	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
+	minishell->heredoc_count += 1;
+	return (fds[READ]); // maybe error value
 }
 
 //	Testing stuff

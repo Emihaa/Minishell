@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 00:40:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 17:11:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -369,12 +369,13 @@ void read_loop(t_minishell *m)
 	{
 		i = 0;
 		m->command_count = 0;
+		m->heredoc_count = 0;
 		m->line = readline("minishell> ");
 		if (m->line == NULL)
 			break ;
 		m->line_counter += 1;
 		while (is_space(m->line[i]))
-		i++;
+			i++;
 		if (m->line[i] == '\0')
 			continue ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
@@ -400,6 +401,8 @@ void minishell_cleanup(t_minishell *minishell)
 // we might want to pre allocate the arenas that will be used here to make cleanup easier
 void init_minishell(t_minishell *minishell, char **envp)
 {
+	static int heredoc_fds_arr[16];
+
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena.data == NULL)
 		; //@TODO: error cheking
@@ -413,6 +416,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
 	minishell->exit_status = 0;
+	minishell->heredoc_fds = heredoc_fds_arr;
 	minishell->heredoc_count = 0;
 	minishell->envp = envp; // need to be our own env etc.. bla bla bal
 	minishell->redir_fds[READ] = STDIN_FILENO;
