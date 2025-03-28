@@ -3,14 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/21 00:45:14 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/27 23:36:41 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+
+//@TODO: heredocuments have to be opened before any forking happens
 
 /*
 
@@ -58,7 +61,16 @@ ltaalas@c1r3p1:~/projects/minishell/sources$
 
 
 */
-
+static inline
+void print_eof_error(t_minishell *m, char *delimiter)
+{
+	FILE *temp;
+	
+	temp = stdout;
+	stdout = stderr;
+	printf(EOF_ERROR, m->line_counter, delimiter);
+	stdout = temp;
+}
 
 static
 void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
@@ -69,15 +81,12 @@ void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *deli
 	while (1)
 	{
 		line = readline("> ");
-		minishell->line_counter += 1;
 		if (line == NULL)
 		{
-			if (errno == EXIT_SUCCESS)
-			{
-				printf(EOF_ERROR, minishell->line_counter, delimiter);
-				break ;
-			} perror("readline failure"); // panic;
+			print_eof_error(minishell, delimiter);
+			break ;
 		}
+		minishell->line_counter += 1;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		if (write(write_fd, line, ft_strlen(line)) == -1)
@@ -90,25 +99,10 @@ void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *deli
 	close(write_fd);
 }
 
-// will need to be replaced
-int		write_env_variable(char *str, int fd)
+int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *m)
 {
-	//uint32_t len;
-	int i;
-
-	i = 0;
-	while(str[i] != '=' && str[i] != '\0')
-		i++;
-	if (str[i++] != '=')
-		return (-1);
-	write(fd, &str[i], ft_strlen(&str[i])); // @TODO: error checking
-	return (0);
-}
-// check which characters are valid + alnum
-int write_expanded_variable(char *string, const uint32_t start, int fd, t_minishell *m)
-{
-	int i;
-	uint32_t len;
+	uint32_t		len;
+	char			*env_var;
 
 	if (ft_isalnum(string[start + 1]) == false)
 	{
@@ -121,18 +115,8 @@ int write_expanded_variable(char *string, const uint32_t start, int fd, t_minish
 		return (0);
 	}
 	len = 0;
-	while (ft_isalnum(string[start + 1 + len]) == true)
-		len += 1;
-	i = 0;
-	while (m->envp[i] != NULL)
-	{
-		if (ft_strncmp(&string[start + 1], m->envp[i], len - 1) == 0) // this does not work for some reason $PAT still expands
-		{
-			write_env_variable(m->envp[i], fd); // @TODO: error checking
-			break ;
-		}
-		i += 1;
-	}
+	env_var = find_env_var(&string[start + 1], ft_strlen(&string[start + 1]), &len, m->envp);
+	ft_putstr_fd(env_var, fd);
 	return (len);
 }
 
@@ -146,22 +130,20 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 	char *line;
 	uint32_t len;
 	uint32_t i;
+	uint32_t line_len;
 
 	while (1)
 	{
 		line = readline("> ");
-		minishell->line_counter += 1;
 		if (line == NULL)
 		{
-			if (errno == EXIT_SUCCESS)
-			{
-				printf(EOF_ERROR, minishell->line_counter, delimiter);
-				break ;
-			} perror("readline failure"); // panic;
+			printf(EOF_ERROR, minishell->line_counter, delimiter); // should this be on stderror?
+			break ;
 		}
-		uint32_t line_len = ft_strlen(line);
+		minishell->line_counter += 1;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
+		line_len = ft_strlen(line);
 		i = 0;
 		while (i < line_len)
 		{
@@ -171,7 +153,7 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 			if (write(write_fd, line + i, len) == -1) 
 				perror("write line"); // error cheking
 			if (line[i + len] == '$')
-				len += write_expanded_variable(line, i + len, write_fd, minishell);
+				len += write_env_variable(line, i + len, write_fd, minishell);
 			i += len + 1;
 		}
 		if (write(write_fd, "\n", 1) == -1)
@@ -205,49 +187,46 @@ char	*create_temp_file_name(void)
 	return(name_buf);
 }
 
-// change to name to /tmp
+// @TODO: change to name to /tmp
+// @TODO: might want to make different error return values
 static
 int	create_heredoc_fds(int fds[2])
 {
-	const char *file_name = create_temp_file_name();
+	const char *file_name;
+	int return_val;
 
-	printf("%s\n", file_name);
-	if (file_name == NULL)
-		perror("filename is NULL"); // @TODO: error cheking
-	fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
-	if (fds[1] == -1)
+	return_val = 0;
+	while (1)
 	{
-		perror("heredoc failure: write"); // @TODO: error shit
+		file_name = create_temp_file_name();
+		fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
+		if (fds[1] != -1)
+			break ;
 		if (errno == EEXIST)
-			return (create_heredoc_fds(fds));
-		return (1); // @TODO: more error stuff
-	}
+			continue ;
+		return (-1); // @TODO: more error stuff
+	}	
 	fds[0] = open(file_name, O_CLOEXEC | O_RDONLY);
 	if (fds[0] == -1)
-	{
-		perror("heredoc failure: read"); // @TODO: error shit
-	}
+		return_val = -1;
 	if (unlink(file_name) == -1)
-		return (1); // @TODO: more error stuff
-	return (0);
+		return_val = -1; // @TODO: more error stuff
+	return (return_val);
 }
 
 int heredoc(t_minishell *minishell, t_token *data)
 {
 	int fds[2];
-	bool	quoted;
-	int errval; // delete
+	int errval = 0; // delete
 	char *delimiter;
 	uint32_t new_size;
 
-	errval = create_heredoc_fds(fds);
-	printf("heredoc_fds r_val: %i\n" , errval); // delete
+	if (create_heredoc_fds(fds) == -1)
+		syscall_failure(minishell);
 	delimiter = arena_alloc(&minishell->node_arena, sizeof(char) * data->string_len + 1); 
 	new_size = set_quote_removed_string(delimiter, data);
 	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
-	quoted = (new_size < data->string_len);
-	printf("quoted: %i\n", quoted);
-	if (quoted == true)
+	if (new_size < data->string_len)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
 	else
 		heredoc_write_with_expansion(minishell, fds[WRITE], delimiter);

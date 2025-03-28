@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/25 18:11:55 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/27 00:03:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,24 +253,22 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 // token recognisation function
 void print_token_type(t_type *token_type)
 {
-	(void)token_type;
-	return ;
-	// if (*token_type == PIPE)
-	// 	ft_putstr_fd("|", 2);
-	// else if (*token_type == REDIRECT_IN)
-	// 	ft_putstr_fd("<", 2);
-	// else if (*token_type == REDIRECT_OUT)
-	// 	ft_putstr_fd(">", 2);
-	// else if (*token_type == HERE_DOCUMENT)
-	// 	ft_putstr_fd("<<", 2);
-	// else if (*token_type == REDIRECT_APPEND)
-	// 	ft_putstr_fd(">>", 2);
-	// else if (*token_type == WORD)
-	// 	ft_putstr_fd("WORD", 2);
-	// else if (*token_type == END_OF_LINE)
-	// 	ft_putstr_fd("newline", 2);
-	// else if (*token_type == ERROR)
-	// 	ft_putstr_fd("error", 2);
+	if (*token_type == PIPE)
+		ft_putstr_fd("|", 2);
+	else if (*token_type == REDIRECT_IN)
+		ft_putstr_fd("<", 2);
+	else if (*token_type == REDIRECT_OUT)
+		ft_putstr_fd(">", 2);
+	else if (*token_type == HERE_DOCUMENT)
+		ft_putstr_fd("<<", 2);
+	else if (*token_type == REDIRECT_APPEND)
+		ft_putstr_fd(">>", 2);
+	else if (*token_type == WORD)
+		ft_putstr_fd("WORD", 2);
+	else if (*token_type == END_OF_LINE)
+		ft_putstr_fd("newline", 2);
+	else if (*token_type == ERROR)
+		ft_putstr_fd("error", 2);
 }
 
 t_node *find_head_root(t_node *node)
@@ -281,30 +279,30 @@ t_node *find_head_root(t_node *node)
 }
 
 // Function to print the tree
-static void print_tree(t_node *node, int depth)
-{
-	int i = 0; 
-	if (!node)
-		return ;
-	while (i++ < depth)
-		printf("  ");
-	// Print current node
-	printf("[-- ");
-	print_token_type(&node->token.type);
-	printf(" -> %.*s\n", (int)node->token.string_len, node->token.u_data.string);
-	// Print left subtree
-	if (node->left)
-	{
-		printf(" L ");
-		print_tree(node->left, depth + 1);
-	}
-	// Print right subtree
-	if (node->right)
-	{
-		printf(" R ");
-		print_tree(node->right, depth + 1);
-	}
-}
+// static void print_tree(t_node *node, int depth)
+// {
+// 	int i = 0; 
+// 	if (!node)
+// 		return ;
+// 	while (i++ < depth)
+// 		printf("  ");
+// 	// Print current node
+// 	printf("[-- ");
+// 	print_token_type(&node->token.type);
+// 	printf(" -> %.*s\n", (int)node->token.string_len, node->token.u_data.string);
+// 	// Print left subtree
+// 	if (node->left)
+// 	{
+// 		printf(" L ");
+// 		print_tree(node->left, depth + 1);
+// 	}
+// 	// Print right subtree
+// 	if (node->right)
+// 	{
+// 		printf(" R ");
+// 		print_tree(node->right, depth + 1);
+// 	}
+// }
 
 
 // @TODO: fix the tree if only one pipe
@@ -341,7 +339,7 @@ t_node *parser(t_arena *arena, char *line)
 		tree = insert_node(tree, NULL, &token, arena);
 	}
 	tree = find_head_root(tree);
-	print_tree(tree, 1);
+	//print_tree(tree, 1);
 	expand(arena, tree);
 	return (tree);
 }

@@ -6,11 +6,14 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/28 14:47:43 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/28 15:06:06 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
+
+// jos ekasta expansionista tulee tyhjaa ni se argv skipataan
+
 
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 
@@ -20,100 +23,85 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 // i dont need to know the amount of pointers before hand because if allocate them dynamically
 // they will be next to each other on arena, but cannot allocate anything new in between
 
-
-// // add the string to the first word node and break the connection
-// static void travel_tree(t_node *node, char *str)
+// get_env_var(t_token *data, const uint32_t start, uint32_t *index, char **env)
 // {
-//     int i;
-//     int len;
-//     t_node *tree_head;  
-//     i = 0;
-//     len = 0;
-//     tree_head = node;
-//     if (!node)
-//         return ;
-//     // travel left subtree
-//     while (node)
-//     {
-//         if (node->token.type == WORD)
-//         {
-//             //argv pointer spot here
-//             printf("%s\n", node->token.u_data.string);
-//             while (i <= (int)node->token.string_len)
-//             {
-//                 str[len++] = node->token.u_data.string[i];
-//                 i++;
-//             }
-//             str[len++] = '\0';
-//             i = 0;
-//         }
-//         node = node->left;
-//         //return(len);
-//         //argv pointterit 
-//     }
-//     //new string
-//     travel_tree(tree_head->right, str);
+// 	char *env_var;
+// 	const char *str = &data->u_data.string[start];
+
+// 	env_var = find_env_var()
 // }
 
 
-// char **get_env(char **env)
+// char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env)
 // {
-// 	static char **envp;
-// 	if (env == NULL)
-// 		return (envp);
-// 	envp = env;
+// 	uint32_t len;
+// 	char c;
+
+// 	len = 0;
+// 	while (start + len < data->string_len)
+// 	{
+// 		c = data->u_data.string[start + len];
+// 		if (c != '_' && ft_isalnum(c) == false)
+// 			break ;
+// 		len += 1;
+// 	}
+// 	if (env != NULL && len > 0)
+// 	{	
+// 		while (*env != NULL)
+// 		{
+// 			if (ft_strncmp(&data->u_data.string[start], *env, len) == 0 &&
+// 							(*env)[len] == '=')
+// 			{
+// 				*index += len;
+// 				return(&(*env)[len + 1]); // watch out maybe problem
+// 			}
+// 			env++;
+// 		}
+// 	}
+// 	*index += len;
 // 	return (NULL);
 // }
 
 
-char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index)
+char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env)
 {
-	char **env;
 	uint32_t len;
-	uint32_t i;
 	char c;
-	
-	env = get_minishell(NULL)->envp;
+
 	len = 0;
-	while (start + len < data->string_len)
+	while (len < str_len)
 	{
-		c = data->u_data.string[start + len];
-		if (c == '_' || ft_isalnum(c) == true)
-			len += 1;
-		else
+		c = str[len];
+		if (c != '_' && ft_isalnum(c) == false)
 			break ;
+		len += 1;
 	}
-	if (env == NULL || env[0] == NULL || len == 0)
+	if (env != NULL && len > 0)
 	{	
-		*index += len;
-		return (NULL);
-	}
-	i = 0;
-	printf("string = %.*s, len = %u\n", len, &data->u_data.string[start], len);
-	while (env[i] != NULL)
-	{
-		if (ft_strncmp(&data->u_data.string[start], env[i], len) == 0)
+		while (*env != NULL)
 		{
-			
-			*index += len;
-			return(ft_strchr(env[i], '=') + 1); // watch out maybe problem
+			if (ft_strncmp(str, *env, len) == 0 &&
+							(*env)[len] == '=')
+			{
+				*index += len;
+				return(&(*env)[len + 1]); // watch out maybe problem
+			}
+			env++;
 		}
-		i += 1;
 	}
 	*index += len;
 	return (NULL);
 }
 
-static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
+static
+char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
 {
-	static uint32_t i;
-	static uint32_t len;
-	char	 **argv_pntr;
+	static uint32_t	i;
+	static uint32_t	len;
+	static char		**argv_pntr;
 	
 	i = 0;
 	len = 0;
-	printf("%s\n", env_node->token.u_data.string);
-
 	while (i < env_node->token.string_len)
 	{
 		if (is_space(env_node->token.u_data.string[i]) == true)
@@ -132,27 +120,27 @@ static char **travel_expansion(t_arena *arena, t_node *env_node, char *str, int 
 		}
 		str[len++] = env_node->token.u_data.string[i++];
 	}
-	i = 0;
 	if (env_node->right->token.string_len > 0)
 	{
 		arena_alloc_no_zero(arena, len);
-		env_node->right->token.u_data.string += i;
-		env_node->right->token.string_len -= i;
 		argv_pntr = travel_tree(arena, env_node->right, &str[len], count);
-		argv_pntr[count] = str;
+		if (argv_pntr != NULL)
+			argv_pntr[count] = str;
 		return (argv_pntr);
 	}
-	str[len++] = '\0';
-	arena_alloc_no_zero(arena, sizeof(*str) * len);
+	if (len > 0)
+	{
+		str[len++] = '\0';
+		arena_alloc_no_zero(arena, sizeof(*str) * len);
+	}
 	// update the arena with new string len info
 	//arena_alloc_no_zero(arena, sizeof(char) * len); //after i know how much info i got i reserve that
-	argv_pntr = travel_tree(arena, env_node->left, &str[len], count + 1);
+	argv_pntr = travel_tree(arena, env_node->left, &str[len], count + (len || 0));
 	// when there is no more to go from branch we return
 	// and start picking up the pointers   
 	// on the way back <-----
-
-	argv_pntr[count] = str;
-	
+	if (argv_pntr != NULL)
+		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV
 }
 
@@ -174,42 +162,53 @@ typedef struct s_expand_vars
 	char *env_var;
 }	t_expand_vars;
 
+
+static inline
+void set_env_var(t_expand_vars *v, t_node *node)
+{
+	v->env_var = find_env_var	(	
+									&node->token.u_data.string[++v->i],
+									node->token.string_len,
+									&v->i,
+									get_minishell(NULL)->envp
+								);
+}
+
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
 	if (ft_isalnum(node->token.u_data.string[v->i + 1]) == false)
 	{
-		printf("alnum is false\n");
 		if (node->token.u_data.string[v->i + 1] == '?')
 		{
-			// write m->exit_status;
+			// write m->exit_status; @TODO: <--
 			v->i += 1;
 			return (0); // stuff????
 		}
 		str[v->len++] = node->token.u_data.string[v->i++];
 		return (0);
 	}
-	printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
-	v->env_var = find_env_var(&node->token, ++v->i, &v->i);
-	printf("env_var: %s\n", v->env_var);
-	printf("node str+index: %u, %s\n", v->i, &node->token.u_data.string[v->i]);
-	if (v->quote == '"')
-	{
-		while (v->env_var != NULL && *v->env_var != '\0')
-		{
-			str[v->len++] = *v->env_var++;
-		}
-		return (0) ; // no field split, spaces and tabs are spaces and tabs and dollar dollar
-	}
-	// else need to do more additional recursions and tabs and spaces are '\0'
+	set_env_var(v, node);
+	// v->env_var = find_env_var(&node->token, ++v->i, &v->i, get_minishell(NULL)->envp);
 	if (v->env_var == NULL)
 		return (0);
+	if (v->quote == '"')
+	{
+		while (*v->env_var != '\0')
+			str[v->len++] = *v->env_var++;
+		return (0) ; // no field split, spaces and tabs are spaces and tabs and dollar dollar
+	} 				// else need to do more additional recursions and tabs and spaces are '\0'
+	while (is_space(*v->env_var) == true)
+	{
+		v->env_var++;
+	}
 	while (*v->env_var != '\0' && is_space(*v->env_var) == false)
 	{
-		// printf("teeest%u\n", v->len);
 		str[v->len++] = *v->env_var++;
 	}
 	if (*v->env_var == '\0')
 		return (0);
+	while (is_space(*v->env_var) == true)
+		v->env_var++;
 	return (1);
 }
 
@@ -228,15 +227,32 @@ bool	is_quote(char c)
 	return ((c == '"' || c == '\''));
 }
 
+/*
+	if (is_quote(node->token.u_data.string[v.i]) &&
+		(v.quote == '\0' || v.quote == node->token.u_data.string[v.i]))
+	{
+		if (v.quote == '\0')
+			v.quote = node->token.u_data.string[v.i];
+		else if (v.quote = node->token.u_data.string[v.i])
+			v.quote = '\0';
+		v.i++;
+	}
+*/
+
 // add the string to the first word node and break the connection
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 {
 	static t_expand_vars v;
-	char	 **argv_pntr;
+	static char	 **argv_pntr;
 
-	v = (t_expand_vars){0};
+	v.env_var = NULL;
+	v.i = 0;
+	v.len = 0;
+	v.quote = '\0';
 	if (node == NULL)
 	{
+		if (count == 0)
+			return (NULL);
 		argv_pntr = arena_alloc(arena, sizeof(*argv_pntr) * (count + 1));
 		argv_pntr[count] = NULL;
 		return (argv_pntr);
@@ -244,44 +260,46 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	while (v.i < node->token.string_len)
 	{
 		// if we find quates, flag it? and also what type of quate flag
-		if (is_quote(node->token.u_data.string[v.i]))
+		if (is_quote(node->token.u_data.string[v.i]) &&
+			(v.quote == '\0' || v.quote == node->token.u_data.string[v.i]))
 		{
 			if (v.quote == '\0')
 				v.quote = node->token.u_data.string[v.i];
 			else if (v.quote == node->token.u_data.string[v.i])
 				v.quote = '\0';
-			else
-			{
-				str[v.len++] = node->token.u_data.string[v.i++];
-				continue ;
-			}
 			v.i++;
 		}
-		else if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
+		if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
 				continue ;
-			str[v.len++] = '\0';
-			arena_alloc_no_zero(arena, v.len);
-			while (is_space(*v.env_var) == true)
-				v.env_var++;
+			if (v.len > 0)
+			{
+				str[v.len++] = '\0';
+				arena_alloc_no_zero(arena, v.len);
+			}
 			node->token.u_data.string += v.i;
 			node->token.string_len -= v.i;
-			argv_pntr = travel_expansion(arena, 
+			argv_pntr = travel_expansion(arena,
 				&(t_node){
 					.left = node->left, .right = node, .root = NULL,
 					.token = {
 						.type = WORD, .u_data.string = v.env_var, .string_len = ft_strlen(v.env_var)},
-						}, &str[v.len], count + 1);
-			argv_pntr[count] = str;
+						}, &str[v.len], count + (v.len || 0));
+			if (argv_pntr != NULL)
+				argv_pntr[count] = str;
 			return(argv_pntr); //should return the WORD node for ARGV
 		}
 		str[v.len++] = node->token.u_data.string[v.i++];
 	}
-	str[v.len++] = '\0';
-	arena_alloc_no_zero(arena, v.len);
-	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + 1);
-	argv_pntr[count] = str;
+	if (v.len > 0)
+	{
+		str[v.len++] = '\0';
+		arena_alloc_no_zero(arena, sizeof(*str) * v.len);
+	}
+	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + (v.len || 0));
+	if (argv_pntr != NULL)
+		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV
 }
 
@@ -323,6 +341,6 @@ void expand(t_arena *arena, t_node *tree)
 		// back track to the next branch (if any)
 		tree = tree_root->right;
 	}
-	printf("arena size: %lu\n", arena->size);
+	printf("arena size after expansion: %lu\n", arena->size);
 	printf("\n---- tree expanded ----\n\n\n");
 }

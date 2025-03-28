@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/22 23:44:34 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 23:36:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,13 @@ int	match_quote(t_lexer *lexer, char quote, int len)
 static inline
 t_token	tokenize_pipe(t_lexer *lexer)
 {
-	lexer->line_index += 1;
-	return ((t_token){
+	const t_token token = {
 		.type = PIPE,
-		.u_data.string = &lexer->line[lexer->line_index - 1],
+		.u_data.string = &lexer->line[lexer->line_index],
 		.string_len = 1,
-	});
+	};
+	lexer->line_index += 1;
+	return (token);
 }
 
 // just returns a token with correct parameters for a EOL
@@ -110,8 +111,8 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 	token = (t_token)
 	{
 		.type = type,
-		{token.u_data.string = &lexer->line[lexer->line_index]},
-		token.string_len = len,
+		.string_len = len,
+		.u_data.string = &lexer->line[lexer->line_index],
 	};
 	lexer->line_index += len;
 	return (token);
@@ -210,56 +211,4 @@ t_token *get_token_array(t_arena *arena, t_lexer *lexer)
 // 		i++;
 // 	}
 // 	arena_reset(arena);
-// }
-
-// void read_loop(char **envp)
-// {
-// 	//t_arena arena = arena_new(DEFAULT_ARENA_CAPACITY);
-// 	char *line;
-// 	(void)envp;
-
-// 	while (1)
-// 	{
-// 		t_lexer lexer = {0};
-// 		line = readline("lexer[TEST]> ");
-// 		if (line == NULL)
-// 		{
-// 			break ;
-// 		}
-// 		add_history(line);
-//     	//printf("%s", line);
-// 		lexer.line = line;
-// 			print_tokens(&lexer);
-// 		//print_token_array(&arena, &lexer);
-// 		free(line);
-// 	}
-// }
-
-// int main_test(int argc, char *argv[], char *envp[])
-// {
-// 	(void)argc;
-// 	(void)argv;
-// 	read_loop(envp);
-// 	//char buf[1024] = {0};
-// 	// while (1)
-// 	// {
-// 	// 	memset(buf, 0, 1024);
-// 	// 	if (read(STDIN_FILENO, buf, 1023) < 1)
-// 	// 		break;
-// 	// 	add_history(buf);
-// 	// 	write(STDOUT_FILENO, buf, ft_strlen(buf));
-// 	// }
-
-// 	printf("exit\n");
-//     return (0);
-// }
-
-
-// int main_test(int argc, char *argv[], char *envp[])
-// {
-// 	(void)argc;
-// 	(void)argv;
-// 	// read_loop(envp);
-// 	printf("exit\n");
-//     return (0);
 // }

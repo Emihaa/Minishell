@@ -6,14 +6,16 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 17:35:06 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/28 15:05:28 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
+//@TODO: heredocuments have to be opened before any forking happens
+
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
-
-#define _GNU_SOURCE
 
 #define ANTIKRISTA 666
 
@@ -34,7 +36,7 @@
 #include <fcntl.h>		// open
 #include <sys/stat.h>	// lstat !!! might not be used WATCH OUTTTTTAMSL:MF:ALMSG:LMA
 
-
+// maybe have all token types be negative except heredoc so that the type can be replace with an fd
 // @question are these the only tokens needed?
 typedef enum e_type
 {
@@ -44,9 +46,9 @@ typedef enum e_type
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	257, // >>
 	// COMMAND		=	258,
-	// ARGUMENT		=	259, // @question with argv or not?
+	// ARGUMENT		=	259,	 // @question with argv or not?
 	WORD			=	260,	// generic word, could be command name or argument 
-	END_OF_LINE		=	-1,		// first WORD before a pipe is the command and the following ones are arguments
+	END_OF_LINE		=	0,		// first WORD before a pipe is the command and the following ones are arguments
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
 
@@ -59,9 +61,11 @@ typedef struct s_minishell
 	uint32_t	heredoc_count;
 	int			redir_fds[2];
 	int			pipe[2];
-	pid_t			*pids;
+	int8_t		pipe_side;
+	pid_t			*pids;  // maybe needed
 	pid_t			last_pid;
 	int			exit_status;
+	char		*line;
 	t_arena		node_arena;
 	t_arena		env_arena;
 	t_arena		scratch_arena;
@@ -97,14 +101,13 @@ typedef struct s_token_string
 typedef struct s_token
 {
 	t_type		type;	// the type of the toke
+	uint32_t	string_len;	// length of the string // changed from size_t to uint32_t. 15.03.2025
 	union
 	{
 		char *string;
 		char **argv; 	// the string of the token | if applicable will be a filename a command name or an argument
 	} u_data;
-	uint32_t	string_len;	// length of the string // changed from size_t to uint32_t. 15.03.2025
-	//char		*name;	// added mostly for testing but might stay useful
-}	t_token; //@TODO: re oder struct to reduce size;
+}	t_token;
 
 // struct for any information the lexer might need
 // currently only the line string and the index seem to be required
@@ -130,8 +133,8 @@ void minishell_cleanup(t_minishell *minishell);
 
 // lexer stuff
 t_token	get_next_token(t_lexer *lexer);
-t_token *get_token_array(t_arena *arena, t_lexer *lexer);
-void print_tokens(t_lexer *lexer);
+t_token *get_token_array(t_arena *arena, t_lexer *lexer); // not used currently @TODO: remove this
+void print_tokens(t_lexer *lexer); // for debugging in the lexer
 
 // tree stuff
 t_node *parser(t_arena *arena, char *line);
@@ -155,18 +158,43 @@ int heredoc(t_minishell *minishell, t_token *data);
 // testing possible redirect stuff
 #define WRITE	1
 #define READ	0
-int store_write_fd(int write_fd, t_minishell *minishell);
-int store_read_fd(int read_fd, t_minishell *minishell);
+void	store_write_fd(int write_fd, t_minishell *minishell);
+void	store_read_fd(int read_fd, t_minishell *minishell);
 void	apply_redirect(t_minishell *minishell);
 void	reset_redirect(t_minishell *minishell);
+int		redirect_out(char **file_name, t_minishell *m);
+int		redirect_in(char **file_name, t_minishell *m);
+int		redirect_append(char **file_name, t_minishell *m);
+
+void	syscall_failure(t_minishell *m);
+void	wait_for_sub_processes(t_minishell *minishell);
+
 
 //environment stuff
-char 	*expand_variable(t_token *data, const uint32_t start, char **env);
+// char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
+char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 //general utils stuff
 uint32_t set_quote_removed_string(char *string, t_token *data);
 uint8_t	num_len(uint32_t num);
 bool	is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
+void error_exit(t_minishell *m, int exit_status); // probably not used
+
+//builtin stuff
+
+typedef enum e_builtin
+{
+	BUILTIN_FALSE = 0,
+	BUILTIN_EXIT,
+	BUILTIN_ECHO,
+	BUILTIN_CD,
+	BUILTIN_PWD,
+	BUILTIN_ENV,
+	BUILTIN_UNSET,
+	BUILTIN_EXPORT,
+} t_builtin;
+
+t_builtin check_for_builtin(char *command);
 
 #endif
