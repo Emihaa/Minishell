@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/25 00:47:44 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/26 17:35:06 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,6 +138,10 @@ t_node *parser(t_arena *arena, char *line);
 
 // expand stuff
 void expand(t_arena *arena, t_node *tree);
+char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index);
+
+// out_expand stuff
+void expand_out(t_arena *arena, t_node *tree);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
