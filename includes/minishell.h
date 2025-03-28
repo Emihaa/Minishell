@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 15:05:28 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/28 15:08:52 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ t_node *parser(t_arena *arena, char *line);
 
 // expand stuff
 void expand(t_arena *arena, t_node *tree);
-char	*find_env_var(t_token *data, const uint32_t start, uint32_t *index);
 
 // out_expand stuff
 void expand_out(t_arena *arena, t_node *tree);
