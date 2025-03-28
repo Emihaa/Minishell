@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 17:12:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 23:34:05 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ int	create_heredoc_fds(int fds[2])
 int heredoc(t_minishell *minishell, t_token *data)
 {
 	int fds[2];
-	int errval = 0; // delete
+	// int errval = 0; // delete
 	char *delimiter;
 	uint32_t new_size;
 
@@ -234,6 +234,8 @@ int heredoc(t_minishell *minishell, t_token *data)
 	minishell->heredoc_count += 1;
 	return (fds[READ]); // maybe error value
 }
+
+
 
 //	Testing stuff
 /*

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/27 00:03:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 23:48:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -340,7 +340,7 @@ t_node *parser(t_arena *arena, char *line)
 	}
 	tree = find_head_root(tree);
 	//print_tree(tree, 1);
-	expand(arena, tree);
+	expand(arena,  get_minishell(NULL), tree); // place holder thingy to get the minishell struct in there
 	return (tree);
 }
 

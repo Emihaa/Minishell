@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 17:11:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 23:50:17 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,22 @@ void run_command(t_minishell *m, char **argv)
 	builtin_exit(NULL, m);
 }
 
+void close_heredocs(t_minishell *m)
+{
+	uint32_t i;
+
+	i = 0;
+	while(i < m->heredoc_count)
+	{
+		if (m->heredoc_fds[i] != -1)
+		{
+			if (close(m->heredoc_fds[i]) == -1)
+				syscall_failure(m);
+		}
+		i++;
+	}
+}
+
 pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 {
 	pid_t	pid;
@@ -322,6 +338,23 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	}
 }
 
+void store_heredoc(t_minishell *m, int fd)
+{
+	uint32_t i;
+
+	i = 0;
+	store_read_fd(fd, m);
+	while (i < m->heredoc_count)
+	{
+		if (m->heredoc_fds[i] == fd)
+		{
+			m->heredoc_fds[i] = -1;
+			break ;
+		}
+		i++;
+	}
+}
+
 int minishell_exec_loop(t_minishell *m, t_node *tree)
 {
 	t_node *current_head;
@@ -338,8 +371,8 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 			status = create_and_store_pipe(m, &m->pipe_side);
 		while (tree)
 		{
-			if(tree->token.type == HERE_DOCUMENT) // maybe temp stuff
-				status = heredoc(m, &tree->token); // delimiter will still have quotes removed
+			if(tree->token.type > 0) // maybe temp stuff
+				store_heredoc(m, tree->token.type); // delimiter will still have quotes removed
 			else if (tree->token.type == REDIRECT_OUT)
 				status = redirect_out(tree->token.u_data.argv, m);
 			else if (tree->token.type == REDIRECT_IN)
@@ -401,7 +434,7 @@ void minishell_cleanup(t_minishell *minishell)
 // we might want to pre allocate the arenas that will be used here to make cleanup easier
 void init_minishell(t_minishell *minishell, char **envp)
 {
-	static int heredoc_fds_arr[16];
+	static int heredoc_fds_arr[16] = {0};
 
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena.data == NULL)

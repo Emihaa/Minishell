@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 17:15:49 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 23:46:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,7 @@ void print_tokens(t_lexer *lexer); // for debugging in the lexer
 t_node *parser(t_arena *arena, char *line);
 
 // expand stuff
-void expand(t_arena *arena, t_node *tree);
+void expand(t_arena *arena, t_minishell *m, t_node *tree);
 
 // out_expand stuff
 void expand_out(t_arena *arena, t_node *tree);

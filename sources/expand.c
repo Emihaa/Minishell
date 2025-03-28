@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/28 15:06:06 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/28 17:18:04 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -311,7 +311,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 // separated by \0
 // then create an array of pointers that point to the starting points of the string
 
-void expand(t_arena *arena, t_node *tree)
+void expand(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	char *str;
 	t_node *tree_root;
@@ -327,8 +327,10 @@ void expand(t_arena *arena, t_node *tree)
 		//find the first WORD node
 		while (tree)
 		{
-			if (tree->token.type == REDIRECT_OUT)
-				expand_out(arena, tree);
+			if (tree->token.type > 0)
+				tree->token.type = heredoc(m, &tree->token);
+			// if (tree->token.type == REDIRECT_OUT)
+			// 	expand_out(arena, tree);
 			if (tree->token.type == WORD)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer

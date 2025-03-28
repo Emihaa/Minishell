@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 19:36:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 17:22:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,5 +88,14 @@ int	redirect_in(char **file_name, t_minishell *m)
 		return (1);
 	}
 	store_read_fd(fd, m);
+	return(0);
+}
+
+int	redirect_heredoc(t_token *data, t_minishell *m)
+{
+	const int fd = data->type;
+
+	store_read_fd(fd, m);
+	m->heredoc_fds[m->heredoc_count] = -1;
 	return(0);
 }
