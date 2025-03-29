@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 23:50:17 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/29 01:48:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 
 #include "../includes/minishell.h" // fix maybe
 
-void env(char **envp)
+void builtin_env(char **envp)
 {
 	int i;
 
@@ -32,7 +32,8 @@ void env(char **envp)
 		i++;
 	}
 }
-
+// @TODO: we need to figure out how we want to do file redirections for builtins when run in the main process (parent)
+// one way would be to not redirect anything but just write into the fd that minishell->fds[WRITE] points to
 void builtin_echo(char *argv[])
 {
 	bool newline;
@@ -56,6 +57,46 @@ void builtin_echo(char *argv[])
 	if (newline == true)
 		printf("\n");
 }
+
+
+// watch the youtube video that had something about path name shortening
+// it also had some stuff about arenas and macros for c. was about 13mins long
+// will need that path name shortening for this cd probably
+// void builtin_cd(char **argv, char **env)
+// {
+// 	int i;
+// 	const char *home = find_env_var("HOME", 4, i, env);
+// 	char *curpath;
+// 	char *directory;
+
+
+// 	i = 0;
+// 	while (argv[i] != NULL)
+// 		i++;
+// 	if (i > 1)
+// 	{
+// 		ft_putendl_fd("minishell: cd: too many arguments", 2);
+// 		return (1);
+// 	}
+// 	directory = argv[0];
+// 	if (argv[0] == NULL)
+// 	{
+// 		if (home == NULL)
+// 		{
+
+// 			ft_putendl_fd("minishell: cd: HOME not set", 2);
+// 			return(1);
+// 		}
+// 		directory = home;
+// 	}
+// 	if (directory[0] == '/') // step 3
+// 	{
+// 		curpath = directory;
+		
+// 	}
+// 	(directory[0] == '.')
+// 	chdir()
+// }
 
 //pwd command
 //propably need file dupping (dup2)
@@ -229,7 +270,9 @@ void run_command(t_minishell *m, char **argv)
 {
 	char *cmd_with_path;
 
-	cmd_with_path = get_cmd_with_path(&m->node_arena, m, argv[0]); // replace with proper command finding function
+	cmd_with_path = argv[0];
+	if (ft_strchr(cmd_with_path, '/') == NULL)
+		cmd_with_path = get_cmd_with_path(&m->node_arena, m, argv[0]); // replace with proper command finding function
 	if (execve(cmd_with_path, argv, m->envp) == -1) // just have execve catch most error values
 		perror("execve fail");
 	printf("errno: %i\n", errno);

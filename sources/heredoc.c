@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 23:34:05 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/29 02:07:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,9 +167,9 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 // @TODO: change to name to /tmp/...
 // we need some kind of global heredoc count to check if it is under 17
 static
-char	*create_temp_file_name(void)
+char	*create_temp_file_name(uint32_t heredoc_num)
 {
-	static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
+	//static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
 									// also should be reset whenever starting a new command reading loop
 	static char name_buf[30] = HEREDOC_TEMP_NAME;
 	uint32_t num_temp;
@@ -192,13 +192,15 @@ char	*create_temp_file_name(void)
 static
 int	create_heredoc_fds(int fds[2])
 {
+	static uint32_t heredoc_num = 1;
 	const char *file_name;
 	int return_val;
 
 	return_val = 0;
+	heredoc_num = 1;
 	while (1)
 	{
-		file_name = create_temp_file_name();
+		file_name = create_temp_file_name(heredoc_num++);
 		fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
 		if (fds[1] != -1)
 			break ;

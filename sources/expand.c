@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/28 17:18:04 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/29 01:38:03 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,6 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 // if all strings are done correctly and they are allocated to the arena correctly
 // i dont need to know the amount of pointers before hand because if allocate them dynamically
 // they will be next to each other on arena, but cannot allocate anything new in between
-
-// get_env_var(t_token *data, const uint32_t start, uint32_t *index, char **env)
-// {
-// 	char *env_var;
-// 	const char *str = &data->u_data.string[start];
-
-// 	env_var = find_env_var()
-// }
 
 
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env)
@@ -201,12 +193,12 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 	{
 		v->env_var++;
 	}
-	while (*v->env_var != '\0' && is_space(*v->env_var) == false)
-	{
+	while (is_space(*v->env_var) == false)
+	{	
+		if (*v->env_var == '\0')
+			return (0);
 		str[v->len++] = *v->env_var++;
 	}
-	if (*v->env_var == '\0')
-		return (0);
 	while (is_space(*v->env_var) == true)
 		v->env_var++;
 	return (1);
@@ -238,7 +230,7 @@ bool	is_quote(char c)
 		v.i++;
 	}
 */
-
+// @TODO: if we get a token with a string of "" bash treats this as the command '\0' so it creates an empty string and uses that as a command
 // add the string to the first word node and break the connection
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 {
@@ -269,7 +261,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				v.quote = '\0';
 			v.i++;
 		}
-		if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
+		else if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
 				continue ;
@@ -290,7 +282,8 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				argv_pntr[count] = str;
 			return(argv_pntr); //should return the WORD node for ARGV
 		}
-		str[v.len++] = node->token.u_data.string[v.i++];
+		else
+			str[v.len++] = node->token.u_data.string[v.i++];
 	}
 	if (v.len > 0)
 	{
