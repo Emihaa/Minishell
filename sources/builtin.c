@@ -6,11 +6,40 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 22:54:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 23:47:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+// @TODO: we need to figure out how we want to do file redirections for builtins when run in the main process (parent)
+// one way would be to not redirect anything but just write into the fd that minishell->fds[WRITE] points to
+void builtin_echo(char *argv[], int fd)
+{
+	bool newline;
+	int i;
+
+	if (argv[1] == NULL)
+	{
+		write(1, "\n", fd);
+		return ;
+	}
+	if (ft_strncmp(argv[1], "-n", 3) == 0)
+		newline = false;
+	else
+		newline = true;
+	i = 1 + newline;
+	while (1)
+	{
+		ft_putstr_fd(argv[i], fd);
+		i++;
+		if (argv[i] == NULL)
+			break ;
+		ft_putchar_fd(' ', fd);
+	}
+	if (newline == true)
+		ft_putchar_fd('\n', fd);
+}
 
 void builtin_exit(t_minishell *m)
 {
@@ -48,12 +77,12 @@ t_builtin check_for_builtin(char *command)
 	return (BUILTIN_FALSE);
 }
 
-int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
+int	execute_builtin(t_minishell *m, char **argv, t_builtin command, int fd)
 {
 	if (command == BUILTIN_EXIT)
 		builtin_exit(m);
 	if (command == BUILTIN_ECHO)
-		builtin_echo(argv); // @TODO: add command
+		builtin_echo(argv, fd); // @TODO: add command
 	if (command == BUILTIN_CD)
 		; // @TODO: add command
 	if (command == BUILTIN_PWD)

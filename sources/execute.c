@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 22:52:54 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 23:42:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 		close_pipe(m);
 		if (builtin != BUILTIN_FALSE)
 		{
-			execute_builtin(m, argv, builtin);
+			execute_builtin(m, argv, builtin, 1);
 			exit(m->exit_status);
 		}
 		run_command(m, argv);
@@ -134,7 +134,7 @@ void execute_command(t_minishell *m, char **argv, int status)
 	builtin_type = check_for_builtin(argv[0]);
 	if (m->pipe_side == -1 && builtin_type != BUILTIN_FALSE)
 	{
-		execute_builtin(m, argv, builtin_type);
+		execute_builtin(m, argv, builtin_type, m->redir_fds[WRITE]);
 		return ;
 	}
 	m->last_pid = execute_subprocess(m, argv, builtin_type);

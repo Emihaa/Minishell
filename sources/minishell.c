@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 22:53:45 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 23:31:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,31 +31,6 @@ void builtin_env(char **envp)
 		printf("%s\n", envp[i]);
 		i++;
 	}
-}
-// @TODO: we need to figure out how we want to do file redirections for builtins when run in the main process (parent)
-// one way would be to not redirect anything but just write into the fd that minishell->fds[WRITE] points to
-void builtin_echo(char *argv[])
-{
-	bool newline;
-	int i;
-
-	if (argv[1] == NULL)
-	{
-		write(1, "\n", 1);
-		return ;
-	}
-	newline = !(0 || !ft_strncmp(argv[1], "-n", 3));
-	i = !newline + 1;
-	while (1)
-	{
-		printf("%s", argv[i]);
-			i++;
-		if (argv[i] == NULL)
-			break ;
-		printf(" ");
-	}
-	if (newline == true)
-		printf("\n");
 }
 
 
