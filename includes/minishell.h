@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 23:46:58 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 17:26:39 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,6 @@ int		redirect_out(char **file_name, t_minishell *m);
 int		redirect_in(char **file_name, t_minishell *m);
 int		redirect_append(char **file_name, t_minishell *m);
 
-void	syscall_failure(t_minishell *m);
 void	wait_for_sub_processes(t_minishell *minishell);
 
 
@@ -198,5 +197,12 @@ typedef enum e_builtin
 } t_builtin;
 
 t_builtin check_for_builtin(char *command);
+
+void builtin_exit(t_minishell *m);
+
+
+//error stuff
+void	syscall_failure(t_minishell *m);
+
 
 #endif

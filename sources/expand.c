@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/29 01:38:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:07:23 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,7 @@ char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, cha
 	{	
 		while (*env != NULL)
 		{
-			if (ft_strncmp(str, *env, len) == 0 &&
-							(*env)[len] == '=')
+			if (ft_strncmp(str, *env, len) == 0 && (*env)[len] == '=')
 			{
 				*index += len;
 				return(&(*env)[len + 1]); // watch out maybe problem

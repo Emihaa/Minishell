@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/29 01:48:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 21:06:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,15 +181,6 @@ void close_pipe(t_minishell *m)
 			syscall_failure(m);
 }
 
-void builtin_exit(char **argv, t_minishell *m)
-{
-	(void)argv;
-	minishell_cleanup(m);
-	if (m->pipe_side != -1)
-		write(2, "exit\n", 5);
-	exit(m->exit_status);
-}
-
 t_builtin check_for_builtin(char *command)
 {
 	if (ft_strncmp(command, "exit", 5) == 0)
@@ -212,7 +203,7 @@ t_builtin check_for_builtin(char *command)
 int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 {
 	if (command == BUILTIN_EXIT)
-		builtin_exit(argv, m);
+		builtin_exit(m);
 	if (command == BUILTIN_ECHO)
 		builtin_echo(argv); // @TODO: add command
 	if (command == BUILTIN_CD)
@@ -233,7 +224,7 @@ void command_not_found(t_minishell *m, char *cmd)
 	stdout = stderr;
 	printf("minishell: %s: command not found\n", cmd);
 	m->exit_status = 127;
-	builtin_exit(NULL, m);
+	builtin_exit(m);
 }
 
 
@@ -266,6 +257,22 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 	return (NULL);
 }
 
+
+static
+void execve_failure(t_minishell *m, char *cmd)
+{
+	m->exit_status = 1;
+	if (errno == ENOENT)
+		m->exit_status = 127;
+	if (errno == EACCES)
+		m->exit_status = 126;
+	if (errno == EISDIR || errno == ENOTDIR)
+		m->exit_status = 126;
+	stdin = stderr;
+	printf("minishell: %s: %s\n", cmd, strerror(errno));
+	builtin_exit(m);
+}
+
 void run_command(t_minishell *m, char **argv)
 {
 	char *cmd_with_path;
@@ -273,16 +280,8 @@ void run_command(t_minishell *m, char **argv)
 	cmd_with_path = argv[0];
 	if (ft_strchr(cmd_with_path, '/') == NULL)
 		cmd_with_path = get_cmd_with_path(&m->node_arena, m, argv[0]); // replace with proper command finding function
-	if (execve(cmd_with_path, argv, m->envp) == -1) // just have execve catch most error values
-		perror("execve fail");
-	printf("errno: %i\n", errno);
-	m->exit_status = 1;
-	if (errno == ENOENT)
-		m->exit_status = 127;
-	if (errno == EACCES)
-		m->exit_status = 126;
-	perror(argv[0]);
-	builtin_exit(NULL, m);
+	execve(cmd_with_path, argv, m->envp); // just have execve catch most error values
+	execve_failure(m, argv[0]);
 }
 
 void close_heredocs(t_minishell *m)
@@ -299,60 +298,6 @@ void close_heredocs(t_minishell *m)
 		}
 		i++;
 	}
-}
-
-pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
-{
-	pid_t	pid;
-
-	for (int i = 0; argv[i] != NULL; ++i)
-	{
-		printf("i: %i\n", i);
-		printf("argv[%i]: %s\n", i, argv[i]);
-	}
-	pid = fork();
-	if (pid == (pid_t)(-1))
-		; // @TODO: error cheking
-	if (pid == 0)
-	{
-		apply_redirect(m);
-		close_pipe(m);
-		if (builtin != BUILTIN_FALSE)
-		{
-			execute_builtin(m, argv, builtin);
-			exit(m->exit_status);
-		}
-		run_command(m, argv);
-	}
-	m->command_count += 1;
-	return (pid);
-}
-
-void execute_command(t_minishell *m, char **argv, int status)
-{
-	pid_t pid;
-	t_builtin builtin_type;
-
-	if (argv == NULL)
-		return ;
-	if (status != 0)
-	{
-		pid = fork();
-		if (pid == -1)
-			; // @TODO: error cheking
-		if (pid == 0)
-			error_exit(m, status);
-		m->command_count += 1;
-		m->last_pid = pid;
-		return ;
-	}
-	builtin_type = check_for_builtin(argv[0]);
-	if (m->pipe_side == -1 && builtin_type != BUILTIN_FALSE)
-	{
-		execute_builtin(m, argv, builtin_type);
-		return ;
-	}
-	m->last_pid = execute_subprocess(m, argv, builtin_type);
 }
 
 void	wait_for_sub_processes(t_minishell *minishell)
@@ -422,7 +367,7 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 				status = redirect_in(tree->token.u_data.argv, m);
 			else if (tree->token.type == REDIRECT_APPEND)
 				status = redirect_append(tree->token.u_data.argv, m);
-			else if (tree->token.type == WORD)
+			else if (tree->token.type == WORD || status != 0)
 			{
 				execute_command(m, tree->token.u_data.argv, status);
 				break ;
@@ -470,6 +415,7 @@ void minishell_cleanup(t_minishell *minishell)
 	arena_delete(&minishell->node_arena);
 	arena_delete(&minishell->scratch_arena);
 	arena_delete(&minishell->env_arena);
+	close_heredocs(minishell);
 	free(minishell->line);
 }
 // set default values for the minishell struct
