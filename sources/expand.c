@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/31 21:07:23 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 22:37:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,8 +321,8 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 		{
 			if (tree->token.type > 0)
 				tree->token.type = heredoc(m, &tree->token);
-			// if (tree->token.type == REDIRECT_OUT)
-			// 	expand_out(arena, tree);
+			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
+			 	expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer

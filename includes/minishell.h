@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 17:26:39 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 22:38:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define _GNU_SOURCE
+#define _GNU_SOURCE
 
 #define ANTIKRISTA 666
 
@@ -145,8 +145,8 @@ t_node *parser(t_arena *arena, char *line);
 // expand stuff
 void expand(t_arena *arena, t_minishell *m, t_node *tree);
 
-// out_expand stuff
-void expand_out(t_arena *arena, t_node *tree);
+// expand_redirect stuff
+void expand_redirect(t_arena *arena, t_node *node);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
