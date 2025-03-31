@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/31 22:37:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 00:04:26 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -327,6 +327,7 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
 				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);
+				tree->left = NULL;
 				break ;
 			}
 			tree = tree->left;

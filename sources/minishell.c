@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 23:31:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 00:04:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,7 +176,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	}
 }
 
-void store_heredoc(t_minishell *m, int fd)
+int store_heredoc(t_minishell *m, int fd)
 {
 	uint32_t i;
 
@@ -191,6 +191,23 @@ void store_heredoc(t_minishell *m, int fd)
 		}
 		i++;
 	}
+	return (0);
+}
+
+int do_redir(t_minishell *m, t_token *data)
+{
+	int status;
+
+	status = 0;
+	if(data->type > 0) // maybe temp stuff
+		status = store_heredoc(m, data->type); // delimiter will still have quotes removed
+	else if (data->type == REDIRECT_OUT)
+		status = redirect_out(data->u_data.argv, m);
+	else if (data->type == REDIRECT_IN)
+		status = redirect_in(data->u_data.argv, m);
+	else if (data->type == REDIRECT_APPEND)
+		status = redirect_append(data->u_data.argv, m);
+	return (status);
 }
 
 int minishell_exec_loop(t_minishell *m, t_node *tree)
@@ -209,25 +226,14 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 			status = create_and_store_pipe(m, &m->pipe_side);
 		while (tree)
 		{
-			if(tree->token.type > 0) // maybe temp stuff
-				store_heredoc(m, tree->token.type); // delimiter will still have quotes removed
-			else if (tree->token.type == REDIRECT_OUT)
-				status = redirect_out(tree->token.u_data.argv, m);
-			else if (tree->token.type == REDIRECT_IN)
-				status = redirect_in(tree->token.u_data.argv, m);
-			else if (tree->token.type == REDIRECT_APPEND)
-				status = redirect_append(tree->token.u_data.argv, m);
-			else if (tree->token.type == WORD || status != 0)
-			{
+			status = do_redir(m, &tree->token);
+			if (tree->token.type == WORD || status != 0)
 				execute_command(m, tree->token.u_data.argv, status);
-				break ;
-			}
 			tree = tree->left;	
 		}
 		reset_redirect(m);
 		tree = current_head->right;
 	}
-	printf("arena_size at end of exec loop: %lu\n", m->node_arena.size);
 	return (42);
 }
 

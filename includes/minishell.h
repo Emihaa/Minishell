@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 23:42:26 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 00:07:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,13 +200,18 @@ t_builtin check_for_builtin(char *command);
 int	execute_builtin(t_minishell *m, char **argv, t_builtin command, int fd);
 
 void builtin_exit(t_minishell *m);
-void builtin_echo(char *argv[]);
+void builtin_echo(char *argv[], int fd);
 void builtin_pwd(void);
 
 
 // execute stuff
 pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin);
 void	execute_command(t_minishell *m, char **argv, int status);
+
+void close_pipe(t_minishell *m);
+void execve_failure(t_minishell *m, char *cmd);
+void command_not_found(t_minishell *m, char *cmd);
+
 
 //error stuff
 void	syscall_failure(t_minishell *m);

@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/03/31 22:39:52 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/01 00:07:56 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ NAME = minishell
 
 SOURCES =	minishell.c lexer.c heredoc.c tree.c utils.c expand.c \
 			redirect.c	redirect_utils.c expand_redirect.c  builtin.c \
-			error.c execute.c
+			error.c execute.c execute_utils.c
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
