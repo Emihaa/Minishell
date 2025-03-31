@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 23:47:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 00:31:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,53 @@ void builtin_exit(t_minishell *m)
 
 //pwd command
 //propably need file dupping (dup2)
-void	builtin_pwd(void)
+void	builtin_pwd(int fd)
 {
 	char current_path[PATH_MAX];
 	getcwd(current_path, PATH_MAX);
-	printf("%s\n", current_path);
+	ft_putendl_fd(current_path, fd);
 }
+
+// watch the youtube video that had something about path name shortening
+// it also had some stuff about arenas and macros for c. was about 13mins long
+// will need that path name shortening for this cd probably
+// void builtin_cd(char **argv, char **env)
+// {
+
+// 	int i;
+// 	const char *home = find_env_var("HOME", 4, i, env);
+// 	char *curpath;
+// 	char *directory;
+
+
+// 	i = 0;
+// 	while (argv[i] != NULL)
+// 		i++;
+// 	if (i > 1)
+// 	{
+// 		ft_putendl_fd("minishell: cd: too many arguments", 2);
+// 		return (1);
+// 	}
+// 	directory = argv[0];
+// 	if (argv[0] == NULL)
+// 	{
+// 		if (home == NULL)
+// 		{
+
+// 			ft_putendl_fd("minishell: cd: HOME not set", 2);
+// 			return(1);
+// 		}
+// 		directory = home;
+// 	}
+// 	if (directory[0] == '/') // step 3
+// 	{
+// 		curpath = directory;
+		
+// 	}
+// 	(directory[0] == '.')
+// 	chdir()
+// }
+
 
 t_builtin check_for_builtin(char *command)
 {
@@ -86,7 +127,7 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command, int fd)
 	if (command == BUILTIN_CD)
 		; // @TODO: add command
 	if (command == BUILTIN_PWD)
-		builtin_pwd(); // @TODO: add command
+		builtin_pwd(fd); // @TODO: add command
 	if (command == BUILTIN_ENV)
 		; // @TODO: add command
 	if (command == BUILTIN_UNSET)
