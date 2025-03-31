@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 22:38:19 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 22:49:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,9 +197,16 @@ typedef enum e_builtin
 } t_builtin;
 
 t_builtin check_for_builtin(char *command);
+int	execute_builtin(t_minishell *m, char **argv, t_builtin command);
 
 void builtin_exit(t_minishell *m);
+void builtin_echo(char *argv[]);
+void builtin_pwd(void);
 
+
+// execute stuff
+pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin);
+void	execute_command(t_minishell *m, char **argv, int status);
 
 //error stuff
 void	syscall_failure(t_minishell *m);

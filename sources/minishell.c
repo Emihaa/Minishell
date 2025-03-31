@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 22:36:39 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 22:53:45 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,16 +98,6 @@ void builtin_echo(char *argv[])
 // 	chdir()
 // }
 
-//pwd command
-//propably need file dupping (dup2)
-int print_working_directory(void)
-{
-	char current_path[PATH_MAX];
-	getcwd(current_path, PATH_MAX);
-	printf("%s\n", current_path);
-	return (BUILTIN_PWD);
-}
-
 void export(void)
 {
 	char *s = "vegenakki";
@@ -167,122 +157,7 @@ int	create_and_store_pipe(t_minishell *m, int8_t *side)
 	}
 	return (0);
 }
-// in the future this will actually need the argv inside the tree node
-// rename probably
 
-static inline
-void close_pipe(t_minishell *m)
-{
-	if (m->pipe[WRITE] != -1)
-		if (close(m->pipe[WRITE]))
-			syscall_failure(m);
-	if (m->pipe[READ] != -1)
-		if (close(m->pipe[READ]))
-			syscall_failure(m);
-}
-
-t_builtin check_for_builtin(char *command)
-{
-	if (ft_strncmp(command, "exit", 5) == 0)
-		return(BUILTIN_EXIT);
-	if (ft_strncmp(command, "echo", 5) == 0)
-		return(BUILTIN_ECHO);
-	if (ft_strncmp(command, "cd", 3) == 0)
-		return(BUILTIN_CD);
-	if (ft_strncmp(command, "pwd", 4) == 0)
-		return(BUILTIN_PWD);
-	if (ft_strncmp(command, "env", 4) == 0)
-		return(BUILTIN_ENV);
-	if (ft_strncmp(command, "unset", 5) == 0)
-		return(BUILTIN_UNSET);
-	if (ft_strncmp(command, "export", 5) == 0)
-		return(BUILTIN_EXPORT);
-	return (BUILTIN_FALSE);
-}
-
-int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
-{
-	if (command == BUILTIN_EXIT)
-		builtin_exit(m);
-	if (command == BUILTIN_ECHO)
-		builtin_echo(argv); // @TODO: add command
-	if (command == BUILTIN_CD)
-		; // @TODO: add command
-	if (command == BUILTIN_PWD)
-		return (print_working_directory()); // @TODO: add command
-	if (command == BUILTIN_ENV)
-		; // @TODO: add command
-	if (command == BUILTIN_UNSET)
-		; // @TODO: add command
-	if (command == BUILTIN_EXPORT)
-		; // @TODO: add command
-	return (0);
-}
-
-void command_not_found(t_minishell *m, char *cmd)
-{
-	stdout = stderr;
-	printf("minishell: %s: command not found\n", cmd);
-	m->exit_status = 127;
-	builtin_exit(m);
-}
-
-
-char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
-{
-	const uint32_t cmd_str_len = ft_strlen(cmd);
-	char *path;
-	uint32_t i;
-	char *cmd_with_path;
-	
-	i = 0;
-	path = find_env_var("PATH", 4, &i, m->envp);
-	if (path == NULL || *path == '\0')
-		return (cmd);
-	while (path[i] != '\0')
-	{
-		i = 0;
-		while (path[i] != ':' && path[i] != '\0')
-			i++;
-		cmd_with_path = arena_alloc(a, sizeof(char) * (i + cmd_str_len + 2));
-		ft_memmove(cmd_with_path, path, i);
-		cmd_with_path[i] = '/';
-		ft_memmove(&cmd_with_path[i + 1], cmd, cmd_str_len);
-		if (access(cmd_with_path, F_OK) == 0)
-			return (cmd_with_path);
-		arena_unalloc(a, sizeof(char) * (i + cmd_str_len + 2));
-		path += i + (path[i] == ':');
-	}
-	command_not_found(m, cmd);
-	return (NULL);
-}
-
-
-static
-void execve_failure(t_minishell *m, char *cmd)
-{
-	m->exit_status = 1;
-	if (errno == ENOENT)
-		m->exit_status = 127;
-	if (errno == EACCES)
-		m->exit_status = 126;
-	if (errno == EISDIR || errno == ENOTDIR)
-		m->exit_status = 126;
-	stdin = stderr;
-	printf("minishell: %s: %s\n", cmd, strerror(errno));
-	builtin_exit(m);
-}
-
-void run_command(t_minishell *m, char **argv)
-{
-	char *cmd_with_path;
-
-	cmd_with_path = argv[0];
-	if (ft_strchr(cmd_with_path, '/') == NULL)
-		cmd_with_path = get_cmd_with_path(&m->node_arena, m, argv[0]); // replace with proper command finding function
-	execve(cmd_with_path, argv, m->envp); // just have execve catch most error values
-	execve_failure(m, argv[0]);
-}
 
 void close_heredocs(t_minishell *m)
 {
