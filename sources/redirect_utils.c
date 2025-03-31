@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 18:44:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/27 23:04:07 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/28 16:38:39 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	store_write_fd(int out_fd, t_minishell *minishell)
 {
 	if (minishell->redir_fds[WRITE] != STDOUT_FILENO)
 		if (close(minishell->redir_fds[WRITE]) == -1)
-			syscall_failure(minishell); // @TODO: error cheking
+			syscall_failure(minishell); // @TODO: error checking
 	minishell->redir_fds[WRITE] = out_fd;
 }
 
@@ -35,7 +35,7 @@ void	store_read_fd(int in_fd, t_minishell *minishell)
 {
 	if (minishell->redir_fds[READ] != STDIN_FILENO)
 		if (close(minishell->redir_fds[READ]) == -1)
-			syscall_failure(minishell); // @TODO: error cheking
+			syscall_failure(minishell); // @TODO: error checking
 	minishell->redir_fds[READ] = in_fd;
 }
 
@@ -44,17 +44,17 @@ void	apply_redirect(t_minishell *minishell)
 	if (minishell->redir_fds[READ] != STDIN_FILENO)
 	{
 		if (dup2(minishell->redir_fds[READ], STDIN_FILENO) == -1)
-			syscall_failure(minishell); // @TODO: error cheking
+			syscall_failure(minishell); // @TODO: error checking
 		if (close(minishell->redir_fds[READ]) == -1)
-			syscall_failure(minishell); // @TODO: error cheking
+			syscall_failure(minishell); // @TODO: error checking
 		minishell->redir_fds[READ] = STDIN_FILENO;
 	}
 	if (minishell->redir_fds[WRITE] != STDOUT_FILENO)
 	{
 		if (dup2(minishell->redir_fds[WRITE], STDOUT_FILENO) == -1)
-			syscall_failure(minishell); // @TODO: error cheking
+			syscall_failure(minishell); // @TODO: error checking
 		if (close(minishell->redir_fds[WRITE]) == -1)
-			syscall_failure(minishell); // @TODO: error cheking
+			syscall_failure(minishell); // @TODO: error checking
 		minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	}
 }

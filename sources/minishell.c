@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 00:40:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 18:25:24 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -374,7 +374,7 @@ void read_loop(t_minishell *m)
 			break ;
 		m->line_counter += 1;
 		while (is_space(m->line[i]))
-		i++;
+			i++;
 		if (m->line[i] == '\0')
 			continue ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later

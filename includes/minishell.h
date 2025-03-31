@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/28 15:08:52 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/31 22:28:38 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+#define _GNU_SOURCE
 
 #define ANTIKRISTA 666
 
@@ -40,7 +42,7 @@
 // @question are these the only tokens needed?
 typedef enum e_type
 {
-	PIPE			=	'|',
+	PIPE			=	-'|',
 	REDIRECT_IN		=	'<',
 	REDIRECT_OUT	=	'>',
 	HERE_DOCUMENT	=	256, // <<
@@ -142,8 +144,8 @@ t_node *parser(t_arena *arena, char *line);
 // expand stuff
 void expand(t_arena *arena, t_node *tree);
 
-// out_expand stuff
-void expand_out(t_arena *arena, t_node *tree);
+// expand_redirect stuff
+void expand_redirect(t_arena *arena, t_node *node);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"

@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/28 15:06:06 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/03/31 22:30:14 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,7 @@ char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, cha
 	{	
 		while (*env != NULL)
 		{
-			if (ft_strncmp(str, *env, len) == 0 &&
-							(*env)[len] == '=')
+			if (ft_strncmp(str, *env, len) == 0 && (*env)[len] == '=')
 			{
 				*index += len;
 				return(&(*env)[len + 1]); // watch out maybe problem
@@ -327,8 +326,8 @@ void expand(t_arena *arena, t_node *tree)
 		//find the first WORD node
 		while (tree)
 		{
-			if (tree->token.type == REDIRECT_OUT)
-				expand_out(arena, tree);
+			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
+				expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
