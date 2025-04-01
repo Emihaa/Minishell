@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 00:08:30 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 22:52:47 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void execve_failure(t_minishell *m, char *cmd)
 		m->exit_status = 126;
 	if (errno == EISDIR || errno == ENOTDIR)
 		m->exit_status = 126;
-	stdin = stderr;
+	stdout = stderr;
 	printf("minishell: %s: %s\n", cmd, strerror(errno));
 	builtin_exit(m);
 }

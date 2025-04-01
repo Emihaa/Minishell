@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 00:07:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 22:56:26 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ typedef struct s_minishell
 	int			exit_status;
 	char		*line;
 	t_arena		node_arena;
-	t_arena		env_arena;
+	//t_arena		env_arena; // not used remeber to take it out
 	t_arena		scratch_arena;
 	char		**envp;
 }	t_minishell;
@@ -143,10 +143,20 @@ void print_tokens(t_lexer *lexer); // for debugging in the lexer
 t_node *parser(t_arena *arena, char *line);
 
 // expand stuff
+
+typedef struct s_expand_vars
+{
+	uint32_t i;
+	uint32_t len;
+	char quote;
+	char *env_var;
+}	t_expand_vars;
+
 void expand(t_arena *arena, t_minishell *m, t_node *tree);
 
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
+int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
@@ -176,11 +186,10 @@ void	wait_for_sub_processes(t_minishell *minishell);
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 //general utils stuff
-uint32_t set_quote_removed_string(char *string, t_token *data);
-uint8_t	num_len(uint32_t num);
-bool	is_space(char c);
+uint32_t	set_quote_removed_string(char *string, t_token *data);
+uint8_t		num_len(uint32_t num);
+bool		is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
-void error_exit(t_minishell *m, int exit_status); // probably not used
 
 //builtin stuff
 
@@ -197,11 +206,11 @@ typedef enum e_builtin
 } t_builtin;
 
 t_builtin check_for_builtin(char *command);
-int	execute_builtin(t_minishell *m, char **argv, t_builtin command, int fd);
+int	execute_builtin(t_minishell *m, char **argv, t_builtin command);
 
 void builtin_exit(t_minishell *m);
 void builtin_echo(char *argv[], int fd);
-void builtin_pwd(void);
+void builtin_pwd(int fd);
 
 
 // execute stuff
@@ -215,6 +224,13 @@ void command_not_found(t_minishell *m, char *cmd);
 
 //error stuff
 void	syscall_failure(t_minishell *m);
+
+
+// write_functions stuff
+int	write_bytes(int fd, char *str, size_t bytes_to_write);
+int	put_str(int fd, char *str);
+int	put_str_nl(int fd, char *str);
+int	put_char(int fd, char c);
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 00:08:44 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 22:56:01 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 {
-	const uint32_t cmd_str_len = ft_strlen(cmd);
-	char *path;
-	uint32_t i;
-	char *cmd_with_path;
+	const uint32_t	cmd_str_len = ft_strlen(cmd);
+	char			*path;
+	uint32_t		i;
+	char			*cmd_with_path;
 	
 	i = 0;
 	path = find_env_var("PATH", 4, &i, m->envp);
@@ -56,7 +56,8 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 {
 	pid_t	pid;
 
-	for (int i = 0; argv[i] != NULL; ++i)
+	// debug stuff
+	for (int i = 0; argv[i] != NULL; ++i) // @TODO: remove this
 	{
 		printf("i: %i\n", i);
 		printf("argv[%i]: %s\n", i, argv[i]);
@@ -70,7 +71,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 		close_pipe(m);
 		if (builtin != BUILTIN_FALSE)
 		{
-			execute_builtin(m, argv, builtin, 1);
+			execute_builtin(m, argv, builtin);
 			exit(m->exit_status);
 		}
 		run_command(m, argv);
@@ -92,7 +93,7 @@ void execute_command(t_minishell *m, char **argv, int status)
 		if (pid == -1)
 			syscall_failure(m); // @TODO: error cheking
 		if (pid == 0)
-			error_exit(m, status);
+			builtin_exit(m);
 		m->command_count += 1;
 		m->last_pid = pid;
 		return ;
@@ -100,7 +101,7 @@ void execute_command(t_minishell *m, char **argv, int status)
 	builtin_type = check_for_builtin(argv[0]);
 	if (m->pipe_side == -1 && builtin_type != BUILTIN_FALSE)
 	{
-		execute_builtin(m, argv, builtin_type, m->redir_fds[WRITE]);
+		execute_builtin(m, argv, builtin_type);
 		return ;
 	}
 	m->last_pid = execute_subprocess(m, argv, builtin_type);

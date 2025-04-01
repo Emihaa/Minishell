@@ -1,26 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_out.c                                       :+:      :+:    :+:   */
+/*   expand_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/31 22:28:15 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/01 18:56:01 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
-
-typedef struct s_expand_vars
-{
-	uint32_t i;
-	uint32_t len;
-	char quote;
-	char *env_var;
-}	t_expand_vars;
-
-int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 
 static inline
 bool	is_quote(char c)

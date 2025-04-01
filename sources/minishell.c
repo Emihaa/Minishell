@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 00:04:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 22:48:25 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,46 +32,6 @@ void builtin_env(char **envp)
 		i++;
 	}
 }
-
-
-// watch the youtube video that had something about path name shortening
-// it also had some stuff about arenas and macros for c. was about 13mins long
-// will need that path name shortening for this cd probably
-// void builtin_cd(char **argv, char **env)
-// {
-// 	int i;
-// 	const char *home = find_env_var("HOME", 4, i, env);
-// 	char *curpath;
-// 	char *directory;
-
-
-// 	i = 0;
-// 	while (argv[i] != NULL)
-// 		i++;
-// 	if (i > 1)
-// 	{
-// 		ft_putendl_fd("minishell: cd: too many arguments", 2);
-// 		return (1);
-// 	}
-// 	directory = argv[0];
-// 	if (argv[0] == NULL)
-// 	{
-// 		if (home == NULL)
-// 		{
-
-// 			ft_putendl_fd("minishell: cd: HOME not set", 2);
-// 			return(1);
-// 		}
-// 		directory = home;
-// 	}
-// 	if (directory[0] == '/') // step 3
-// 	{
-// 		curpath = directory;
-		
-// 	}
-// 	(directory[0] == '.')
-// 	chdir()
-// }
 
 void export(void)
 {
@@ -105,9 +65,10 @@ char *get_token_name(t_token *token)
 		return ("newline");
 	return ("ERROR");
 }
-
+//debug stuff
 void print_token(t_token *token)
 {
+	// debug stuff
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
 			token->type, get_token_name(token), (int)token->string_len, token->u_data.string);
 }
@@ -157,8 +118,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	pid_t		pid;
 
 	i = 0;
-	printf("command count: %o\n", minishell->command_count);
-	printf("last_pid = %i\n", minishell->last_pid);
+	printf("command count: %o\n", minishell->command_count); // Debug stuff
+	printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -223,7 +184,10 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 		if (m->pipe_side == READ)
 			status = create_and_store_pipe(m, &m->pipe_side);
 		if (tree->token.type == PIPE)
+		{
 			status = create_and_store_pipe(m, &m->pipe_side);
+			tree = tree->left;
+		}
 		while (tree)
 		{
 			status = do_redir(m, &tree->token);
@@ -234,7 +198,7 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 		reset_redirect(m);
 		tree = current_head->right;
 	}
-	return (42);
+	return (0);
 }
 
 void read_loop(t_minishell *m)
@@ -269,8 +233,6 @@ void read_loop(t_minishell *m)
 void minishell_cleanup(t_minishell *minishell)
 {
 	arena_delete(&minishell->node_arena);
-	arena_delete(&minishell->scratch_arena);
-	arena_delete(&minishell->env_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
 }
@@ -283,13 +245,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena.data == NULL)
-		; //@TODO: error cheking
-	minishell->env_arena = arena_new(ARG_MAX);
-	if (minishell->env_arena.data == NULL)
-		; //@TODO: error cheking
-	minishell->scratch_arena = arena_new(1024);
-	if (minishell->scratch_arena.data == NULL)
-		; //@TODO: error cheking
+		; // @TODO: error cheking
 	minishell->line = NULL;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
@@ -315,6 +271,6 @@ int main(int argc, char *argv[], char *envp[])
 	init_minishell(&minishell, envp);
 	read_loop(&minishell);
 	minishell_cleanup(&minishell);
-	printf("exit\n");
-    return (0);
+	printf("exit\n"); // doesnt make sense
+    return (minishell.exit_status);
 }

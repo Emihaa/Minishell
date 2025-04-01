@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/01 00:04:26 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 18:55:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,14 +144,6 @@ char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
 // on "ASD" there is no space so no \0, and we will continue to write rest of the node->token.u_data.string +len($OMPPU)
 // into the same argument 
 // after expansion is done, we will still move forward to node.left.left if not NULL
-
-typedef struct s_expand_vars
-{
-	uint32_t i;
-	uint32_t len;
-	char quote;
-	char *env_var;
-}	t_expand_vars;
 
 
 static inline

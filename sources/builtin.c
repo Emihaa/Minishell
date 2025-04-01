@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 00:31:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 22:52:05 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void builtin_echo(char *argv[], int fd)
 void builtin_exit(t_minishell *m)
 {
 	minishell_cleanup(m);
-	if (m->pipe_side != -1)
+	if (m->pipe_side == -1)
 		write(2, "exit\n", 5);
 	exit(m->exit_status);
 }
@@ -118,16 +118,16 @@ t_builtin check_for_builtin(char *command)
 	return (BUILTIN_FALSE);
 }
 
-int	execute_builtin(t_minishell *m, char **argv, t_builtin command, int fd)
+int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 {
 	if (command == BUILTIN_EXIT)
 		builtin_exit(m);
 	if (command == BUILTIN_ECHO)
-		builtin_echo(argv, fd); // @TODO: add command
+		builtin_echo(argv, m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_CD)
 		; // @TODO: add command
 	if (command == BUILTIN_PWD)
-		builtin_pwd(fd); // @TODO: add command
+		builtin_pwd(m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_ENV)
 		; // @TODO: add command
 	if (command == BUILTIN_UNSET)

@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/01 00:07:56 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/01 19:30:56 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,7 @@ NAME = minishell
 
 SOURCES =	minishell.c lexer.c heredoc.c tree.c utils.c expand.c \
 			redirect.c	redirect_utils.c expand_redirect.c  builtin.c \
-			error.c execute.c execute_utils.c
+			error.c execute.c execute_utils.c write_functions.c
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
@@ -51,7 +51,7 @@ HEADERS = $(addprefix $(INC_DIR)/, minishell.h)
 
 LINKS = $(addprefix -l, readline) # make this make any sense
 
-CC_FLAGS = -Wall -Wextra -Werror -ggdb3 -gdwarf
+CC_FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
 
@@ -141,10 +141,10 @@ no_built_in_optimize: optimize
 no_built_in_profile: CC_FLAGS += -fno-builtin -pg -O3
 no_built_in_profile: all
 
-debug: CC_FLAGS += -g3 -Wunreachable-code -Wunused-function
+debug: CC_FLAGS += -g3 -ggdb3 -gdwarf -Wunreachable-code -Wunused-function
 debug: all
 
-profile: CC_FLAGS += -O3 -pg 
+profile: CC_FLAGS += -O3 -pg
 profile: all
 
 optimize: CC_FLAGS += -O3 -mavx2 -msse4.2 -maes

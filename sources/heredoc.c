@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/29 02:07:19 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/01 23:03:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,23 +80,17 @@ void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *deli
 
 	while (1)
 	{
-		line = readline("> ");
-		if (line == NULL)
-		{
-			print_eof_error(minishell, delimiter);
+		if (heredoc_read(minishell, &line, delimiter));
 			break ;
-		}
-		minishell->line_counter += 1;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
-		if (write(write_fd, line, ft_strlen(line)) == -1)
-			perror("write line"); // error cheking
-		if (write(write_fd, "\n", 1) == -1)
-			perror("write '\\n'"); // error cheking
+		if (put_str_nl(write_fd, line) == -1)
+			break ; // @TODO: maybe error cheking
 		free(line);
 	}
 	free(line);
-	close(write_fd);
+	if (close(write_fd) == -1)
+		syscall_failure(minishell);
 }
 
 int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *m)
@@ -116,8 +110,21 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	}
 	len = 0;
 	env_var = find_env_var(&string[start + 1], ft_strlen(&string[start + 1]), &len, m->envp);
-	ft_putstr_fd(env_var, fd);
+	put_str(fd, env_var);
 	return (len);
+}
+
+static
+int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
+{
+	*line = readline("> ");
+	if (*line == NULL)
+	{
+		printf(EOF_ERROR, minishell->line_counter, delimiter); // should this be on stderror?
+		return -1;
+	}
+	minishell->line_counter += 1;
+	return (0);
 }
 
 // this is going to be a "simple" prototype that uses getenv
@@ -134,13 +141,8 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 
 	while (1)
 	{
-		line = readline("> ");
-		if (line == NULL)
-		{
-			printf(EOF_ERROR, minishell->line_counter, delimiter); // should this be on stderror?
+		if (heredoc_read(minishell, &line, delimiter));
 			break ;
-		}
-		minishell->line_counter += 1;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		line_len = ft_strlen(line);
@@ -150,18 +152,19 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 			len = 0;
 			while (line[i + len] != '\0' && line[i + len] != '$')
 				len += 1;
-			if (write(write_fd, line + i, len) == -1) 
-				perror("write line"); // error cheking
+			if (write_bytes(write_fd, line + i, len) == -1)
+				break ; // @TODO: maybe error cheking
 			if (line[i + len] == '$')
 				len += write_env_variable(line, i + len, write_fd, minishell);
 			i += len + 1;
 		}
-		if (write(write_fd, "\n", 1) == -1)
-			perror("write '\\n'"); // error cheking
+		if (put_char(write_fd, '\n'))
+			break ; // @TODO: error cheking
 		free(line);
 	}
 	free(line);
-	close(write_fd);
+	if (close(write_fd) == -1)
+		syscall_failure(minishell);
 }
 
 // @TODO: change to name to /tmp/...
