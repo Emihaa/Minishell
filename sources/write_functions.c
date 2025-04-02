@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 19:19:56 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 22:21:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 20:34:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,10 @@ int	put_str_nl(int fd, char *str)
 
 	r_val = 0;
 	if (str != NULL)
-		if (write_bytes(fd, str, ft_strlen(str)))
+	{
+		if (write_bytes(fd, str, ft_strlen(str)) == -1)
 			return (-1);
+	}
 	r_val = write_bytes(fd, "\n", 1);
 	return (r_val);
 }
@@ -46,10 +48,13 @@ int	put_str(int fd, char *str)
 
 	r_val = 0;
 	if (str != NULL)
+	{
 		r_val = write_bytes(fd, str, ft_strlen(str));
+	}
 	return (r_val);
 }
 
+inline
 int	put_char(int fd, char c)
 {
 	return (write_bytes(fd, &c, 1));
