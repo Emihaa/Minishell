@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 22:54:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 16:52:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,12 +73,4 @@ t_minishell *get_minishell(t_minishell *m)
 		return (minishell);
 	minishell = m;
 	return (NULL);
-}
-// seems to be unused currently
-void error_exit(t_minishell *m)
-{
-	// ASDASDASDASDASD
-	minishell_cleanup(m);
-	write(2, "exit\n", 5);
-	exit(m->exit_status);
 }

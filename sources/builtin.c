@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 22:52:05 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 17:28:32 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void builtin_echo(char *argv[], int fd)
 		newline = false;
 	else
 		newline = true;
-	i = 1 + newline;
+	i = !newline + 1;
 	while (1)
 	{
 		ft_putstr_fd(argv[i], fd);
@@ -56,6 +56,20 @@ void	builtin_pwd(int fd)
 	char current_path[PATH_MAX];
 	getcwd(current_path, PATH_MAX);
 	ft_putendl_fd(current_path, fd);
+}
+
+void builtin_env(char **envp)
+{
+	int i;
+
+	i = 0;
+	if (envp == NULL)
+		return ;
+	while (envp[i])
+	{
+		printf("%s\n", envp[i]);
+		i++;
+	}
 }
 
 // watch the youtube video that had something about path name shortening
@@ -129,7 +143,7 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 	if (command == BUILTIN_PWD)
 		builtin_pwd(m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_ENV)
-		; // @TODO: add command
+		builtin_env(m->envp); // @TODO: add command
 	if (command == BUILTIN_UNSET)
 		; // @TODO: add command
 	if (command == BUILTIN_EXPORT)

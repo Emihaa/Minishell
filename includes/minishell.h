@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 22:56:26 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 17:15:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,7 @@ void command_not_found(t_minishell *m, char *cmd);
 
 
 //error stuff
+void error_exit(t_minishell *m);
 void	syscall_failure(t_minishell *m);
 
 

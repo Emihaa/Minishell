@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 22:48:25 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 17:28:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,6 @@
 #include <linux/limits.h>
 
 #include "../includes/minishell.h" // fix maybe
-
-void builtin_env(char **envp)
-{
-	int i;
-
-	i = 0;
-	if (envp == NULL)
-		return ;
-	while (envp[i])
-	{
-		printf("%s\n", envp[i]);
-		i++;
-	}
-}
 
 void export(void)
 {
@@ -262,7 +248,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	get_minishell(minishell); // this will probably not be used so remeber to take care of it
 }
 
-int main(int argc, char *argv[], char *envp[])
+int main(int argc, char *argv[], char **envp)
 {
 	t_minishell minishell;
 

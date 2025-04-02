@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 23:03:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 16:57:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,19 @@ void print_eof_error(t_minishell *m, char *delimiter)
 }
 
 static
+int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
+{
+	*line = readline("> ");
+	if (*line == NULL)
+	{
+		print_eof_error(minishell, delimiter); // should this be on stderror?
+		return (-1);
+	}
+	minishell->line_counter += 1;
+	return (0);
+}
+
+static
 void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
@@ -80,7 +93,7 @@ void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *deli
 
 	while (1)
 	{
-		if (heredoc_read(minishell, &line, delimiter));
+		if (heredoc_read(minishell, &line, delimiter))
 			break ;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
@@ -114,19 +127,6 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	return (len);
 }
 
-static
-int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
-{
-	*line = readline("> ");
-	if (*line == NULL)
-	{
-		printf(EOF_ERROR, minishell->line_counter, delimiter); // should this be on stderror?
-		return -1;
-	}
-	minishell->line_counter += 1;
-	return (0);
-}
-
 // this is going to be a "simple" prototype that uses getenv
 // will be replaced with our own env version
 // there will be no quote removal inside heredoc
@@ -141,7 +141,7 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 
 	while (1)
 	{
-		if (heredoc_read(minishell, &line, delimiter));
+		if (heredoc_read(minishell, &line, delimiter))
 			break ;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;

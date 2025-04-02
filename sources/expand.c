@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/01 18:55:46 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 17:34:39 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,7 +281,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 		str[v.len++] = '\0';
 		arena_alloc_no_zero(arena, sizeof(*str) * v.len);
 	}
-	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + (v.len || 0));
+	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + (v.len != 0));
 	if (argv_pntr != NULL)
 		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/01 22:56:01 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 16:59:52 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 	// debug stuff
 	for (int i = 0; argv[i] != NULL; ++i) // @TODO: remove this
 	{
-		printf("i: %i\n", i);
+		//printf("i: %i\n", i);
 		printf("argv[%i]: %s\n", i, argv[i]);
 	}
 	pid = fork();
