@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 22:18:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:29:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,6 +169,10 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree);
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
+
+//expand_utils stuff
+bool	is_valid_var_start(char c);
+bool	is_quote(char c);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"

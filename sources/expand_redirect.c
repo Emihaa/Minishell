@@ -6,17 +6,12 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 19:19:40 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:31:03 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
 
-static inline
-bool	is_quote(char c)
-{
-	return ((c == '"' || c == '\''));
-}
 
 static void	memmove_name(t_arena *arena, t_node *node, char *str, char **argv)
 {

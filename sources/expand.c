@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:18:16 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:32:11 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
 	}
 	// update the arena with new string len info
 	//arena_alloc_no_zero(arena, sizeof(char) * len); //after i know how much info i got i reserve that
-	argv_pntr = travel_tree(arena, env_node->left, &str[len], count + (len || 0));
+	argv_pntr = travel_tree(arena, env_node->left, &str[len], count + (len != 0));
 	// when there is no more to go from branch we return
 	// and start picking up the pointers   
 	// on the way back <-----
@@ -189,11 +189,14 @@ static int small_itoa(t_expand_vars *v, char *str)
 
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
-	if (ft_isalnum(node->token.u_data.string[v->i + 1]) == false)
+	if (is_valid_var_start(node->token.u_data.string[v->i + 1]) == false)
 	{
 		if (node->token.u_data.string[v->i + 1] == '?')
 			return (small_itoa(v, str));
-		str[v->len++] = node->token.u_data.string[v->i++];
+		if (is_quote(node->token.u_data.string[v->i +1]))
+			v->i += 1;
+		else  
+			str[v->len++] = node->token.u_data.string[v->i++];
 		return (0);
 	}
 	set_env_var(v, node);
@@ -229,12 +232,6 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 	v.i += v.len;
 
 */
-
-static inline
-bool	is_quote(char c)
-{
-	return ((c == '"' || c == '\''));
-}
 
 /*
 	if (is_quote(node->token.u_data.string[v.i]) &&
@@ -294,7 +291,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 					.left = node->left, .right = node, .root = NULL,
 					.token = {
 						.type = WORD, .u_data.string = v.env_var, .string_len = ft_strlen(v.env_var)},
-						}, &str[v.len], count + (v.len || 0));
+						}, &str[v.len], count + (v.len != 0));
 			if (argv_pntr != NULL)
 				argv_pntr[count] = str;
 			return(argv_pntr); //should return the WORD node for ARGV
