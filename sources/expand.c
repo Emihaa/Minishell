@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 23:12:33 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 23:37:08 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
 
 
 static inline
-void set_env_var(t_expand_vars *v, t_node *node)
+char *set_env_var(t_expand_vars *v, t_node *node)
 {
 	v->env_var = find_env_var	(	
 									&node->token.u_data.string[++v->i],
@@ -85,14 +85,7 @@ void set_env_var(t_expand_vars *v, t_node *node)
 									&v->i,
 									get_minishell(NULL)->envp
 								);
-}
-
-uint32_t eat_space(char *str)
-{
-	int i;
-	while (is_space(str[i]))
-		i++;
-	return (i);
+	return (v->env_var);
 }
 
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
@@ -107,8 +100,7 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 			str[v->len++] = node->token.u_data.string[v->i++];
 		return (0);
 	}
-	set_env_var(v, node);
-	if (v->env_var == NULL)
+	if (set_env_var(v, node) == NULL)
 		return (0);
 	if (v->quote == '"')
 	{

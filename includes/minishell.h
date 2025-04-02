@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 23:04:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 23:36:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,7 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 //expand_utils stuff
 bool	is_valid_var_start(char c);
 bool	is_quote(char c);
+uint32_t eat_space(char *str);
 int		small_itoa(t_expand_vars *v, char *str);
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 

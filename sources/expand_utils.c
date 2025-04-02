@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:31:01 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 23:01:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 23:32:25 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,17 @@ inline
 bool	is_quote(char c)
 {
 	return ((c == '"' || c == '\''));
+}
+
+inline 
+uint32_t eat_space(char *str)
+{
+	uint32_t i;
+
+	i = 0;
+	while (is_space(str[i]))
+		i++;
+	return (i);
 }
 
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env)
