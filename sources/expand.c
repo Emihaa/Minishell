@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 18:30:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 19:53:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,7 +159,7 @@ void set_env_var(t_expand_vars *v, t_node *node)
 
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
-	if (ft_isalnum(node->token.u_data.string[v->i + 1]) == false)
+	if (is_valid_var_start(node->token.u_data.string[v->i + 1]) == false)
 	{
 		if (node->token.u_data.string[v->i + 1] == '?')
 		{

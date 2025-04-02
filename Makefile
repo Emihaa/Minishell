@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/01 19:30:56 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/02 19:50:31 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,9 +41,13 @@ LT_ALLOC = $(LIB_DIR)/$(LT_ALLOC_DIR)/build/lt_alloc.a
 
 NAME = minishell
 
-SOURCES =	minishell.c lexer.c heredoc.c tree.c utils.c expand.c \
-			redirect.c	redirect_utils.c expand_redirect.c  builtin.c \
-			error.c execute.c execute_utils.c write_functions.c
+SOURCES =	minishell.c \
+			lexer.c heredoc.c tree.c \
+			redirect.c	redirect_utils.c \
+			expand.c expand_redirect.c  expand_utils.c \
+			execute.c execute_utils.c \
+			error.c write_functions.c utils.c \
+			builtin.c
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 

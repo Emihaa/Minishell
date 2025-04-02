@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 18:31:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 19:54:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,9 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree);
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
+
+//expand_utils stuff
+bool	is_valid_var_start(char c);
 bool	is_quote(char c);
 
 // heredoc stuff

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 16:57:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 19:55:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	uint32_t		len;
 	char			*env_var;
 
-	if (ft_isalnum(string[start + 1]) == false)
+	if (is_valid_var_start(string[start + 1]) == false)
 	{
 		if (string[start + 1] == '?')
 		{

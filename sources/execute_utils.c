@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 19:06:30 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 19:31:32 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,4 @@ void command_not_found(t_minishell *m, char *cmd)
 	printf("minishell: %s: command not found\n", cmd);
 	m->exit_status = 127;
 	error_exit(m);
-}
-
-inline
-bool	is_quote(char c)
-{
-	return ((c == '"' || c == '\''));
 }
