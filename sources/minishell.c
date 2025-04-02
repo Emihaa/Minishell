@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 17:28:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 22:06:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,7 +206,7 @@ void read_loop(t_minishell *m)
 		if (m->line[i] == '\0')
 			continue ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
-		tree = parser(&m->node_arena, &m->line[i]);
+		tree = parser(&m->node_arena, m, &m->line[i]);
 		if (tree != NULL)
 			minishell_exec_loop(m, tree);
 		wait_for_sub_processes(m);

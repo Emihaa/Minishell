@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
+#    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/01 19:30:56 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/02 22:08:10 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,7 +43,8 @@ NAME = minishell
 
 SOURCES =	minishell.c lexer.c heredoc.c tree.c utils.c expand.c \
 			redirect.c	redirect_utils.c expand_redirect.c  builtin.c \
-			error.c execute.c execute_utils.c write_functions.c
+			error.c execute.c execute_utils.c write_functions.c tree_nodes.c \
+			tree_utils.c
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 

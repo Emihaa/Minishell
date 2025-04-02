@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 17:42:50 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:18:35 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,10 +140,22 @@ t_token *get_token_array(t_arena *arena, t_lexer *lexer); // not used currently 
 void print_tokens(t_lexer *lexer); // for debugging in the lexer
 
 // tree stuff
-t_node *parser(t_arena *arena, char *line);
+t_node	*parser(t_arena *arena, t_minishell *m, char *line);
+
+// tree_utils stuff
+bool heredoc_limit(t_token *token, uint32_t *heredoc_count);
+void *syntax_error(t_token *token, t_lexer *lexer);
+t_node *find_head_root(t_node *node);
+void print_token_type(t_type *token_type);
+
+// tree_nodes stuff
+t_node *create_node(t_node *root, t_token *token, t_arena *arena);
+t_node *insert_middle(t_node *root, t_node *node, t_token *token, t_arena *arena);
+t_node *insert_below(t_node *root, t_node *node, t_token *token, t_arena *arena);
+t_node *insert_bottom(t_node *node, t_token *token, t_arena *arena);
+t_node *insert_top(t_node *node, t_token *token, t_arena *arena);
 
 // expand stuff
-
 typedef struct s_expand_vars
 {
 	uint32_t i;
@@ -181,7 +193,7 @@ int		redirect_append(char **file_name, t_minishell *m);
 void	wait_for_sub_processes(t_minishell *minishell);
 
 
-//environment stuff
+// environment stuff
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
