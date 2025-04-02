@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/31 13:50:52 by ltaalas           #+#    #+#             */
-/*   Updated: 2024/12/23 16:45:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/03/31 23:07:23 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,13 @@ char	*ft_itoa(int n)
 		n *= -1;
 		*num = '-';
 	}
-	num[size--] = 0;
-	num[size--] = n % 10 + '0';
-	n /= 10;
-	while (n > 0)
+	num[size--] = '\0';
+	while (1)
 	{
 		num[size--] = n % 10 + '0';
 		n /= 10;
+		if (n <= 0)
+			break ;
 	}
 	return (num);
 }

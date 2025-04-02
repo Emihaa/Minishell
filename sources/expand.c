@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/03/31 22:30:14 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 17:37:34 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,6 @@
 
 
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
-
-// second round around the tree packing the expanded words to one string per branch
-// then third time around creating the vector pointers and giving them something to point to
-// if all strings are done correctly and they are allocated to the arena correctly
-// i dont need to know the amount of pointers before hand because if allocate them dynamically
-// they will be next to each other on arena, but cannot allocate anything new in between
 
 // get_env_var(t_token *data, const uint32_t start, uint32_t *index, char **env)
 // {
@@ -36,7 +30,6 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 // {
 // 	uint32_t len;
 // 	char c;
-
 // 	len = 0;
 // 	while (start + len < data->string_len)
 // 	{
@@ -173,16 +166,41 @@ void set_env_var(t_expand_vars *v, t_node *node)
 								);
 }
 
+// builtin exit somebody can add anything they want a exit code
+// atol
+// exit 100 = $? = 125
+// do i write this out or printf it out or what?
+static int small_itoa(t_expand_vars *v, char *str)
+{
+	int value;
+	int size;
+
+	v->i += 2;
+	size = 0;
+	value = get_minishell(NULL)->exit_status;
+	if (value == 0)
+	{
+		str[v->len++] = '0'; 
+		return (0);
+	}
+	size = (int) num_len((uint32_t) value);
+	str += v->len;
+	v->len += size;
+	while (value > 0)
+	{
+		str[--size] = value % 10 + '0';
+		value /= 10;
+	}	
+	return (0);
+}
+
+
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
 	if (ft_isalnum(node->token.u_data.string[v->i + 1]) == false)
 	{
 		if (node->token.u_data.string[v->i + 1] == '?')
-		{
-			// write m->exit_status; @TODO: <--
-			v->i += 1;
-			return (0); // stuff????
-		}
+			return (small_itoa(v, str));
 		str[v->len++] = node->token.u_data.string[v->i++];
 		return (0);
 	}
@@ -335,9 +353,7 @@ void expand(t_arena *arena, t_node *tree)
 				break ;
 			}
 			tree = tree->left;
-		}
-		// printf("test stuff: %i\n", i++);
-		// back track to the next branch (if any)
+		} 
 		tree = tree_root->right;
 	}
 	printf("arena size after expansion: %lu\n", arena->size);
