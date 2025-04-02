@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 22:29:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 23:04:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 #include "../libs/lt_alloc/includes/lt_alloc.h" 
 #include "../libs/libft/includes/libft.h"
 
+#include <stddef.h> // size_t
 #include <unistd.h>	//for write, pipe etc.
 #include <sys/types.h>  // pid_t
 #include <sys/wait.h> // wait, waitpid
@@ -70,7 +71,6 @@ typedef struct s_minishell
 	int			exit_status;
 	char		*line;
 	t_arena		node_arena;
-	//t_arena		env_arena; // not used remeber to take it out
 	t_arena		scratch_arena;
 	char		**envp;
 }	t_minishell;
@@ -173,6 +173,8 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 //expand_utils stuff
 bool	is_valid_var_start(char c);
 bool	is_quote(char c);
+int		small_itoa(t_expand_vars *v, char *str);
+char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
@@ -182,6 +184,10 @@ delimited by end-of-file (wanted `%s')\n"
 // int a = NAME_BASE_LEN; // delete
 int heredoc(t_minishell *minishell, t_token *data);
 
+
+//	heredoc_utils stuff
+char	*create_temp_file_name(uint32_t heredoc_num);
+int		create_heredoc_fds(int fds[2]);
 
 // testing possible redirect stuff
 #define WRITE	1
@@ -199,7 +205,6 @@ void	wait_for_sub_processes(t_minishell *minishell);
 
 // environment stuff
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
-char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 //general utils stuff
 uint32_t	set_quote_removed_string(char *string, t_token *data);

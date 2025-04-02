@@ -6,44 +6,11 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 20:30:25 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 22:57:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-
-// give an allocated dest pointer that is atleast the size of {data->u_data.string_len + 1}
-// will return the new size of the string that has quotes removed
-// the 
-uint32_t	set_quote_removed_string(char *dest, t_token *data)
-{
-	char quote;
-	uint32_t data_index; // feel like this or these should be renamde
-	uint32_t dest_index;
-
-	data_index = 0; 
-	dest_index = 0;
-	while (data_index < data->string_len)
-	{
-		if (data->u_data.string[data_index] == '"' || data->u_data.string[data_index] == '\'')
-		{
-			quote = data->u_data.string[data_index++];
-			while (data_index < data->string_len)
-			{
-				if (data->u_data.string[data_index] == quote)
-				{
-					data_index += 1;
-					break ;
-				}
-				dest[dest_index++] = data->u_data.string[data_index++];
-			}
-			continue ;
-		}
-		dest[dest_index++] = data->u_data.string[data_index++];
-	}
-	return (dest_index);
-}
 
 uint8_t	num_len(uint32_t num)
 {
@@ -59,7 +26,7 @@ uint8_t	num_len(uint32_t num)
 	}
 	return (i);
 }
-
+inline
 bool	is_space(char c)
 {
 	return (c == ' ' || c == '\t'); // || c == '\n' maybe?

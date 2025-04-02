@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 19:55:58 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 23:05:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,58 +165,6 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 	free(line);
 	if (close(write_fd) == -1)
 		syscall_failure(minishell);
-}
-
-// @TODO: change to name to /tmp/...
-// we need some kind of global heredoc count to check if it is under 17
-static
-char	*create_temp_file_name(uint32_t heredoc_num)
-{
-	//static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
-									// also should be reset whenever starting a new command reading loop
-	static char name_buf[30] = HEREDOC_TEMP_NAME;
-	uint32_t num_temp;
-	uint8_t i;
-
-	num_temp = heredoc_num;
-	i = num_len(heredoc_num);
-	name_buf[NAME_BASE_LEN + i] = '\0';
-	while(i--)
-	{
-		name_buf[NAME_BASE_LEN + i] = (num_temp % 10) + '0';
-		num_temp = num_temp / 10;
-	}
-	heredoc_num += 1;
-	return(name_buf);
-}
-
-// @TODO: change to name to /tmp
-// @TODO: might want to make different error return values
-static
-int	create_heredoc_fds(int fds[2])
-{
-	static uint32_t heredoc_num = 1;
-	const char *file_name;
-	int return_val;
-
-	return_val = 0;
-	heredoc_num = 1;
-	while (1)
-	{
-		file_name = create_temp_file_name(heredoc_num++);
-		fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
-		if (fds[1] != -1)
-			break ;
-		if (errno == EEXIST)
-			continue ;
-		return (-1); // @TODO: more error stuff
-	}	
-	fds[0] = open(file_name, O_CLOEXEC | O_RDONLY);
-	if (fds[0] == -1)
-		return_val = -1;
-	if (unlink(file_name) == -1)
-		return_val = -1; // @TODO: more error stuff
-	return (return_val);
 }
 
 int heredoc(t_minishell *minishell, t_token *data)
