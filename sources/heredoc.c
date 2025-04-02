@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/27 23:36:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 16:57:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,19 @@ void print_eof_error(t_minishell *m, char *delimiter)
 }
 
 static
+int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
+{
+	*line = readline("> ");
+	if (*line == NULL)
+	{
+		print_eof_error(minishell, delimiter); // should this be on stderror?
+		return (-1);
+	}
+	minishell->line_counter += 1;
+	return (0);
+}
+
+static
 void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
@@ -80,23 +93,17 @@ void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *deli
 
 	while (1)
 	{
-		line = readline("> ");
-		if (line == NULL)
-		{
-			print_eof_error(minishell, delimiter);
+		if (heredoc_read(minishell, &line, delimiter))
 			break ;
-		}
-		minishell->line_counter += 1;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
-		if (write(write_fd, line, ft_strlen(line)) == -1)
-			perror("write line"); // error cheking
-		if (write(write_fd, "\n", 1) == -1)
-			perror("write '\\n'"); // error cheking
+		if (put_str_nl(write_fd, line) == -1)
+			break ; // @TODO: maybe error cheking
 		free(line);
 	}
 	free(line);
-	close(write_fd);
+	if (close(write_fd) == -1)
+		syscall_failure(minishell);
 }
 
 int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *m)
@@ -116,7 +123,7 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	}
 	len = 0;
 	env_var = find_env_var(&string[start + 1], ft_strlen(&string[start + 1]), &len, m->envp);
-	ft_putstr_fd(env_var, fd);
+	put_str(fd, env_var);
 	return (len);
 }
 
@@ -134,13 +141,8 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 
 	while (1)
 	{
-		line = readline("> ");
-		if (line == NULL)
-		{
-			printf(EOF_ERROR, minishell->line_counter, delimiter); // should this be on stderror?
+		if (heredoc_read(minishell, &line, delimiter))
 			break ;
-		}
-		minishell->line_counter += 1;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		line_len = ft_strlen(line);
@@ -150,26 +152,27 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 			len = 0;
 			while (line[i + len] != '\0' && line[i + len] != '$')
 				len += 1;
-			if (write(write_fd, line + i, len) == -1) 
-				perror("write line"); // error cheking
+			if (write_bytes(write_fd, line + i, len) == -1)
+				break ; // @TODO: maybe error cheking
 			if (line[i + len] == '$')
 				len += write_env_variable(line, i + len, write_fd, minishell);
 			i += len + 1;
 		}
-		if (write(write_fd, "\n", 1) == -1)
-			perror("write '\\n'"); // error cheking
+		if (put_char(write_fd, '\n'))
+			break ; // @TODO: error cheking
 		free(line);
 	}
 	free(line);
-	close(write_fd);
+	if (close(write_fd) == -1)
+		syscall_failure(minishell);
 }
 
 // @TODO: change to name to /tmp/...
 // we need some kind of global heredoc count to check if it is under 17
 static
-char	*create_temp_file_name(void)
+char	*create_temp_file_name(uint32_t heredoc_num)
 {
-	static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
+	//static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
 									// also should be reset whenever starting a new command reading loop
 	static char name_buf[30] = HEREDOC_TEMP_NAME;
 	uint32_t num_temp;
@@ -192,13 +195,15 @@ char	*create_temp_file_name(void)
 static
 int	create_heredoc_fds(int fds[2])
 {
+	static uint32_t heredoc_num = 1;
 	const char *file_name;
 	int return_val;
 
 	return_val = 0;
+	heredoc_num = 1;
 	while (1)
 	{
-		file_name = create_temp_file_name();
+		file_name = create_temp_file_name(heredoc_num++);
 		fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
 		if (fds[1] != -1)
 			break ;
@@ -217,7 +222,7 @@ int	create_heredoc_fds(int fds[2])
 int heredoc(t_minishell *minishell, t_token *data)
 {
 	int fds[2];
-	int errval = 0; // delete
+	// int errval = 0; // delete
 	char *delimiter;
 	uint32_t new_size;
 
@@ -230,9 +235,12 @@ int heredoc(t_minishell *minishell, t_token *data)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
 	else
 		heredoc_write_with_expansion(minishell, fds[WRITE], delimiter);
-	store_read_fd(fds[READ], minishell);
-	return (errval); // maybe error value
+	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
+	minishell->heredoc_count += 1;
+	return (fds[READ]); // maybe error value
 }
+
+
 
 //	Testing stuff
 /*

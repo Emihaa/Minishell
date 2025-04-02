@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 23:09:00 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 17:42:50 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@
 typedef enum e_type
 {
 	PIPE			=	-'|',
-	REDIRECT_IN		=	'<',
-	REDIRECT_OUT	=	'>',
+	REDIRECT_IN		=	-'<',
+	REDIRECT_OUT	=	-'>',
 	HERE_DOCUMENT	=	256, // <<
-	REDIRECT_APPEND	=	257, // >>
+	REDIRECT_APPEND	=	-257, // >>
 	// COMMAND		=	258,
 	// ARGUMENT		=	259,	 // @question with argv or not?
-	WORD			=	260,	// generic word, could be command name or argument 
+	WORD			=	-260,	// generic word, could be command name or argument 
 	END_OF_LINE		=	0,		// first WORD before a pipe is the command and the following ones are arguments
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
@@ -61,6 +61,7 @@ typedef struct s_minishell
 	uint32_t	line_counter;
 	uint32_t	command_count;
 	uint32_t	heredoc_count;
+	int			*heredoc_fds;
 	int			redir_fds[2];
 	int			pipe[2];
 	int8_t		pipe_side;
@@ -69,7 +70,7 @@ typedef struct s_minishell
 	int			exit_status;
 	char		*line;
 	t_arena		node_arena;
-	t_arena		env_arena;
+	//t_arena		env_arena; // not used remeber to take it out
 	t_arena		scratch_arena;
 	char		**envp;
 }	t_minishell;
@@ -142,10 +143,20 @@ void print_tokens(t_lexer *lexer); // for debugging in the lexer
 t_node *parser(t_arena *arena, char *line);
 
 // expand stuff
-void expand(t_arena *arena, t_node *tree);
+
+typedef struct s_expand_vars
+{
+	uint32_t i;
+	uint32_t len;
+	char quote;
+	char *env_var;
+}	t_expand_vars;
+
+void expand(t_arena *arena, t_minishell *m, t_node *tree);
 
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
+int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
@@ -167,7 +178,6 @@ int		redirect_out(char **file_name, t_minishell *m);
 int		redirect_in(char **file_name, t_minishell *m);
 int		redirect_append(char **file_name, t_minishell *m);
 
-void	syscall_failure(t_minishell *m);
 void	wait_for_sub_processes(t_minishell *minishell);
 
 
@@ -176,11 +186,10 @@ void	wait_for_sub_processes(t_minishell *minishell);
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 //general utils stuff
-uint32_t set_quote_removed_string(char *string, t_token *data);
-uint8_t	num_len(uint32_t num);
-bool	is_space(char c);
+uint32_t	set_quote_removed_string(char *string, t_token *data);
+uint8_t		num_len(uint32_t num);
+bool		is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
-void error_exit(t_minishell *m, int exit_status); // probably not used
 
 //builtin stuff
 
@@ -197,5 +206,32 @@ typedef enum e_builtin
 } t_builtin;
 
 t_builtin check_for_builtin(char *command);
+int	execute_builtin(t_minishell *m, char **argv, t_builtin command);
+
+void builtin_exit(t_minishell *m);
+void builtin_echo(char *argv[], int fd);
+void builtin_pwd(int fd);
+
+
+// execute stuff
+pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin);
+void	execute_command(t_minishell *m, char **argv, int status);
+
+void close_pipe(t_minishell *m);
+void execve_failure(t_minishell *m, char *cmd);
+void command_not_found(t_minishell *m, char *cmd);
+
+
+//error stuff
+void error_exit(t_minishell *m);
+void	syscall_failure(t_minishell *m);
+
+
+// write_functions stuff
+int	write_bytes(int fd, char *str, size_t bytes_to_write);
+int	put_str(int fd, char *str);
+int	put_str_nl(int fd, char *str);
+int	put_char(int fd, char c);
+
 
 #endif

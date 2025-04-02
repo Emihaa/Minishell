@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 19:25:52 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 16:52:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,23 +60,6 @@ uint8_t	num_len(uint32_t num)
 	return (i);
 }
 
-ssize_t write_cheking_thingy_asd(int fd, char *str, size_t str_len)
-{
-	size_t bytes_to_write;
-	ssize_t bytes_written;
-
-	bytes_to_write = str_len;
-	bytes_written = 0;
-	while (bytes_to_write > 0)
-	{
-		bytes_written = write(fd, str + bytes_written, bytes_to_write);
-		if (bytes_written == -1)
-			return (-1); // full error situation
-		bytes_to_write -= bytes_written;
-	}
-	return (0);
-}
-
 bool	is_space(char c)
 {
 	return (c == ' ' || c == '\t'); // || c == '\n' maybe?
@@ -90,11 +73,4 @@ t_minishell *get_minishell(t_minishell *m)
 		return (minishell);
 	minishell = m;
 	return (NULL);
-}
-// seems to be unused currently
-void error_exit(t_minishell *m, int exit_status)
-{
-	// ASDASDASDASDASD
-	minishell_cleanup(m);
-	exit(exit_status);
 }

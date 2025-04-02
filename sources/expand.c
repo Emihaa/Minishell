@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 17:37:34 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 17:42:14 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,14 +146,6 @@ char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
 // into the same argument 
 // after expansion is done, we will still move forward to node.left.left if not NULL
 
-typedef struct s_expand_vars
-{
-	uint32_t i;
-	uint32_t len;
-	char quote;
-	char *env_var;
-}	t_expand_vars;
-
 
 static inline
 void set_env_var(t_expand_vars *v, t_node *node)
@@ -218,12 +210,12 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 	{
 		v->env_var++;
 	}
-	while (*v->env_var != '\0' && is_space(*v->env_var) == false)
-	{
+	while (is_space(*v->env_var) == false)
+	{	
+		if (*v->env_var == '\0')
+			return (0);
 		str[v->len++] = *v->env_var++;
 	}
-	if (*v->env_var == '\0')
-		return (0);
 	while (is_space(*v->env_var) == true)
 		v->env_var++;
 	return (1);
@@ -255,7 +247,7 @@ bool	is_quote(char c)
 		v.i++;
 	}
 */
-
+// @TODO: if we get a token with a string of "" bash treats this as the command '\0' so it creates an empty string and uses that as a command
 // add the string to the first word node and break the connection
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 {
@@ -286,7 +278,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				v.quote = '\0';
 			v.i++;
 		}
-		if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
+		else if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
 				continue ;
@@ -307,14 +299,15 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				argv_pntr[count] = str;
 			return(argv_pntr); //should return the WORD node for ARGV
 		}
-		str[v.len++] = node->token.u_data.string[v.i++];
+		else
+			str[v.len++] = node->token.u_data.string[v.i++];
 	}
 	if (v.len > 0)
 	{
 		str[v.len++] = '\0';
 		arena_alloc_no_zero(arena, sizeof(*str) * v.len);
 	}
-	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + (v.len || 0));
+	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + (v.len != 0));
 	if (argv_pntr != NULL)
 		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV
@@ -328,7 +321,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 // separated by \0
 // then create an array of pointers that point to the starting points of the string
 
-void expand(t_arena *arena, t_node *tree)
+void expand(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	char *str;
 	t_node *tree_root;
@@ -344,12 +337,15 @@ void expand(t_arena *arena, t_node *tree)
 		//find the first WORD node
 		while (tree)
 		{
+			if (tree->token.type > 0)
+				tree->token.type = heredoc(m, &tree->token);
 			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
-				expand_redirect(arena, tree);
+			 	expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
 				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);
+				tree->left = NULL;
 				break ;
 			}
 			tree = tree->left;
