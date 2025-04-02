@@ -6,17 +6,11 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/01 18:56:01 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/02 18:29:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h" 
-
-static inline
-bool	is_quote(char c)
-{
-	return ((c == '"' || c == '\''));
-}
+#include "../includes/minishell.h"
 
 // we have to handle the "'" as well
 // if "\"" "$OMPPU" = 'Lukan kissa'
