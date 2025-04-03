@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/03 18:27:09 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 19:14:41 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -229,7 +229,10 @@ void init_minishell(t_minishell *minishell, char **envp)
 
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena.data == NULL)
-		; // @TODO: error cheking
+	{
+		put_str_nl(STDERR_FILENO, "allocation failure");
+		error_exit(minishell, 1); // @TODO: error cheking
+	}
 	minishell->line = NULL;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
@@ -243,7 +246,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->pipe[WRITE] = -1;
 	minishell->last_pid = 0; 
 	minishell->pids = NULL;
-	get_minishell(minishell); // this will probably not be used so remeber to take care of it
+	get_minishell(minishell);
 }
 
 int main(int argc, char *argv[], char **envp)

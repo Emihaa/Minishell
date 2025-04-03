@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/03 18:08:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 19:23:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ ltaalas@c1r3p1:~/projects/minishell/sources$
 static inline
 void print_eof_error(t_minishell *m, char *delimiter)
 {
-	FILE *temp;
+	FILE	*temp;
 	
 	temp = stdout;
 	stdout = stderr;
@@ -88,8 +88,8 @@ int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 static
 void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
-	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
-	char *line;
+	const int	delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
+	char		*line;
 
 	while (1)
 	{
@@ -126,6 +126,26 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	(void)put_str(fd, env_var);
 	return (len);
 }
+static
+void heredoc_write_no_expansion_write_loop(t_minishell *m, int write_fd, char *line)
+{
+	const uint32_t	line_len = ft_strlen(line);
+	uint32_t		i;
+	uint32_t		len;
+
+	i = 0;
+	while (i < line_len)
+	{
+		len = 0;
+		while (line[i + len] != '\0' && line[i + len] != '$')
+			len += 1;
+		if (write_bytes(write_fd, line + i, len) == -1)
+			break ; // @TODO: maybe error cheking
+		if (line[i + len] == '$')
+			len += write_env_variable(line, i + len, write_fd, m);
+		i += len + 1;
+	}
+}
 
 // this is going to be a "simple" prototype that uses getenv
 // will be replaced with our own env version
@@ -135,9 +155,8 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 {
 	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char *line;
-	uint32_t len;
+
 	uint32_t i;
-	uint32_t line_len;
 
 	while (1)
 	{
@@ -145,19 +164,8 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 			break ;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
-		line_len = ft_strlen(line);
 		i = 0;
-		while (i < line_len)
-		{
-			len = 0;
-			while (line[i + len] != '\0' && line[i + len] != '$')
-				len += 1;
-			if (write_bytes(write_fd, line + i, len) == -1)
-				break ; // @TODO: maybe error cheking
-			if (line[i + len] == '$')
-				len += write_env_variable(line, i + len, write_fd, minishell);
-			i += len + 1;
-		}
+		heredoc_write_no_expansion_write_loop(minishell, write_fd, line);
 		if (put_char(write_fd, '\n'))
 			break ; // @TODO: error cheking
 		free(line);
@@ -169,10 +177,10 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 
 int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 {
-	int fds[2];
-	t_arena_temp temp_arena;
-	char *delimiter;
-	uint32_t new_size;
+	t_arena_temp	temp_arena;
+	int				fds[2];
+	char			*delimiter;
+	uint32_t		new_size;
 	
 	if (create_heredoc_fds(fds) == -1)
 	syscall_failure(minishell);

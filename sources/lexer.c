@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/03 19:11:04 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 19:25:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,18 +50,6 @@ int	match_quote(t_lexer *lexer, char quote, int len)
 	}
 	return (len);
 }
-
-// just returns a token with correct parameters for a EOL
-// static inline
-// t_token	tokenize_end_of_line(void)
-// {
-// 	return ((t_token)
-// 		{
-// 			.type = END_OF_LINE,
-// 			.u_data.string = NULL,
-// 			.string_len = 0,
-// 		});
-// }
 
 // if we hit a quote len will for sure be at least 1
 // so might break the len check
