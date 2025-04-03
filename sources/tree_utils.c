@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:04:47 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/03 18:05:38 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void *syntax_error(t_token *token, t_lexer *lexer)
 bool heredoc_limit(t_token *token, uint32_t *heredoc_count)
 {	
 	if (token->type == HERE_DOCUMENT)
-		heredoc_count++;
+		(*heredoc_count)++; // LUKA: this used to be *heredoc_count++; this moved the pointer heredoc_count and then dereferenced it!
 	if (*heredoc_count > 16)
 	{
 		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);

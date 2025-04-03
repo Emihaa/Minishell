@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 19:31:32 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 17:48:39 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,5 @@ void command_not_found(t_minishell *m, char *cmd)
 	stdout = stderr;
 	printf("minishell: %s: command not found\n", cmd);
 	m->exit_status = 127;
-	error_exit(m);
+	error_exit(m, 0);
 }

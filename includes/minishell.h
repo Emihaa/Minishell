@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 23:36:58 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 18:27:26 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,8 +183,7 @@ char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, cha
 #define EOF_ERROR "minishell: warning: here-document at line %i \
 delimited by end-of-file (wanted `%s')\n"
 // int a = NAME_BASE_LEN; // delete
-int heredoc(t_minishell *minishell, t_token *data);
-
+int heredoc(t_arena *arena, t_minishell *minishell, t_token *data);
 
 //	heredoc_utils stuff
 char	*create_temp_file_name(uint32_t heredoc_num);
@@ -213,6 +212,11 @@ uint8_t		num_len(uint32_t num);
 bool		is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
 
+// arena_utils stuff
+void *xarena_alloc(t_arena *arena, uint64_t size);
+void *xarena_alloc_no_zero(t_arena *arena, uint64_t size);
+
+
 //builtin stuff
 
 typedef enum e_builtin
@@ -237,7 +241,7 @@ void builtin_pwd(int fd);
 
 // execute stuff
 pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin);
-void	execute_command(t_minishell *m, char **argv, int status);
+int	execute_command(t_minishell *m, char **argv, int status);
 
 void close_pipe(t_minishell *m);
 void execve_failure(t_minishell *m, char *cmd);
@@ -245,7 +249,7 @@ void command_not_found(t_minishell *m, char *cmd);
 
 
 //error stuff
-void error_exit(t_minishell *m);
+void	error_exit(t_minishell *m, int exit_status);
 void	syscall_failure(t_minishell *m);
 
 

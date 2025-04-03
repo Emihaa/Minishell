@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 17:28:32 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 17:37:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void builtin_echo(char *argv[], int fd)
 
 	if (argv[1] == NULL)
 	{
-		write(1, "\n", fd);
+		(void)put_char(fd, '\n');
 		return ;
 	}
 	if (ft_strncmp(argv[1], "-n", 3) == 0)
@@ -31,14 +31,14 @@ void builtin_echo(char *argv[], int fd)
 	i = !newline + 1;
 	while (1)
 	{
-		ft_putstr_fd(argv[i], fd);
+		(void)put_str(fd, argv[i]);
 		i++;
 		if (argv[i] == NULL)
 			break ;
-		ft_putchar_fd(' ', fd);
+		(void)put_char(fd, ' ');
 	}
 	if (newline == true)
-		ft_putchar_fd('\n', fd);
+		(void)put_char(fd, '\n');
 }
 
 void builtin_exit(t_minishell *m)
@@ -54,8 +54,8 @@ void builtin_exit(t_minishell *m)
 void	builtin_pwd(int fd)
 {
 	char current_path[PATH_MAX];
-	getcwd(current_path, PATH_MAX);
-	ft_putendl_fd(current_path, fd);
+	(void)getcwd(current_path, PATH_MAX);
+	(void)put_str_nl(fd, current_path);
 }
 
 void builtin_env(char **envp)

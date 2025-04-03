@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 23:37:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 18:59:05 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,14 +228,14 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 		while (tree)
 		{
 			if (tree->token.type > 0)
-				tree->token.type = heredoc(m, &tree->token);
+				tree->token.type = heredoc(arena, m, &tree->token);
 			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
 			 	expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
 			{
-				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
-				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);
-				tree->left = NULL;
+				str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
+				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);						   // if we encounter weird issues its probably
+				tree->left = NULL;																   // it's probably because of this
 				break ;
 			}
 			tree = tree->left;

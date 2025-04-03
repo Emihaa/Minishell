@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 23:05:14 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 18:08:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	}
 	len = 0;
 	env_var = find_env_var(&string[start + 1], ft_strlen(&string[start + 1]), &len, m->envp);
-	put_str(fd, env_var);
+	(void)put_str(fd, env_var);
 	return (len);
 }
 
@@ -167,24 +167,26 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 		syscall_failure(minishell);
 }
 
-int heredoc(t_minishell *minishell, t_token *data)
+int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 {
 	int fds[2];
-	// int errval = 0; // delete
+	t_arena_temp temp_arena;
 	char *delimiter;
 	uint32_t new_size;
-
+	
 	if (create_heredoc_fds(fds) == -1)
-		syscall_failure(minishell);
-	delimiter = arena_alloc(&minishell->node_arena, sizeof(char) * data->string_len + 1); 
+	syscall_failure(minishell);
+	temp_arena = arena_temp_begin(arena);
+	delimiter = arena_alloc(temp_arena.arena, sizeof(char) * data->string_len + 1); 
 	new_size = set_quote_removed_string(delimiter, data);
-	arena_unalloc(&minishell->node_arena, (data->string_len + 1) - new_size);
+	arena_unalloc(temp_arena.arena, (data->string_len + 1) - new_size);
 	if (new_size < data->string_len)
 		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
 	else
 		heredoc_write_with_expansion(minishell, fds[WRITE], delimiter);
 	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
 	minishell->heredoc_count += 1;
+	arena_temp_end(&temp_arena);
 	return (fds[READ]); // maybe error value
 }
 

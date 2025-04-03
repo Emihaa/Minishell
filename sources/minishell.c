@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 22:06:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/03 18:27:09 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,15 +170,13 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 		if (m->pipe_side == READ)
 			status = create_and_store_pipe(m, &m->pipe_side);
 		if (tree->token.type == PIPE)
-		{
 			status = create_and_store_pipe(m, &m->pipe_side);
-			tree = tree->left;
-		}
 		while (tree)
 		{
 			status = do_redir(m, &tree->token);
 			if (tree->token.type == WORD || status != 0)
-				execute_command(m, tree->token.u_data.argv, status);
+				if (execute_command(m, tree->token.u_data.argv, status))
+					break ;
 			tree = tree->left;	
 		}
 		reset_redirect(m);

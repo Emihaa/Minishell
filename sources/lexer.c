@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 22:53:07 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 18:37:24 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,20 +144,20 @@ t_token	get_next_token(t_lexer *lexer)
 // use to get an array of all the tokens in a line
 // give an arena to allocate the array with
 // give an initialized lexer
-t_token *get_token_array(t_arena *arena, t_lexer *lexer)
-{
-	t_token *token_array_base;
-	int	i;
+// t_token *get_token_array(t_arena *arena, t_lexer *lexer)
+// {
+// 	t_token *token_array_base;
+// 	int	i;
 
-	token_array_base = arena_alloc(arena, sizeof(t_token));
-	i = 0;
-	while (1)
-	{
-		token_array_base[i] = get_next_token(lexer);
-		if (token_array_base[i].type == END_OF_LINE)
-			break ;
-		arena_alloc(arena, sizeof(t_token));
-		i++;
-	}
-	return (token_array_base);
-}
+// 	token_array_base = arena_alloc(arena, sizeof(t_token));
+// 	i = 0;
+// 	while (1)
+// 	{
+// 		token_array_base[i] = get_next_token(lexer);
+// 		if (token_array_base[i].type == END_OF_LINE)
+// 			break ;
+// 		arena_alloc(arena, sizeof(t_token));
+// 		i++;
+// 	}
+// 	return (token_array_base);
+// }
