@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/03 18:27:26 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 19:01:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,6 @@ void minishell_cleanup(t_minishell *minishell);
 
 // lexer stuff
 t_token	get_next_token(t_lexer *lexer);
-t_token *get_token_array(t_arena *arena, t_lexer *lexer); // not used currently @TODO: remove this
 void print_tokens(t_lexer *lexer); // for debugging in the lexer
 
 // tree stuff
