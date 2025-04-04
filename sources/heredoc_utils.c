@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 00:09:57 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/05 00:14:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 // the 
 uint32_t	set_quote_removed_string(char *dest, t_token *data)
 {
-	char quote;
-	uint32_t data_index; // feel like this or these should be renamde
-	uint32_t dest_index;
+	char		quote;
+	uint32_t	data_index; // feel like this or these should be renamde
+	uint32_t	dest_index;
 
 	data_index = 0; 
 	dest_index = 0;
@@ -48,11 +48,9 @@ uint32_t	set_quote_removed_string(char *dest, t_token *data)
 // we need some kind of global heredoc count to check if it is under 17
 char	*create_temp_file_name(uint32_t heredoc_num)
 {
-	//static uint32_t heredoc_num = 1; // this should probably be included into the minishell struct and passed here
-									// also should be reset whenever starting a new command reading loop
 	static char name_buf[30] = HEREDOC_TEMP_NAME;
-	uint32_t num_temp;
-	uint8_t i;
+	uint32_t 	num_temp;
+	uint8_t 	i;
 
 	num_temp = heredoc_num;
 	i = num_len(heredoc_num);
@@ -70,9 +68,9 @@ char	*create_temp_file_name(uint32_t heredoc_num)
 // @TODO: might want to make different error return values
 int	create_heredoc_fds(int fds[2])
 {
-	uint32_t heredoc_num;
-	const char *file_name;
-	int return_val;
+	uint32_t 	heredoc_num;
+	const char 	*file_name;
+	int 		return_val;
 
 	return_val = 0;
 	heredoc_num = 1;

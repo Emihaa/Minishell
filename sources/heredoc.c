@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 00:08:47 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/05 00:14:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,8 @@ ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
 bash: warning: here-document at line 18 delimited by end-of-file (wanted `DELIM')
 ltaalas@c1r3p1:~/projects/minishell/sources$ 
 
-
-
 */
+
 static inline
 void print_eof_error(t_minishell *m, char *delimiter)
 {
@@ -88,7 +87,7 @@ int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 static
 void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
-	const int	delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
+	const int	delimiter_len = ft_strlen(delimiter) + 1;
 	char		*line;
 
 	while (1)
@@ -126,6 +125,7 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	(void)put_str(fd, env_var);
 	return (len);
 }
+
 static
 void heredoc_write_with_expansion_write_loop(t_minishell *m, int write_fd, char *line)
 {
@@ -153,9 +153,8 @@ void heredoc_write_with_expansion_write_loop(t_minishell *m, int write_fd, char 
 static
 void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
-	const int delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
-	char *line;
-
+	const int	delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
+	char		*line;
 	uint32_t i;
 
 	while (1)
@@ -195,49 +194,5 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
 	minishell->heredoc_count += 1;
 	arena_temp_end(&temp_arena);
-	return (fds[READ]); // maybe error value
+	return (fds[READ]);
 }
-
-
-
-//	Testing stuff
-/*
-cc heredoc.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o heredoc -g
-*/
-
-
-
-// int main(int argc, char *argv[], char *envp[])
-// {
-// 	pid_t pids[3] = {0};
-// 	t_minishell minishell;
-// 	init_minishell(&minishell);
-// 	(void)argc;
-// 	(void)argv;
-// 	int wstatus;
-// 	//read_loop(envp);
-// 	printf("%i\n", getpid());
-// 	while (minishell.command_count < 2)
-// 	{
-// 		heredoc(&minishell, "DELIM");
-// 		pid_t pid = fork();
-// 		if (pid == 0)
-// 		{
-// 			apply_redirect(&minishell);
-// 			char *cat_argv[3] = {[0] = "cat", "-e", [2] = NULL};
-// 			printf("fd to cat \t%i\n", 17);
-// 			if (execve("/bin/cat", cat_argv, envp) == -1)
-// 				perror("execve fail");
-// 			exit(1);
-// 		}
-// 		reset_redirect(&minishell);
-// 		pids[minishell.command_count] = pid;
-// 		minishell.command_count += 1;
-// 	}
-// 	int exit_status = wait_for_sub_processes(&minishell, pids);
-// 	printf("last printf %s\t%i\n", strerror(exit_status), exit_status);
-// 	printf("exit\n");
-//     return (0);
-// }
-
-
