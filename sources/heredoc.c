@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 00:14:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/05 00:16:41 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		i = 0;
-		heredoc_write_no_expansion_write_loop(minishell, write_fd, line);
+		heredoc_write_with_expansion_write_loop(minishell, write_fd, line);
 		if (put_char(write_fd, '\n'))
 			break ; // @TODO: error cheking
 		free(line);

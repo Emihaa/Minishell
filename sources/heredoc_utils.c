@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 00:14:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/05 00:21:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ char	*create_temp_file_name(uint32_t heredoc_num)
 // @TODO: might want to make different error return values
 int	create_heredoc_fds(int fds[2])
 {
-	uint32_t 	heredoc_num;
-	const char 	*file_name;
+	uint32_t	heredoc_num;
+	char 		*file_name;
 	int 		return_val;
 
 	return_val = 0;
