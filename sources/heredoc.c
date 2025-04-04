@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/03 19:23:46 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/05 00:08:47 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 	return (len);
 }
 static
-void heredoc_write_no_expansion_write_loop(t_minishell *m, int write_fd, char *line)
+void heredoc_write_with_expansion_write_loop(t_minishell *m, int write_fd, char *line)
 {
 	const uint32_t	line_len = ft_strlen(line);
 	uint32_t		i;
