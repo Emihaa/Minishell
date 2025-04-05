@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 22:06:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/05 00:06:40 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include <linux/limits.h>
 
 #include "../includes/minishell.h" // fix maybe
+
+volatile int g_global_int = 0;
 
 void export(void)
 {
@@ -51,6 +53,7 @@ char *get_token_name(t_token *token)
 		return ("newline");
 	return ("ERROR");
 }
+
 //debug stuff
 void print_token(t_token *token)
 {
@@ -116,6 +119,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			printf("pid == %i\n", pid);
 			printf("exit_status before = %i\n", minishell->exit_status);
 			minishell->exit_status = WEXITSTATUS(wstatus);
+			printf("wstatus: %d\n", wstatus);
 			printf("exit_status after = %i\n", minishell->exit_status);
 
 		}
@@ -248,9 +252,37 @@ void init_minishell(t_minishell *minishell, char **envp)
 	get_minishell(minishell); // this will probably not be used so remeber to take care of it
 }
 
+void signal_handler(int signal)
+{
+	if (signal == SIGINT)
+	{
+		write(1, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+	
+	if (signal == SIGQUIT)
+		printf("found cntrl+'\\n");
+	g_global_int = 1;
+}
+
+// SIGINT for cntrl+C
+// cancel current input, prints a newline + promt
+// in child rocesses reset signal to default so they get killed properly
+
+// SIGQUIT for ctrl+\ <- this does nothing
+// ignore the SIGQUIT, and reset it to default?
+
+// ctrl+D EOF (End Of File) <- doesnt send signal but must be handled manually
+// returns NULL to readline(), clean up and exit
+// but only does this if input is empty
+// this one already works
 int main(int argc, char *argv[], char **envp)
 {
 	t_minishell minishell;
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 
 	(void)argc;
 	(void)argv;

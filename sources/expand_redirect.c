@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:31:03 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:56:47 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,12 +88,12 @@ void expand_redirect(t_arena *arena, t_node *node)
 	char **argv;
 	char *str = NULL;
 	
-	printf("--- redirect_out expand ---\n");
-	printf("token string: %.*s\n", node->token.string_len, node->token.u_data.string);
+	// printf("--- redirect_out expand ---\n");
+	// printf("token string: %.*s\n", node->token.string_len, node->token.u_data.string);
 	argv = arena_alloc(arena, sizeof(*argv) * 2);
  	expand_action(arena, node, str, &*argv);
 	node->token.u_data.argv = argv;
-	printf("redirect argv_pntr[0]: %s, pntr: %p\n", argv[0],  argv[0]);
-	printf("redirect argv_pntr[1]: %s, pntr: %p\n", argv[1],  argv[1]);	
-	printf("--- out expand done ---\n");	
+	// printf("redirect argv_pntr[0]: %s, pntr: %p\n", argv[0],  argv[0]);
+	// printf("redirect argv_pntr[1]: %s, pntr: %p\n", argv[1],  argv[1]);	
+	// printf("--- out expand done ---\n");
 }

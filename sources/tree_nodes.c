@@ -6,12 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 21:49:59 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:49:06 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
 
+// create a new node
 t_node *create_node(t_node *root, t_token *token, t_arena *arena)
 {
 	t_node *new_node;
@@ -45,41 +46,30 @@ t_node *insert_middle(t_node *root, t_node *node, t_token *token, t_arena *arena
 		new_node->left = node;
 	else
 		new_node->right = node;
-	// printf("new node--> ");
-	// print_token_type(&token->type);
-	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	// printf("\n");
 	return(node);
 }
 
+// create node below current to the left
 t_node *insert_below(t_node *root, t_node *node, t_token *token, t_arena *arena)
 {
 	t_node *new_node;
 	
 	new_node = create_node(root, token, arena);
 	node->left = new_node;
-	// printf("new node--> ");
-	// print_token_type(&token->type);
-	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	// printf("\n");
 	return(new_node);
 }
 
+// first find most bottom node
+// then creates new node to bottom and connect the old bottom with new
 t_node *insert_bottom(t_node *node, t_token *token, t_arena *arena)
 {
 	t_node *bottom_node;
 
 	bottom_node = node;
-	// first we need to find the bottom most node
 	while (bottom_node->left)
 		bottom_node = bottom_node->left;
-	// then create new node to bottom and connect the old bottom with new
 	t_node *new_node = create_node(bottom_node, token, arena);
 	bottom_node->left = new_node;
-	// printf("new node--> ");
-	// print_token_type(&token->type);
-	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	// printf("\n");
 	return(new_node);
 }
 
@@ -93,17 +83,17 @@ t_node *insert_top(t_node *node, t_token *token, t_arena *arena)
 	t_node *temp_root;
 	
 	head_node = find_head_root(node);
-	if (head_node->token.type != PIPE) //at top there isnt any pipes so pipe will be the new top
+	if (head_node->token.type != PIPE)
 	{
 		new_node = create_node(NULL, token, arena);
 		new_node->left = head_node;
 		head_node->root = new_node;
 	}
-	else //there is one or more pipes
+	else
 	{
 		temp_root = head_node;
-		while (temp_root->right && temp_root->right->token.type == PIPE) //if multiple pipes, then find the last pipe that
-		{ // that doesnt have anything on the rigth side
+		while (temp_root->right && temp_root->right->token.type == PIPE)
+		{
 			temp_root = temp_root->right;
 		}
 		new_node = create_node(temp_root, token, arena);
@@ -112,9 +102,5 @@ t_node *insert_top(t_node *node, t_token *token, t_arena *arena)
 		if (new_node->left)
 			new_node->left->root = new_node;   
 	}
-	// printf("new node--> ");
-	// print_token_type(&token->type);
-	// // printf(" %.*s\n", (int)node->token->string_len, node->token->string);
-	// printf("\n");
 	return (new_node);
 }

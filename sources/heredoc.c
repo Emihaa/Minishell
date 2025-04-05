@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 19:55:58 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/05 00:03:30 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ ltaalas@c1r3p1:~/projects/minishell/sources$
 
 
 */
+
+extern int g_global_int;
+
+
 static inline
 void print_eof_error(t_minishell *m, char *delimiter)
 {
@@ -75,7 +79,9 @@ void print_eof_error(t_minishell *m, char *delimiter)
 static
 int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 {
+	// signal(SIGINT, SIG_DFL);
 	*line = readline("> ");
+	printf("global: %i\n", g_global_int);
 	if (*line == NULL)
 	{
 		print_eof_error(minishell, delimiter); // should this be on stderror?

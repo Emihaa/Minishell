@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 22:29:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/04 23:57:58 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #define _GNU_SOURCE
 
 #define ANTIKRISTA 666
+
 
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
@@ -37,6 +38,7 @@
 #include <stdbool.h>	// for bool data type
 #include <fcntl.h>		// open
 #include <sys/stat.h>	// lstat !!! might not be used WATCH OUTTTTTAMSL:MF:ALMSG:LMA
+#include <signal.h>     // signal handling
 
 // maybe have all token types be negative except heredoc so that the type can be replace with an fd
 // @question are these the only tokens needed?
@@ -133,6 +135,7 @@ typedef struct s_node
 
 // minishell main stuff
 void minishell_cleanup(t_minishell *minishell);
+void signal_handler(int signal);
 
 // lexer stuff
 t_token	get_next_token(t_lexer *lexer);

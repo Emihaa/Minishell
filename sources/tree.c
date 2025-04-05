@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:17:56 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:50:26 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,11 @@ ls > a > b > c | cat | > outfile wc -l | echo smth > 2
 								
 */
 
- // Examples above:
- // always adds new nodes to left side on the branch
- // commands/words should be at the bottom
- // redirect should be in the middle
- // pipex always at the top
- 
+// Examples above:
+// always adds new nodes to left side on the branch
+// commands/words should be at the bottom
+// redirect should be in the middle
+// pipex always at the top
 t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 {
 	if (!node)
@@ -179,7 +178,7 @@ static void print_tree(t_node *node, int depth)
 }
 */
 
-//@TODO: signals in the end
+// @TODO: signals in the end
 // add before return line:
 // print_tree(tree, 1);
 // if you want the tree to be printed

@@ -6,14 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:32:11 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:59:48 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
-
-// jos ekasta expansionista tulee tyhjaa ni se argv skipataan
-
 
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 
@@ -54,7 +51,6 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
 // 	*index += len;
 // 	return (NULL);
 // }
-
 
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env)
 {
@@ -186,7 +182,6 @@ static int small_itoa(t_expand_vars *v, char *str)
 	return (0);
 }
 
-
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
 	if (is_valid_var_start(node->token.u_data.string[v->i + 1]) == false)
@@ -200,7 +195,6 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 		return (0);
 	}
 	set_env_var(v, node);
-	// v->env_var = find_env_var(&node->token, ++v->i, &v->i, get_minishell(NULL)->envp);
 	if (v->env_var == NULL)
 		return (0);
 	if (v->quote == '"')
@@ -323,7 +317,7 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 	char *str;
 	t_node *tree_root;
 	
-	printf("\n---- starting tree expansion ----\n");
+	// printf("\n---- starting tree expansion ----\n");
 	
 	//loop here so that we send the first word node of branch
 	//come ut of branch, return argv to first word node and then go to another branch loop
@@ -349,6 +343,6 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 		} 
 		tree = tree_root->right;
 	}
-	printf("arena size after expansion: %lu\n", arena->size);
-	printf("\n---- tree expanded ----\n\n\n");
+	// printf("arena size after expansion: %lu\n", arena->size);
+	// printf("\n---- tree expanded ----\n\n\n");
 }

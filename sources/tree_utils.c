@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:04:47 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:44:23 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void print_token_type(t_type *token_type)
 		ft_putstr_fd("error", 2);
 }
 
+// finds the main root head of tree
 t_node *find_head_root(t_node *node)
 {
 	if (node && node->root)
@@ -40,6 +41,7 @@ t_node *find_head_root(t_node *node)
 	return(node);  
 }
 
+// prints syntax error
 void *syntax_error(t_token *token, t_lexer *lexer)
 {
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
@@ -50,6 +52,7 @@ void *syntax_error(t_token *token, t_lexer *lexer)
 	return (NULL);
 }
 
+// heredoc max limit for over 16 heredocs
 bool heredoc_limit(t_token *token, uint32_t *heredoc_count)
 {	
 	if (token->type == HERE_DOCUMENT)

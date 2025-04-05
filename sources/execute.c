@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 16:59:52 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/04 23:47:34 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 		syscall_failure(m); // @TODO: error cheking
 	if (pid == 0)
 	{
+		// signal(SIGINT, SIG_DFL);
 		apply_redirect(m);
 		close_pipe(m);
 		if (builtin != BUILTIN_FALSE)
