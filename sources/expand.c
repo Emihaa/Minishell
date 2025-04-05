@@ -6,80 +6,16 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:59:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/05 19:24:13 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
 
+// jos ekasta expansionista tulee tyhjaa ni se argv skipataan
+
+
 static char **travel_tree(t_arena *arena, t_node *node, char *str, int count);
-
-// get_env_var(t_token *data, const uint32_t start, uint32_t *index, char **env)
-// {
-// 	char *env_var;
-// 	const char *str = &data->u_data.string[start];
-
-// 	env_var = find_env_var()
-// }
-
-
-// char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env)
-// {
-// 	uint32_t len;
-// 	char c;
-// 	len = 0;
-// 	while (start + len < data->string_len)
-// 	{
-// 		c = data->u_data.string[start + len];
-// 		if (c != '_' && ft_isalnum(c) == false)
-// 			break ;
-// 		len += 1;
-// 	}
-// 	if (env != NULL && len > 0)
-// 	{	
-// 		while (*env != NULL)
-// 		{
-// 			if (ft_strncmp(&data->u_data.string[start], *env, len) == 0 &&
-// 							(*env)[len] == '=')
-// 			{
-// 				*index += len;
-// 				return(&(*env)[len + 1]); // watch out maybe problem
-// 			}
-// 			env++;
-// 		}
-// 	}
-// 	*index += len;
-// 	return (NULL);
-// }
-
-char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env)
-{
-	uint32_t len;
-	char c;
-
-	len = 0;
-	while (len < str_len)
-	{
-		c = str[len];
-		if (c != '_' && ft_isalnum(c) == false)
-			break ;
-		len += 1;
-	}
-	if (env != NULL && len > 0)
-	{	
-		while (*env != NULL)
-		{
-			if (ft_strncmp(str, *env, len) == 0 && (*env)[len] == '=')
-			{
-				*index += len;
-				return(&(*env)[len + 1]); // watch out maybe problem
-			}
-			env++;
-		}
-	}
-	*index += len;
-	return (NULL);
-}
 
 static
 char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
@@ -144,7 +80,7 @@ char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
 
 
 static inline
-void set_env_var(t_expand_vars *v, t_node *node)
+char *set_env_var(t_expand_vars *v, t_node *node)
 {
 	v->env_var = find_env_var	(	
 									&node->token.u_data.string[++v->i],
@@ -152,34 +88,7 @@ void set_env_var(t_expand_vars *v, t_node *node)
 									&v->i,
 									get_minishell(NULL)->envp
 								);
-}
-
-// builtin exit somebody can add anything they want a exit code
-// atol
-// exit 100 = $? = 125
-// do i write this out or printf it out or what?
-static int small_itoa(t_expand_vars *v, char *str)
-{
-	int value;
-	int size;
-
-	v->i += 2;
-	size = 0;
-	value = get_minishell(NULL)->exit_status;
-	if (value == 0)
-	{
-		str[v->len++] = '0'; 
-		return (0);
-	}
-	size = (int) num_len((uint32_t) value);
-	str += v->len;
-	v->len += size;
-	while (value > 0)
-	{
-		str[--size] = value % 10 + '0';
-		value /= 10;
-	}	
-	return (0);
+	return (v->env_var);
 }
 
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
@@ -188,33 +97,26 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 	{
 		if (node->token.u_data.string[v->i + 1] == '?')
 			return (small_itoa(v, str));
-		if (is_quote(node->token.u_data.string[v->i +1]))
+		if (is_quote(node->token.u_data.string[v->i + 1]))
 			v->i += 1;
 		else  
 			str[v->len++] = node->token.u_data.string[v->i++];
 		return (0);
 	}
-	set_env_var(v, node);
-	if (v->env_var == NULL)
+	if (set_env_var(v, node) == NULL)
 		return (0);
 	if (v->quote == '"')
 	{
 		while (*v->env_var != '\0')
 			str[v->len++] = *v->env_var++;
-		return (0) ; // no field split, spaces and tabs are spaces and tabs and dollar dollar
+		return (0); // no field split, spaces and tabs are spaces and tabs and dollar dollar
 	} 				// else need to do more additional recursions and tabs and spaces are '\0'
-	while (is_space(*v->env_var) == true)
-	{
-		v->env_var++;
-	}
-	while (is_space(*v->env_var) == false)
-	{	
-		if (*v->env_var == '\0')
-			return (0);
+	v->env_var += eat_space(v->env_var);
+	while (is_space(*v->env_var) == false && *v->env_var != '\0')
 		str[v->len++] = *v->env_var++;
-	}
-	while (is_space(*v->env_var) == true)
-		v->env_var++;
+	if (*v->env_var == '\0')
+		return (0);
+	v->env_var += eat_space(v->env_var);
 	return (1);
 }
 
@@ -329,14 +231,14 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 		while (tree)
 		{
 			if (tree->token.type > 0)
-				tree->token.type = heredoc(m, &tree->token);
+				tree->token.type = heredoc(arena, m, &tree->token);
 			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
 			 	expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
 			{
-				str = arena_alloc_no_zero(arena, sizeof(char) * 1); //alloc only the first pointer
-				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);
-				tree->left = NULL;
+				str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
+				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);						   // if we encounter weird issues its probably
+				tree->left = NULL;																   // it's probably because of this
 				break ;
 			}
 			tree = tree->left;

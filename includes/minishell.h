@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/04 23:57:58 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/05 19:21:26 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include "../libs/lt_alloc/includes/lt_alloc.h" 
 #include "../libs/libft/includes/libft.h"
 
+#include <stddef.h> // size_t
 #include <unistd.h>	//for write, pipe etc.
 #include <sys/types.h>  // pid_t
 #include <sys/wait.h> // wait, waitpid
@@ -72,7 +73,6 @@ typedef struct s_minishell
 	int			exit_status;
 	char		*line;
 	t_arena		node_arena;
-	//t_arena		env_arena; // not used remeber to take it out
 	t_arena		scratch_arena;
 	char		**envp;
 }	t_minishell;
@@ -139,8 +139,6 @@ void signal_handler(int signal);
 
 // lexer stuff
 t_token	get_next_token(t_lexer *lexer);
-t_token *get_token_array(t_arena *arena, t_lexer *lexer); // not used currently @TODO: remove this
-void print_tokens(t_lexer *lexer); // for debugging in the lexer
 
 // tree stuff
 t_node	*parser(t_arena *arena, t_minishell *m, char *line);
@@ -176,6 +174,9 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 //expand_utils stuff
 bool	is_valid_var_start(char c);
 bool	is_quote(char c);
+uint32_t eat_space(char *str);
+int		small_itoa(t_expand_vars *v, char *str);
+char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 // heredoc stuff
 #define HEREDOC_TEMP_NAME "./heredoc_temp"
@@ -183,8 +184,11 @@ bool	is_quote(char c);
 #define EOF_ERROR "minishell: warning: here-document at line %i \
 delimited by end-of-file (wanted `%s')\n"
 // int a = NAME_BASE_LEN; // delete
-int heredoc(t_minishell *minishell, t_token *data);
+int heredoc(t_arena *arena, t_minishell *minishell, t_token *data);
 
+//	heredoc_utils stuff
+char	*create_temp_file_name(uint32_t heredoc_num);
+int		create_heredoc_fds(int fds[2]);
 
 // testing possible redirect stuff
 #define WRITE	1
@@ -202,13 +206,17 @@ void	wait_for_sub_processes(t_minishell *minishell);
 
 // environment stuff
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
-char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 //general utils stuff
 uint32_t	set_quote_removed_string(char *string, t_token *data);
 uint8_t		num_len(uint32_t num);
 bool		is_space(char c);
 t_minishell *get_minishell(t_minishell *m);
+
+// arena_utils stuff
+void *xarena_alloc(t_arena *arena, uint64_t size);
+void *xarena_alloc_no_zero(t_arena *arena, uint64_t size);
+
 
 //builtin stuff
 
@@ -234,7 +242,7 @@ void builtin_pwd(int fd);
 
 // execute stuff
 pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin);
-void	execute_command(t_minishell *m, char **argv, int status);
+int	execute_command(t_minishell *m, char **argv, int status);
 
 void close_pipe(t_minishell *m);
 void execve_failure(t_minishell *m, char *cmd);
@@ -242,7 +250,7 @@ void command_not_found(t_minishell *m, char *cmd);
 
 
 //error stuff
-void error_exit(t_minishell *m);
+void	error_exit(t_minishell *m, int exit_status);
 void	syscall_failure(t_minishell *m);
 
 

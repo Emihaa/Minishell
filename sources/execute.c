@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/04 23:47:34 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/05 19:21:40 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 		close_pipe(m);
 		if (builtin != BUILTIN_FALSE)
 		{
-			execute_builtin(m, argv, builtin);
-			exit(m->exit_status);
+			(void)execute_builtin(m, argv, builtin);
+			builtin_exit(m);
 		}
 		run_command(m, argv);
 	}
@@ -81,13 +81,13 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 	return (pid);
 }
 
-void execute_command(t_minishell *m, char **argv, int status)
+int	execute_command(t_minishell *m, char **argv, int status)
 {
 	pid_t pid;
 	t_builtin builtin_type;
 
 	if (argv == NULL)
-		return ;
+		return (1);
 	if (status != 0)
 	{
 		pid = fork();
@@ -97,13 +97,14 @@ void execute_command(t_minishell *m, char **argv, int status)
 			builtin_exit(m);
 		m->command_count += 1;
 		m->last_pid = pid;
-		return ;
+		return (1);
 	}
 	builtin_type = check_for_builtin(argv[0]);
 	if (m->pipe_side == -1 && builtin_type != BUILTIN_FALSE)
 	{
 		execute_builtin(m, argv, builtin_type);
-		return ;
+		return (1);
 	}
 	m->last_pid = execute_subprocess(m, argv, builtin_type);
+	return (1);	
 }

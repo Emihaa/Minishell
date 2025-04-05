@@ -6,22 +6,13 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/26 23:36:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 19:25:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// to compile just the lexer for testing use
-// 
-/*
-cc lexer.c -l readline ../libs/libft/build/libft.a ../libs/lt_alloc/build/lt_alloc.a -o lexer
-
-*/
 #include "../includes/minishell.h" 
-// change to be a just "minishell.h" after making sure makefile linking works properly
-
-// LUKA: should the lexer care about syntax errors or not
-// seems like probably not
-// probably makes more sense to detect syntax error in parser when getting tokens in unexpected order
+// change to be a just "minishell.h"
+// after making sure makefile linking works properly
 
 // does the current character delimit a word
 static inline
@@ -60,36 +51,13 @@ int	match_quote(t_lexer *lexer, char quote, int len)
 	return (len);
 }
 
-// @question which style is nicer :P?
-
-// just returns a token with correct parameters for a pipe
-static inline
-t_token	tokenize_pipe(t_lexer *lexer)
-{
-	const t_token token = {
-		.type = PIPE,
-		.u_data.string = &lexer->line[lexer->line_index],
-		.string_len = 1,
-	};
-	lexer->line_index += 1;
-	return (token);
-}
-
-// just returns a token with correct parameters for a EOL
-static inline
-t_token	tokenize_end_of_line(void)
-{
-	return ((t_token)
-		{
-			.type = END_OF_LINE,
-			.u_data.string = NULL,
-			.string_len = 0,
-		});
-}
+// if we hit a quote len will for sure be at least 1
+// so might break the len check
 
 // creates a token matching the input parameters
 // for tokens that can have a string
 // @TODO: rename
+static
 t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 {
 	t_token	token;
@@ -103,7 +71,7 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 	while (1)
 	{
 		c = lexer->line[lexer->line_index + len];
-		len = match_quote(lexer, c, len); // if we hit a quote len will for sure be at least 1 so might break the len check 
+		len = match_quote(lexer, c, len);
 		if (is_delimiter(c))
 			break ;
 		len += 1;
@@ -118,17 +86,19 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 	return (token);
 }
 
-// @example
-// stuff necessary for calling the lexer
-/*
-		t_lexer lexer;
-		lexer.line = readline("minishell >");
-		lexer.line_index = 0;
+// just returns a token with correct parameters for a pipe
+static inline
+t_token	tokenize_pipe(t_lexer *lexer)
+{
+	const t_token	token = {
+		.type = PIPE,
+		.u_data.string = &lexer->line[lexer->line_index],
+		.string_len = 1,
+	};
 
-		t_token token;
-		token = get_next_token(&lexer);
-
-*/
+	lexer->line_index += 1;
+	return (token);
+}
 
 // skips whitespace between tokens and finds the next token type to return
 // @TODO:	find out which character can be valid parts of a word
@@ -149,66 +119,6 @@ t_token	get_next_token(t_lexer *lexer)
 	if (lexer->line[lexer->line_index] == '>')
 		return (tokenize_stuffs(lexer, REDIRECT_OUT, 1));
 	if (lexer->line[lexer->line_index] == '\0')
-		return (tokenize_end_of_line());
+		return ((t_token){0});
 	return (tokenize_stuffs(lexer, WORD, 0));
-	//return ((t_token){.type = ERROR, .string = {0}}); // error	
 }
-
-// use to get an array of all the tokens in a line
-// give an arena to allocate the array with
-// give an initialized lexer
-t_token *get_token_array(t_arena *arena, t_lexer *lexer)
-{
-	t_token *token_array_base;
-	int	i;
-
-	token_array_base = arena_alloc(arena, sizeof(t_token));
-	i = 0;
-	while (1)
-	{
-		token_array_base[i] = get_next_token(lexer);
-		if (token_array_base[i].type == END_OF_LINE)
-			break ;
-		arena_alloc(arena, sizeof(t_token));
-		i++;
-	}
-	return (token_array_base);
-}
-
-// TESTING STUFF
-// comment out when integrating to project or testing other stuff that need the lexer 
-// and delete when ready to submit
-// cc lexer.c -l readline ../libs/libft/build/libft.a
-//testing main
-// void print_tokens(t_lexer *lexer)
-// {
-// 	while (1)
-// 	{
-// 		t_token token = get_next_token(lexer);
-
-// 		char *token_string = calloc(1, token.string_len + 1);
-// 		ft_memmove(token_string, token.string, token.string_len);
-// 		printf("token number: %i\ttoken name: %s\ttoken string: %s\n", token.type, token.name, token_string);
-// 		free(token_string);
-// 		if (token.type == END_OF_LINE || token.type == ERROR)
-// 			break ;
-// 	}
-// }
-
-// void print_token_array(t_arena *arena, t_lexer *lexer)
-// {
-// 	int i = 0;
-// 	t_token *token_array = get_token_array(arena, lexer);
-// 	while (1)
-// 	{
-// 		t_token token = token_array[i];
-// 		char *token_string = calloc(1, token.string_len + 1);
-// 		ft_memmove(token_string, token.string, token.string_len);
-// 		printf("token number: %i\ttoken name: %s\ttoken string: %s\n", token.type, token.name, token_string);
-// 		free(token_string);
-// 		if (token.type == END_OF_LINE || token.type == ERROR)
-// 			break ;
-// 		i++;
-// 	}
-// 	arena_reset(arena);
-// }

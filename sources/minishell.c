@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 00:06:40 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/05 19:25:31 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,15 +174,13 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 		if (m->pipe_side == READ)
 			status = create_and_store_pipe(m, &m->pipe_side);
 		if (tree->token.type == PIPE)
-		{
 			status = create_and_store_pipe(m, &m->pipe_side);
-			tree = tree->left;
-		}
 		while (tree)
 		{
 			status = do_redir(m, &tree->token);
 			if (tree->token.type == WORD || status != 0)
-				execute_command(m, tree->token.u_data.argv, status);
+				if (execute_command(m, tree->token.u_data.argv, status))
+					break ;
 			tree = tree->left;	
 		}
 		reset_redirect(m);
@@ -235,7 +233,10 @@ void init_minishell(t_minishell *minishell, char **envp)
 
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena.data == NULL)
-		; // @TODO: error cheking
+	{
+		put_str_nl(STDERR_FILENO, "allocation failure");
+		error_exit(minishell, 1); // @TODO: error cheking
+	}
 	minishell->line = NULL;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
@@ -249,7 +250,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->pipe[WRITE] = -1;
 	minishell->last_pid = 0; 
 	minishell->pids = NULL;
-	get_minishell(minishell); // this will probably not be used so remeber to take care of it
+	get_minishell(minishell);
 }
 
 void signal_handler(int signal)

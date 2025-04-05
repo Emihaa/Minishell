@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/31 21:25:00 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/03 17:40:43 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,16 @@
 static inline
 void	ambigous_redirect(char *file_name)
 {
-	ft_putstr_fd("minishell: ", 2);
+	(void)put_str(STDERR_FILENO, "minishell: ");
 	if (file_name != NULL)
-		ft_putstr_fd(file_name, 2);
-	ft_putendl_fd(": ambigous redirect", 2);
+		(void)put_str(STDERR_FILENO, file_name);
+	(void)put_str_nl(STDERR_FILENO, ": ambigous redirect");
 }
 
 static inline
 void	open_failure(char *file_name)
 {
-	ft_putstr_fd("minishell: ", 2);
+	(void)put_str(STDERR_FILENO, "minishell: ");
 	perror(file_name);
 }
 
