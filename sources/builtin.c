@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 00:28:17 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 00:31:45 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@ int str_is_numeric(char *str)
 	int i;
 
 	i = 0;
+	if (*str == '-' || *str == '+')
+		i++;
 	while (ft_isdigit(str[i]))
 		i++;
 	return ((str[i] == '\0'));
