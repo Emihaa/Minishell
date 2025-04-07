@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 21:58:05 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 22:45:06 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,6 +188,6 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 	if (command == BUILTIN_UNSET)
 		; // @TODO: add command
 	if (command == BUILTIN_EXPORT)
-		; // @TODO: add command
+		print_export(m); // @TODO: add command
 	return (0);
 }
