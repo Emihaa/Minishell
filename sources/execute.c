@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 19:21:40 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/05 20:01:13 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 		if (builtin != BUILTIN_FALSE)
 		{
 			(void)execute_builtin(m, argv, builtin);
-			builtin_exit(m);
+			error_exit(m, 0);
 		}
 		run_command(m, argv);
 	}
@@ -94,7 +94,7 @@ int	execute_command(t_minishell *m, char **argv, int status)
 		if (pid == -1)
 			syscall_failure(m); // @TODO: error cheking
 		if (pid == 0)
-			builtin_exit(m);
+			error_exit(m, 0);
 		m->command_count += 1;
 		m->last_pid = pid;
 		return (1);

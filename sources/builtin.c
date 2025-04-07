@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/03 17:37:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/05 20:02:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,51 @@ void builtin_echo(char *argv[], int fd)
 	if (newline == true)
 		(void)put_char(fd, '\n');
 }
-
-void builtin_exit(t_minishell *m)
+static
+int count_argc(char **argv)
 {
+	int count;
+
+	if (argv == NULL)
+		return (0);
+	count = 0;
+	while (argv[count] != NULL)
+		count++;
+	return (count);
+}
+
+int str_is_numeric(char *str)
+{
+	int i;
+
+	i = 0;
+	while (ft_isdigit(str[i]))
+		i++;
+	return ((str[i] == '\0'));
+}
+
+void builtin_exit(t_minishell *m, char **argv)
+{
+	const int argc = count_argc(argv);
+
+	write(1, "exit\n", 5);
+	if (argc > 1 && str_is_numeric(argv[1]) == false)
+	{
+		stdout = stderr;
+		printf("minishell: exit: %s: numeric argument required\n", argv[1]);
+		m->exit_status = 2;
+	}
+	else if (argc > 2)
+	{
+		write(2, "minishell: exit: too many arguments\n", 36);
+		m->exit_status = 1;
+		return ;
+	}
+	else
+	{
+		m->exit_status = ft_atoi(argv[1]);
+	}
 	minishell_cleanup(m);
-	if (m->pipe_side == -1)
-		write(2, "exit\n", 5);
 	exit(m->exit_status);
 }
 
@@ -135,7 +174,7 @@ t_builtin check_for_builtin(char *command)
 int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 {
 	if (command == BUILTIN_EXIT)
-		builtin_exit(m);
+		builtin_exit(m, argv);
 	if (command == BUILTIN_ECHO)
 		builtin_echo(argv, m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_CD)

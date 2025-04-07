@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 19:25:31 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/05 21:54:22 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,10 +281,12 @@ void signal_handler(int signal)
 // this one already works
 int main(int argc, char *argv[], char **envp)
 {
+	static char 	arr[ARG_MAX];
 	t_minishell minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 
+	arr[0] = 7;
 	(void)argc;
 	(void)argv;
 	init_minishell(&minishell, envp);
