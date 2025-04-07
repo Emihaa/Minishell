@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:50:26 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 17:58:58 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,33 +150,33 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 	return (node);
 }
 
-/*
-// Function to print the tree
-static void print_tree(t_node *node, int depth)
-{
-	int i = 0; 
-	if (!node)
-		return ;
-	while (i++ < depth)
-		printf("  ");
-	// Print current node
-	printf("[-- ");
-	print_token_type(&node->token.type);
-	printf(" -> %.*s\n", (int)node->token.string_len, node->token.u_data.string);
-	// Print left subtree
-	if (node->left)
-	{
-		printf(" L ");
-		print_tree(node->left, depth + 1);
-	}
-	// Print right subtree
-	if (node->right)
-	{
-		printf(" R ");
-		print_tree(node->right, depth + 1);
-	}
-}
-*/
+
+// // Function to print the tree
+// static void print_tree(t_node *node, int depth)
+// {
+// 	int i = 0; 
+// 	if (!node)
+// 		return ;
+// 	while (i++ < depth)
+// 		printf("  ");
+// 	// Print current node
+// 	printf("[-- ");
+// 	print_token_type(&node->token.type);
+// 	printf(" -> %.*s\n", (int)node->token.string_len, node->token.u_data.string);
+// 	// Print left subtree
+// 	if (node->left)
+// 	{
+// 		printf(" L ");
+// 		print_tree(node->left, depth + 1);
+// 	}
+// 	// Print right subtree
+// 	if (node->right)
+// 	{
+// 		printf(" R ");
+// 		print_tree(node->right, depth + 1);
+// 	}
+// }
+
 
 // @TODO: signals in the end
 // add before return line:

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/03 17:37:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/07 21:38:28 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ void	builtin_pwd(int fd)
 	(void)put_str_nl(fd, current_path);
 }
 
+// check if '=' on env and print that line otherwise skip
 void builtin_env(char **envp)
 {
 	int i;
@@ -67,7 +68,8 @@ void builtin_env(char **envp)
 		return ;
 	while (envp[i])
 	{
-		printf("%s\n", envp[i]);
+		if (ft_strchr(envp[i], '='))
+			printf("%s\n", envp[i]);
 		i++;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 19:21:26 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 20:53:28 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@
 #include <fcntl.h>		// open
 #include <sys/stat.h>	// lstat !!! might not be used WATCH OUTTTTTAMSL:MF:ALMSG:LMA
 #include <signal.h>     // signal handling
+
+extern sig_atomic_t g_int;
 
 // maybe have all token types be negative except heredoc so that the type can be replace with an fd
 // @question are these the only tokens needed?
@@ -75,11 +77,8 @@ typedef struct s_minishell
 	t_arena		node_arena;
 	t_arena		scratch_arena;
 	char		**envp;
+	int			envp_size;
 }	t_minishell;
-
-
-// LUKA i have to handle | $ expansion | "" quote expansion | '' single quote expansion | white space removal
-// EMILIA handles these
 
 
 // LUKA: maybe use this? idunno probably  not
@@ -204,7 +203,8 @@ int		redirect_append(char **file_name, t_minishell *m);
 void	wait_for_sub_processes(t_minishell *minishell);
 
 
-// environment stuff
+// envi stuff
+char **create_env(char **envp, t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 
 //general utils stuff
@@ -219,7 +219,6 @@ void *xarena_alloc_no_zero(t_arena *arena, uint64_t size);
 
 
 //builtin stuff
-
 typedef enum e_builtin
 {
 	BUILTIN_FALSE = 0,

@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 19:24:44 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 19:28:37 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,6 @@ ltaalas@c1r3p1:~/projects/minishell/sources$
 
 */
 
-extern int g_global_int;
-
-
 static inline
 void print_eof_error(t_minishell *m, char *delimiter)
 {
@@ -74,15 +71,27 @@ void print_eof_error(t_minishell *m, char *delimiter)
 	stdout = temp;
 }
 
+static 
+int heredoc_event_hook(void)
+{
+	if (g_int == SIGINT)
+	{
+		rl_done = 1;
+		return (1);
+	}
+	return (0);
+}
+
 static
 int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 {
-	// signal(SIGINT, SIG_DFL);
+	rl_event_hook = heredoc_event_hook;
 	*line = readline("> ");
-	printf("global: %i\n", g_global_int);
-	if (*line == NULL)
+	if (*line == NULL || g_int == SIGINT)
 	{
-		print_eof_error(minishell, delimiter); // should this be on stderror?
+		g_int = 0;
+		if (!*line)
+			print_eof_error(minishell, delimiter); // should this be on stderror?
 		return (-1);
 	}
 	minishell->line_counter += 1;

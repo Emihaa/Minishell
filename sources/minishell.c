@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 19:25:31 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 21:07:35 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,7 @@
 
 #include "../includes/minishell.h" // fix maybe
 
-volatile int g_global_int = 0;
-
-void export(void)
-{
-	char *s = "vegenakki";
-	printf("%s\n", s);
-
-	//should return something?
-}
+sig_atomic_t g_int = 0;
 
 void print_expansion(char *line)
 {	
@@ -189,6 +181,21 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 	return (0);
 }
 
+static 
+int heredoc_event_hook(void)
+{
+	if (g_int == SIGINT)
+	{
+		write(1, "\n", 1);
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+		g_int = 0;
+		return (1);
+	}
+	return (0);
+}
+
 void read_loop(t_minishell *m)
 {
 	t_node *tree;
@@ -197,6 +204,7 @@ void read_loop(t_minishell *m)
 	while (1)
 	{
 		i = 0;
+		rl_event_hook = heredoc_event_hook;
 		m->command_count = 0;
 		m->heredoc_count = 0;
 		m->line = readline("minishell> ");
@@ -218,12 +226,17 @@ void read_loop(t_minishell *m)
 	}
 }
 
+// add env clean up here @TODO Emilia
 void minishell_cleanup(t_minishell *minishell)
 {
 	arena_delete(&minishell->node_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
+	while (minishell->envp_size >= 0)
+		free(minishell->envp[minishell->envp_size--]);
+	free(minishell->envp);
 }
+
 // set default values for the minishell struct
 // the struct is going to work as a kind of storage for globally needef alues
 // we might want to pre allocate the arenas that will be used here to make cleanup easier
@@ -243,7 +256,8 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->exit_status = 0;
 	minishell->heredoc_fds = heredoc_fds_arr;
 	minishell->heredoc_count = 0;
-	minishell->envp = envp; // need to be our own env etc.. bla bla bal
+	minishell->envp_size = 0;
+	minishell->envp = create_env(envp, minishell); // <---------- @TODO Emilia
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
@@ -255,22 +269,19 @@ void init_minishell(t_minishell *minishell, char **envp)
 
 void signal_handler(int signal)
 {
-	if (signal == SIGINT)
-	{
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-	}
-	
-	if (signal == SIGQUIT)
-		printf("found cntrl+'\\n");
-	g_global_int = 1;
+	if (signal == SIGINT) // this would be for the basic shell process ON_READ
+		g_int = SIGINT;
+	else
+		g_int = 0;
 }
 
 // SIGINT for cntrl+C
 // cancel current input, prints a newline + promt
 // in child rocesses reset signal to default so they get killed properly
+// signal status, ON_READ <- default status of the shell
+// ON_HDOC <-- shell using stdin and writing on hdoc
+// ON_EXE, which shell is on while commands are being executed
+
 
 // SIGQUIT for ctrl+\ <- this does nothing
 // ignore the SIGQUIT, and reset it to default?
@@ -284,6 +295,8 @@ int main(int argc, char *argv[], char **envp)
 	t_minishell minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTERM, SIG_IGN); //<-- why?
+
 
 	(void)argc;
 	(void)argv;
