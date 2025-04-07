@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 21:07:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 21:58:18 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -292,12 +292,14 @@ void signal_handler(int signal)
 // this one already works
 int main(int argc, char *argv[], char **envp)
 {
+	static char 	arr[ARG_MAX];
 	t_minishell minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTERM, SIG_IGN); //<-- why?
 
 
+	arr[0] = 7;
 	(void)argc;
 	(void)argv;
 	init_minishell(&minishell, envp);

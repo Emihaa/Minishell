@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 20:53:28 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 21:57:43 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -234,7 +234,7 @@ typedef enum e_builtin
 t_builtin check_for_builtin(char *command);
 int	execute_builtin(t_minishell *m, char **argv, t_builtin command);
 
-void builtin_exit(t_minishell *m);
+void builtin_exit(t_minishell *m, char **argv);
 void builtin_echo(char *argv[], int fd);
 void builtin_pwd(int fd);
 
