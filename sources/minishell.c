@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 21:58:18 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 23:02:44 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,10 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		{
 			printf("pid == %i\n", pid);
 			printf("exit_status before = %i\n", minishell->exit_status);
-			minishell->exit_status = WEXITSTATUS(wstatus);
+			if (wstatus != 0 && wstatus < 128)
+				minishell->exit_status = 128 + wstatus;
+			else
+				minishell->exit_status = WEXITSTATUS(wstatus);
 			printf("wstatus: %d\n", wstatus);
 			printf("exit_status after = %i\n", minishell->exit_status);
 

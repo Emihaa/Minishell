@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 21:58:05 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/08 00:28:17 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,15 +74,15 @@ void builtin_exit(t_minishell *m, char **argv)
 		printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 		m->exit_status = 2;
 	}
+	else if (argc > 1) 
+	{
+		m->exit_status = ft_atoi(argv[1]);
+	}
 	else if (argc > 2)
 	{
 		write(2, "minishell: exit: too many arguments\n", 36);
 		m->exit_status = 1;
 		return ;
-	}
-	else
-	{
-		m->exit_status = ft_atoi(argv[1]);
 	}
 	minishell_cleanup(m);
 	exit(m->exit_status);
