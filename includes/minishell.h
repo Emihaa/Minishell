@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 01:00:47 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:25:09 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,6 +208,7 @@ void	wait_for_sub_processes(t_minishell *minishell);
 
 // envi stuff
 char **create_env(char **envp, t_minishell *m);
+char **print_export(t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 
 //general utils stuff

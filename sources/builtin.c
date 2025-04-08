@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 00:40:02 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 15:24:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,6 +191,6 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 	if (command == BUILTIN_UNSET)
 		; // @TODO: add command
 	if (command == BUILTIN_EXPORT)
-		; // @TODO: add command
+		print_export(m); // @TODO: add command
 	return (0);
 }
