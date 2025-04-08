@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/05 19:24:13 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 22:54:08 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	static t_expand_vars v;
 	static char	 **argv_pntr;
 
+	v.had_quote = 0;
 	v.env_var = NULL;
 	v.i = 0;
 	v.len = 0;
@@ -162,16 +163,9 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	while (v.i < node->token.string_len)
 	{
 		// if we find quates, flag it? and also what type of quate flag
-		if (is_quote(node->token.u_data.string[v.i]) &&
-			(v.quote == '\0' || v.quote == node->token.u_data.string[v.i]))
-		{
-			if (v.quote == '\0')
-				v.quote = node->token.u_data.string[v.i];
-			else if (v.quote == node->token.u_data.string[v.i])
-				v.quote = '\0';
-			v.i++;
-		}
-		else if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
+		if (quote_check(node, &v))
+			continue ;
+		if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
 				continue ;
@@ -190,17 +184,18 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 						}, &str[v.len], count + (v.len != 0));
 			if (argv_pntr != NULL)
 				argv_pntr[count] = str;
-			return(argv_pntr); //should return the WORD node for ARGV
+			return (argv_pntr); //should return the WORD node for ARGV
 		}
-		else
-			str[v.len++] = node->token.u_data.string[v.i++];
+		str[v.len++] = node->token.u_data.string[v.i++];
 	}
 	if (v.len > 0)
 	{
 		str[v.len++] = '\0';
 		arena_alloc_no_zero(arena, sizeof(*str) * v.len);
 	}
-	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + (v.len != 0));
+	else if (v.had_quote)
+		arena_alloc(arena, 1);
+	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + ((v.len != 0) || v.had_quote));
 	if (argv_pntr != NULL)
 		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/02 22:56:47 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/07 22:52:01 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,17 +21,25 @@ static void	memmove_name(t_arena *arena, t_node *node, char *str, char **argv)
 	argv[1] = str;
 }
 
-static void	quote_check(t_node *node, t_expand_vars *v)
+int	quote_check(t_node *node, t_expand_vars *v)
 {
 	if (is_quote(node->token.u_data.string[v->i]))
 	{
-		if ((v->quote == '\0' && node->token.u_data.string[v->i] == '\'') || \
-			(v->quote == '\0' && node->token.u_data.string[v->i] == '\"'))
+		if (v->quote == '\0' && node->token.u_data.string[v->i] == '\'')
+		{
 			v->quote = node->token.u_data.string[v->i];
+		}
+		if (v->quote == '\0' && node->token.u_data.string[v->i] == '\"')
+		{
+			v->quote = node->token.u_data.string[v->i];
+		}
 		else if (v->quote == node->token.u_data.string[v->i])
 			v->quote = '\0';
 		v->i++;
-	}	
+		v->had_quote = 1;
+		return (1);
+	}
+	return (0);
 }
 
 // we have to handle the "'" as well
@@ -48,7 +56,6 @@ static void	quote_check(t_node *node, t_expand_vars *v)
 static void	expand_action(t_arena *arena, t_node *node, char *str, char **argv)
 {
 	t_expand_vars v;
-
 	v.i = 0;
 	v.len = 0;
 	v.quote = '\0';
@@ -57,7 +64,8 @@ static void	expand_action(t_arena *arena, t_node *node, char *str, char **argv)
 	str = arena_alloc_no_zero(arena, sizeof(char) * v.len);
 	while (v.i < node->token.string_len)
 	{
-		quote_check(node, &v);
+		if (quote_check(node, &v))
+			continue ;
 		if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)

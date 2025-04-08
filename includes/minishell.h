@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 22:44:21 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/08 15:25:09 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,6 +161,7 @@ typedef struct s_expand_vars
 	uint32_t i;
 	uint32_t len;
 	char quote;
+	bool had_quote;
 	char *env_var;
 }	t_expand_vars;
 
@@ -170,6 +171,8 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree);
 void expand_redirect(t_arena *arena, t_node *node);
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 
+int	quote_check(t_node *node, t_expand_vars *v);
+
 //expand_utils stuff
 bool	is_valid_var_start(char c);
 bool	is_quote(char c);
@@ -178,9 +181,9 @@ int		small_itoa(t_expand_vars *v, char *str);
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 
 // heredoc stuff
-#define HEREDOC_TEMP_NAME "./heredoc_temp"
-#define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
-#define EOF_ERROR "minishell: warning: here-document at line %i \
+# define HEREDOC_TEMP_NAME "./heredoc_temp"
+# define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
+# define EOF_ERROR "minishell: warning: here-document at line %i \
 delimited by end-of-file (wanted `%s')\n"
 // int a = NAME_BASE_LEN; // delete
 int heredoc(t_arena *arena, t_minishell *minishell, t_token *data);

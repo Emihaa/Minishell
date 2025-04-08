@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 22:45:06 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/08 15:24:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void builtin_echo(char *argv[], int fd)
 	if (newline == true)
 		(void)put_char(fd, '\n');
 }
+
 static
 int count_argc(char **argv)
 {
@@ -58,8 +59,10 @@ int str_is_numeric(char *str)
 	int i;
 
 	i = 0;
+	if (*str == '-' || *str == '+')
+		i += 1;
 	while (ft_isdigit(str[i]))
-		i++;
+		i += 1;
 	return ((str[i] == '\0'));
 }
 
@@ -74,15 +77,15 @@ void builtin_exit(t_minishell *m, char **argv)
 		printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 		m->exit_status = 2;
 	}
-	else if (argc > 2)
-	{
-		write(2, "minishell: exit: too many arguments\n", 36);
-		m->exit_status = 1;
-		return ;
-	}
-	else
+	else if (argc > 1) 
 	{
 		m->exit_status = ft_atoi(argv[1]);
+	}
+	else if (argc > 2)
+	{
+		write_bytes(STDERR_FILENO, "minishell: exit: too many arguments\n", 36);
+		m->exit_status = 1;
+		return ;
 	}
 	minishell_cleanup(m);
 	exit(m->exit_status);
@@ -109,7 +112,7 @@ void builtin_env(char **envp)
 	{
 		if (ft_strchr(envp[i], '='))
 			printf("%s\n", envp[i]);
-		i++;
+		i += 1;
 	}
 }
 
