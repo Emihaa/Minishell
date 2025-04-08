@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/07 22:52:01 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 19:10:08 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,24 +16,24 @@
 static void	memmove_name(t_arena *arena, t_node *node, char *str, char **argv)
 {
 	str = arena_alloc(arena, sizeof(char) * (node->token.string_len + 1));
-	ft_memmove(str, node->token.u_data.string, node->token.string_len);
+	ft_memmove(str, node->token.string, node->token.string_len);
 	argv[0] = str;
 	argv[1] = str;
 }
 
 int	quote_check(t_node *node, t_expand_vars *v)
 {
-	if (is_quote(node->token.u_data.string[v->i]))
+	if (is_quote(node->token.string[v->i]))
 	{
-		if (v->quote == '\0' && node->token.u_data.string[v->i] == '\'')
+		if (v->quote == '\0' && node->token.string[v->i] == '\'')
 		{
-			v->quote = node->token.u_data.string[v->i];
+			v->quote = node->token.string[v->i];
 		}
-		if (v->quote == '\0' && node->token.u_data.string[v->i] == '\"')
+		if (v->quote == '\0' && node->token.string[v->i] == '\"')
 		{
-			v->quote = node->token.u_data.string[v->i];
+			v->quote = node->token.string[v->i];
 		}
-		else if (v->quote == node->token.u_data.string[v->i])
+		else if (v->quote == node->token.string[v->i])
 			v->quote = '\0';
 		v->i++;
 		v->had_quote = 1;
@@ -66,13 +66,13 @@ static void	expand_action(t_arena *arena, t_node *node, char *str, char **argv)
 	{
 		if (quote_check(node, &v))
 			continue ;
-		if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
+		if (node->token.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
 				continue ;
 			return (memmove_name(arena, node, str, argv));
 		}
-		str[v.len++] = node->token.u_data.string[v.i++];
+		str[v.len++] = node->token.string[v.i++];
 	}
 	if (v.len == 0)
 		return (memmove_name(arena, node, str, argv));
@@ -100,7 +100,7 @@ void expand_redirect(t_arena *arena, t_node *node)
 	// printf("token string: %.*s\n", node->token.string_len, node->token.u_data.string);
 	argv = arena_alloc(arena, sizeof(*argv) * 2);
  	expand_action(arena, node, str, &*argv);
-	node->token.u_data.argv = argv;
+	node->token.argv = argv;
 	// printf("redirect argv_pntr[0]: %s, pntr: %p\n", argv[0],  argv[0]);
 	// printf("redirect argv_pntr[1]: %s, pntr: %p\n", argv[1],  argv[1]);	
 	// printf("--- out expand done ---\n");

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 00:21:21 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 19:10:35 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,21 @@ uint32_t	set_quote_removed_string(char *dest, t_token *data)
 	dest_index = 0;
 	while (data_index < data->string_len)
 	{
-		if (data->u_data.string[data_index] == '"' || data->u_data.string[data_index] == '\'')
+		if (data->string[data_index] == '"' || data->string[data_index] == '\'')
 		{
-			quote = data->u_data.string[data_index++];
+			quote = data->string[data_index++];
 			while (data_index < data->string_len)
 			{
-				if (data->u_data.string[data_index] == quote)
+				if (data->string[data_index] == quote)
 				{
 					data_index += 1;
 					break ;
 				}
-				dest[dest_index++] = data->u_data.string[data_index++];
+				dest[dest_index++] = data->string[data_index++];
 			}
 			continue ;
 		}
-		dest[dest_index++] = data->u_data.string[data_index++];
+		dest[dest_index++] = data->string[data_index++];
 	}
 	return (dest_index);
 }
@@ -90,4 +90,14 @@ int	create_heredoc_fds(int fds[2])
 	if (unlink(file_name) == -1)
 		return_val = -1; // @TODO: more error stuff
 	return (return_val);
+}
+
+int heredoc_event_hook(void)
+{
+	if (g_int == SIGINT)
+	{
+		rl_done = 1;
+		return (1);
+	}
+	return (0);
 }

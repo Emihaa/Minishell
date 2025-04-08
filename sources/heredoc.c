@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 19:28:37 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/08 16:46:03 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,17 +71,6 @@ void print_eof_error(t_minishell *m, char *delimiter)
 	stdout = temp;
 }
 
-static 
-int heredoc_event_hook(void)
-{
-	if (g_int == SIGINT)
-	{
-		rl_done = 1;
-		return (1);
-	}
-	return (0);
-}
-
 static
 int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 {
@@ -99,7 +88,7 @@ int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 }
 
 static
-void	heredoc_write_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
+void	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int	delimiter_len = ft_strlen(delimiter) + 1;
 	char		*line;
@@ -141,7 +130,7 @@ int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *
 }
 
 static
-void heredoc_write_with_expansion_write_loop(t_minishell *m, int write_fd, char *line)
+void heredoc_with_expansion_write_loop(t_minishell *m, int write_fd, char *line)
 {
 	const uint32_t	line_len = ft_strlen(line);
 	uint32_t		i;
@@ -165,7 +154,7 @@ void heredoc_write_with_expansion_write_loop(t_minishell *m, int write_fd, char 
 // will be replaced with our own env version
 // there will be no quote removal inside heredoc
 static
-void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *delimiter)
+void	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int	delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char		*line;
@@ -178,7 +167,7 @@ void	heredoc_write_with_expansion(t_minishell *minishell, int write_fd, char *de
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		i = 0;
-		heredoc_write_with_expansion_write_loop(minishell, write_fd, line);
+		heredoc_with_expansion_write_loop(minishell, write_fd, line);
 		if (put_char(write_fd, '\n'))
 			break ; // @TODO: error cheking
 		free(line);
@@ -202,9 +191,9 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 	new_size = set_quote_removed_string(delimiter, data);
 	arena_unalloc(temp_arena.arena, (data->string_len + 1) - new_size);
 	if (new_size < data->string_len)
-		heredoc_write_no_expansion(minishell, fds[WRITE], delimiter);
+		heredoc_no_expansion(minishell, fds[WRITE], delimiter);
 	else
-		heredoc_write_with_expansion(minishell, fds[WRITE], delimiter);
+		heredoc_with_expansion(minishell, fds[WRITE], delimiter);
 	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
 	minishell->heredoc_count += 1;
 	arena_temp_end(&temp_arena);

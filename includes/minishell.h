@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 15:25:09 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 19:05:40 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ typedef struct s_token
 	{
 		char *string;
 		char **argv; 	// the string of the token | if applicable will be a filename a command name or an argument
-	} u_data;
+	};
 }	t_token;
 
 // struct for any information the lexer might need
@@ -191,6 +191,7 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data);
 //	heredoc_utils stuff
 char	*create_temp_file_name(uint32_t heredoc_num);
 int		create_heredoc_fds(int fds[2]);
+int		heredoc_event_hook(void);
 
 // testing possible redirect stuff
 #define WRITE	1
