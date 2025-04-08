@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:43:59 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/08 00:26:59 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/08 15:21:37 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,11 @@ char **print_export(t_minishell *m)
 	env_sort(pntr_array, m->envp_size);
 	print_export_env(pntr_array);
 	return (pntr_array);
+}
+
+void export(t_minishell *m, char **argv)
+{
+	
 }
 
 char **create_env(char **envp, t_minishell *m)
