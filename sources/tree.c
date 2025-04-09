@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/07 17:58:58 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/09 16:33:04 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,6 +207,7 @@ t_node	*parser(t_arena *arena, t_minishell *m, char *line)
 	}
 	tree = find_head_root(tree);
 	m->heredoc_count = 0;
-	expand(arena, m, tree);
+	if (expand(arena, m, tree)) // shiiit we need to return to the main readloop if heredoc is stopped by sigint. seems like we also need to make a sub process to get the exit value of 128 + signal
+		return (NULL);
 	return (tree);
 }

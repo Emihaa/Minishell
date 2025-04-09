@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 16:46:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/09 22:12:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,12 @@ int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 	*line = readline("> ");
 	if (*line == NULL || g_int == SIGINT)
 	{
-		g_int = 0;
+		if (g_int == SIGINT)
+		{
+			minishell->exit_status = SIGINT + 128;
+			g_int = 0;
+			return (-2);
+		}
 		if (!*line)
 			print_eof_error(minishell, delimiter); // should this be on stderror?
 		return (-1);
@@ -88,14 +93,16 @@ int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 }
 
 static
-void	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
+int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int	delimiter_len = ft_strlen(delimiter) + 1;
 	char		*line;
+	int			read_rval;
 
 	while (1)
 	{
-		if (heredoc_read(minishell, &line, delimiter))
+		read_rval = heredoc_read(minishell, &line, delimiter);
+		if (read_rval != 0)
 			break ;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
@@ -106,6 +113,7 @@ void	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 	free(line);
 	if (close(write_fd) == -1)
 		syscall_failure(minishell);
+	return (read_rval);
 }
 
 int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *m)
@@ -154,15 +162,17 @@ void heredoc_with_expansion_write_loop(t_minishell *m, int write_fd, char *line)
 // will be replaced with our own env version
 // there will be no quote removal inside heredoc
 static
-void	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter)
+int	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 {
 	const int	delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char		*line;
 	uint32_t i;
+	int			read_rval;
 
 	while (1)
 	{
-		if (heredoc_read(minishell, &line, delimiter))
+		read_rval = heredoc_read(minishell, &line, delimiter);
+		if (read_rval != 0)
 			break ;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
@@ -175,6 +185,7 @@ void	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimite
 	free(line);
 	if (close(write_fd) == -1)
 		syscall_failure(minishell);
+	return (read_rval);
 }
 
 int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
@@ -183,6 +194,7 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 	int				fds[2];
 	char			*delimiter;
 	uint32_t		new_size;
+	int				read_rval;
 	
 	if (create_heredoc_fds(fds) == -1)
 	syscall_failure(minishell);
@@ -191,11 +203,13 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 	new_size = set_quote_removed_string(delimiter, data);
 	arena_unalloc(temp_arena.arena, (data->string_len + 1) - new_size);
 	if (new_size < data->string_len)
-		heredoc_no_expansion(minishell, fds[WRITE], delimiter);
+		read_rval = heredoc_no_expansion(minishell, fds[WRITE], delimiter);
 	else
-		heredoc_with_expansion(minishell, fds[WRITE], delimiter);
+		read_rval = heredoc_with_expansion(minishell, fds[WRITE], delimiter);
 	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
 	minishell->heredoc_count += 1;
+	if (read_rval == -2)
+		return (-2);
 	arena_temp_end(&temp_arena);
 	return (fds[READ]);
 }

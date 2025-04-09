@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/08 22:10:22 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/09 23:36:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,10 +111,10 @@ uint32_t	copy_in_single_quote(t_arena *arena, t_token *data, uint32_t start, boo
 		len += 1;
 	}
 	write_to_arena(arena, &data->string[start], len, got_argument);
-	return (start + len);
+	return (start + len + 1);
 }
 
-uint32_t copy_env_var(t_arena *arena, t_token *data, uint32_t start, bool *got_argument)
+uint32_t copy_full_env_var(t_arena *arena, t_token *data, uint32_t start, bool *got_argument)
 {
 	const char *env_var = find_env_var(&data->string[start], data->string_len - start, &start, get_minishell(NULL)->envp);
 	uint32_t len;
@@ -141,7 +141,7 @@ uint32_t	copy_in_double_quote(t_arena *arena, t_token *data, uint32_t index, boo
 			{
 				write_to_arena(arena, &data->string[index], len, got_argument);
 				index += len;
-				index = copy_env_var(arena, data, index, got_argument);
+				index = copy_full_env_var(arena, data, index, got_argument);
 				len = 0;
 				continue ;
 			}
@@ -149,7 +149,7 @@ uint32_t	copy_in_double_quote(t_arena *arena, t_token *data, uint32_t index, boo
 		len += 1;
 	}
 	write_to_arena(arena, &data->string[index], len, got_argument);
-	return (index);
+	return (index + len + 1);
 }
 
 char	**create_argv(t_arena *arena, t_node *node)
@@ -185,7 +185,8 @@ char	**create_argv(t_arena *arena, t_node *node)
 			{
 				if (is_valid_var_start(node->token.string[i + 1]))
 				{
-					i = copy_env_var(arena, &node->token, i + 1, &got_argument);
+					//copy_env_var_and_split()
+					i = copy_full_env_var(arena, &node->token, i + 1, &got_argument);
 					continue ;
 				}
 				write_to_arena(arena, &node->token.string[i], 1, &got_argument);
@@ -200,6 +201,7 @@ char	**create_argv(t_arena *arena, t_node *node)
 		}
 		node = node->left;
 	}
+
 	arg_vec = arena_alloc(arena, sizeof(char *) * (arg_count + 1));
 	ft_memmove(arg_vec, arg_vec_temp, sizeof(*arg_vec_temp) * arg_count);
 	arena_delete(&temp_arena);
@@ -216,8 +218,9 @@ char	**create_argv(t_arena *arena, t_node *node)
 // separated by \0
 // then create an array of pointers that point to the starting points of the string
 
-void expand(t_arena *arena, t_minishell *m, t_node *tree)
+int expand(t_arena *arena, t_minishell *m, t_node *tree)
 {
+	char *str;
 	t_node *tree_root;
 	
 	// printf("\n---- starting tree expansion ----\n");
@@ -232,14 +235,17 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 		while (tree)
 		{
 			if (tree->token.type > 0)
+			{
 				tree->token.type = heredoc(arena, m, &tree->token);
+				if (tree->token.type == -2)
+					return (-2);
+			}
 			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
 			 	expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
 			{
-				//str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
-				//tree->token.argv = travel_tree(arena, tree, str, 0);
-				tree->token.argv = create_argv(arena, tree);				   // if we encounter weird issues
+				str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
+				tree->token.argv = create_argv(arena, tree);					   // if we encounter weird issues
 				tree->left = NULL;																   // it's probably because of this
 				break ;
 			}
@@ -249,4 +255,5 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 	}
 	// printf("arena size after expansion: %lu\n", arena->size);
 	// printf("\n---- tree expanded ----\n\n\n");
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 19:05:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/09 21:33:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,7 @@ typedef struct s_expand_vars
 	char *env_var;
 }	t_expand_vars;
 
-void expand(t_arena *arena, t_minishell *m, t_node *tree);
+int	expand(t_arena *arena, t_minishell *m, t_node *tree);
 
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
@@ -192,7 +192,7 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data);
 char	*create_temp_file_name(uint32_t heredoc_num);
 int		create_heredoc_fds(int fds[2]);
 int		heredoc_event_hook(void);
-
+void	close_heredocs(t_minishell *m); // in wrong file atm
 // testing possible redirect stuff
 #define WRITE	1
 #define READ	0

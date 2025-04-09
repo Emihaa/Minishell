@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 20:29:05 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/09 22:11:52 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			printf("pid == %i\n", pid);
 			printf("exit_status before = %i\n", minishell->exit_status);
 			if (WIFSIGNALED(wstatus))
-				minishell->exit_status = WSTOPSIG(wstatus) + wstatus;
+				minishell->exit_status = WTERMSIG(wstatus) + 128;
 			else if (WIFEXITED(wstatus))
 				minishell->exit_status = WEXITSTATUS(wstatus);
 			else

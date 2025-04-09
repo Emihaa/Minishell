@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/08 19:09:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/09 21:31:10 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,6 +152,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 	v.i = 0;
 	v.len = 0;
 	v.quote = '\0';
+
 	if (node == NULL)
 	{
 		if (count == 0)
@@ -194,7 +195,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 		arena_alloc_no_zero(arena, sizeof(*str) * v.len);
 	}
 	else if (v.had_quote)
-		arena_alloc(arena, 1);
+		xarena_alloc(arena, 1);
 	argv_pntr = travel_tree(arena, node->left, &str[v.len], count + ((v.len != 0) || v.had_quote));
 	if (argv_pntr != NULL)
 		argv_pntr[count] = str;
@@ -228,7 +229,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 // separated by \0
 // then create an array of pointers that point to the starting points of the string
 
-void expand(t_arena *arena, t_minishell *m, t_node *tree)
+int expand(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	char *str;
 	t_node *tree_root;
@@ -245,7 +246,11 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 		while (tree)
 		{
 			if (tree->token.type > 0)
+			{
 				tree->token.type = heredoc(arena, m, &tree->token);
+				if (tree->token.type == -2)
+					return (-2);
+			}
 			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
 			 	expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
@@ -261,4 +266,5 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 	}
 	// printf("arena size after expansion: %lu\n", arena->size);
 	// printf("\n---- tree expanded ----\n\n\n");
+	return (0);
 }
