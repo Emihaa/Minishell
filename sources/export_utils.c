@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 17:41:23 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/08 17:41:58 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/09 22:33:29 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,18 @@ void print_export_env(char **env)
 	temp = NULL;
 	while (env[i])
 	{
+		if (env[i] == NULL)
+		{
+			i++;
+			continue ;
+		}
 		size = char_pos(env[i], '=') + 1;
+		if (size == 1)
+		{
+			printf("declare -x %s\n", env[i]);
+			i++;
+			continue ;
+		}
 		temp = ft_strchr(env[i], '=') + 1;
 		printf("declare -x %.*s\"%s\"\n", size, env[i], temp);
 		i++;

@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 15:39:42 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/09 21:27:44 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,14 @@
 char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 {
 	const uint32_t	cmd_str_len = ft_strlen(cmd);
-	char			*path;
 	uint32_t		i;
+	char			*path;
 	char			*cmd_with_path;
-	
-	i = 0;
+
 	path = find_env_var("PATH", 4, &i, m->envp);
 	if (path == NULL || *path == '\0')
 		return (cmd);
-	while (path[i] != '\0')
+	while (*path != '\0')
 	{
 		i = 0;
 		while (path[i] != ':' && path[i] != '\0')

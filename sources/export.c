@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 16:43:07 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/09 21:23:04 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/09 23:25:23 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ char **find_slot(t_minishell *m, int *pos)
 	int i;
 
 	i = 0;
+	printf("at find slot\n");
 	while (i <= m->envp_size * 2)
 	{
 		if (m->envp[i] == NULL)
@@ -82,7 +83,7 @@ char **find_match(t_minishell *m, char *s)
 	size = 0;
 	while (s[size] != '=' && s[size] != '\0')
 		size++;
-	while (i <= (m->envp_size * 2))
+	while (i < m->env_capacity)
 	{
 		if (m->envp[i] == NULL)
 		{
@@ -90,13 +91,29 @@ char **find_match(t_minishell *m, char *s)
 			continue ;
 		}
 		if (ft_strncmp(s, m->envp[i], size) == 0)
-		{
-			printf("match found!\n");
 			return (&m->envp[i]);
-		}
 		i++;
 	}
 	return (NULL);	
+}
+
+int spelling_check(t_minishell *m, char *s)
+{
+	int i;
+
+	i = 0;
+	while (s[i] != '\0')
+	{	
+		if ((i == 0 && !ft_isalpha(s[i]) && s[i] != '_') || \
+		(i != 0 && !ft_isalnum(s[i]) && s[i] != '_' && s[i] != '='))
+		{
+			printf("export: `%s': not a valid identifier\n", s);
+			m->exit_status = 1;
+			return (1);
+		}
+		i++;
+	}
+	return (0);
 }
 
 // find the first empty slot or find a match to overwrite the previous
@@ -108,33 +125,45 @@ char **find_match(t_minishell *m, char *s)
 // second last because i want the _something to be the last
 // or what is the order?
 // if the export has '=' then 'env' will print it out
-void cmd_export(t_minishell *m, int argc, char **argv)
+
+// @TODO export also needs a spell check what letters are allowed to env
+// @TODO if i want the _something be the last option always on export ??
+// @TODO redo the env space if it is full
+// @TODO WHAT IF CALLOC FAILS DO WE KILL EVERYTHING???
+// @TODO the create_new_env doesnt work!???
+void export_add(t_minishell *m, int argc, char **argv)
 {
 	// first argument is always the "export"? right? yes
 	int i;
 	int pos;
 	char **slot;
-	// char *temp;
 
 	i = 1;
-	slot = NULL;
 	while (i < argc)
 	{
+		slot = NULL;
 		pos = 0;
+		if (spelling_check(m, argv[i]))
+		{
+			i++;
+			continue ;
+		}
 		slot = find_match(m, argv[i]);
 		if (slot)
 		{
 			*slot = ft_strdup(argv[i]);
 			printf("%s\n", *slot);
-			m->envp_size++;
 			i++;
 			continue ;
 		}
 		slot = find_slot(m, &pos);
 		if (!slot)
-		{	
-			// redo the env with double the size
-			return ;
+		{
+			printf("creating new env!\n");
+			m->envp = create_new_env(m, m->envp);
+			if (m->envp == NULL)
+				return ;
+			continue ;
 		}
 		*slot = ft_strdup(argv[i]);
 		printf("%s\n", *slot);
@@ -149,5 +178,5 @@ void builtin_export(t_minishell *m, int argc, char **argv)
 	if (argc == 1)
 		print_export(m);
 	else
-		cmd_export(m, argc, argv);
+		export_add(m, argc, argv);
 }

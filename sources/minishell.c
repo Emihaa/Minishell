@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/07 23:02:44 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/09 23:08:24 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void print_token(t_token *token)
 {
 	// debug stuff
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
-			token->type, get_token_name(token), (int)token->string_len, token->u_data.string);
+			token->type, get_token_name(token), (int)token->string_len, token->string);
 }
 
 int	create_and_store_pipe(t_minishell *m, int8_t *side)
@@ -110,10 +110,12 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		{
 			printf("pid == %i\n", pid);
 			printf("exit_status before = %i\n", minishell->exit_status);
-			if (wstatus != 0 && wstatus < 128)
-				minishell->exit_status = 128 + wstatus;
-			else
+			if (WIFSIGNALED(wstatus))
+				minishell->exit_status = WSTOPSIG(wstatus) + wstatus;
+			else if (WIFEXITED(wstatus))
 				minishell->exit_status = WEXITSTATUS(wstatus);
+			else
+				minishell->exit_status = 1;
 			printf("wstatus: %d\n", wstatus);
 			printf("exit_status after = %i\n", minishell->exit_status);
 
@@ -148,11 +150,11 @@ int do_redir(t_minishell *m, t_token *data)
 	if(data->type > 0) // maybe temp stuff
 		status = store_heredoc(m, data->type); // delimiter will still have quotes removed
 	else if (data->type == REDIRECT_OUT)
-		status = redirect_out(data->u_data.argv, m);
+		status = redirect_out(data->argv, m);
 	else if (data->type == REDIRECT_IN)
-		status = redirect_in(data->u_data.argv, m);
+		status = redirect_in(data->argv, m);
 	else if (data->type == REDIRECT_APPEND)
-		status = redirect_append(data->u_data.argv, m);
+		status = redirect_append(data->argv, m);
 	return (status);
 }
 
@@ -174,7 +176,7 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 		{
 			status = do_redir(m, &tree->token);
 			if (tree->token.type == WORD || status != 0)
-				if (execute_command(m, tree->token.u_data.argv, status))
+				if (execute_command(m, tree->token.argv, status))
 					break ;
 			tree = tree->left;	
 		}
@@ -185,7 +187,7 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 }
 
 static 
-int heredoc_event_hook(void)
+int read_loop_event_hook(void)
 {
 	if (g_int == SIGINT)
 	{
@@ -207,15 +209,14 @@ void read_loop(t_minishell *m)
 	while (1)
 	{
 		i = 0;
-		rl_event_hook = heredoc_event_hook;
+		rl_event_hook = read_loop_event_hook;
 		m->command_count = 0;
 		m->heredoc_count = 0;
 		m->line = readline("minishell> ");
 		if (m->line == NULL)
 			break ;
 		m->line_counter += 1;
-		while (is_space(m->line[i]))
-			i++;
+		i += eat_space(m->line);
 		if (m->line[i] == '\0')
 			continue ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
@@ -260,7 +261,8 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->heredoc_fds = heredoc_fds_arr;
 	minishell->heredoc_count = 0;
 	minishell->envp_size = 0;
-	minishell->envp = create_env(envp, minishell); // <---------- @TODO Emilia
+	minishell->env_capacity = 0;
+	minishell->envp = create_env(minishell, envp); // <---------- @TODO Emilia
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;

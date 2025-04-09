@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 17:42:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/09 23:08:11 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ typedef struct s_minishell
 	t_arena		scratch_arena;
 	char		**envp;
 	int			envp_size;
+	int			env_capacity;
 }	t_minishell;
 
 
@@ -110,7 +111,7 @@ typedef struct s_token
 	{
 		char *string;
 		char **argv; 	// the string of the token | if applicable will be a filename a command name or an argument
-	} u_data;
+	};
 }	t_token;
 
 // struct for any information the lexer might need
@@ -191,6 +192,7 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data);
 //	heredoc_utils stuff
 char	*create_temp_file_name(uint32_t heredoc_num);
 int		create_heredoc_fds(int fds[2]);
+int		heredoc_event_hook(void);
 
 // testing possible redirect stuff
 #define WRITE	1
@@ -214,7 +216,8 @@ void swap_pntrs(char **p1, char **p2);
 int is_sorted(char **pntr_array, int size);
 
 // envi stuff
-char **create_env(char **envp, t_minishell *m);
+char **create_env(t_minishell *m, char **envp);
+char **create_new_env(t_minishell *m , char **envp);
 char **print_export(t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 

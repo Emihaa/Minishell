@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/07 22:54:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 19:09:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,21 +28,21 @@ char	**travel_expansion(t_arena *arena, t_node *env_node, char *str, int count)
 	len = 0;
 	while (i < env_node->token.string_len)
 	{
-		if (is_space(env_node->token.u_data.string[i]) == true)
+		if (is_space(env_node->token.string[i]) == true)
 		{
 			str[len++] = '\0';
 			arena_alloc_no_zero(arena, sizeof(*str) * len);
-			while (is_space(env_node->token.u_data.string[i]) == true)
+			while (is_space(env_node->token.string[i]) == true)
 				i++;
-			if (env_node->token.u_data.string[i] == '\0')
+			if (env_node->token.string[i] == '\0')
 				break;
-			env_node->token.u_data.string += i;
+			env_node->token.string += i;
 			env_node->token.string_len -= i;
 			argv_pntr = travel_expansion(arena, env_node, &str[len], count + 1);
 			argv_pntr[count] = str;
 			return (argv_pntr);
 		}
-		str[len++] = env_node->token.u_data.string[i++];
+		str[len++] = env_node->token.string[i++];
 	}
 	if (env_node->right->token.string_len > 0)
 	{
@@ -83,7 +83,7 @@ static inline
 char *set_env_var(t_expand_vars *v, t_node *node)
 {
 	v->env_var = find_env_var	(	
-									&node->token.u_data.string[++v->i],
+									&node->token.string[++v->i],
 									node->token.string_len,
 									&v->i,
 									get_minishell(NULL)->envp
@@ -93,14 +93,14 @@ char *set_env_var(t_expand_vars *v, t_node *node)
 
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
 {
-	if (is_valid_var_start(node->token.u_data.string[v->i + 1]) == false)
+	if (is_valid_var_start(node->token.string[v->i + 1]) == false)
 	{
-		if (node->token.u_data.string[v->i + 1] == '?')
+		if (node->token.string[v->i + 1] == '?')
 			return (small_itoa(v, str));
-		if (is_quote(node->token.u_data.string[v->i + 1]))
+		if (is_quote(node->token.string[v->i + 1]))
 			v->i += 1;
 		else  
-			str[v->len++] = node->token.u_data.string[v->i++];
+			str[v->len++] = node->token.string[v->i++];
 		return (0);
 	}
 	if (set_env_var(v, node) == NULL)
@@ -165,7 +165,7 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 		// if we find quates, flag it? and also what type of quate flag
 		if (quote_check(node, &v))
 			continue ;
-		if (node->token.u_data.string[v.i] == '$' && v.quote != '\'')
+		if (node->token.string[v.i] == '$' && v.quote != '\'')
 		{
 			if (expansion_stuffs(node, &v, str) == 0)
 				continue ;
@@ -174,19 +174,19 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 				str[v.len++] = '\0';
 				arena_alloc_no_zero(arena, v.len);
 			}
-			node->token.u_data.string += v.i;
+			node->token.string += v.i;
 			node->token.string_len -= v.i;
 			argv_pntr = travel_expansion(arena,
 				&(t_node){
 					.left = node->left, .right = node, .root = NULL,
 					.token = {
-						.type = WORD, .u_data.string = v.env_var, .string_len = ft_strlen(v.env_var)},
+						.type = WORD, .string = v.env_var, .string_len = ft_strlen(v.env_var)},
 						}, &str[v.len], count + (v.len != 0));
 			if (argv_pntr != NULL)
 				argv_pntr[count] = str;
 			return (argv_pntr); //should return the WORD node for ARGV
 		}
-		str[v.len++] = node->token.u_data.string[v.i++];
+		str[v.len++] = node->token.string[v.i++];
 	}
 	if (v.len > 0)
 	{
@@ -200,6 +200,25 @@ static char **travel_tree(t_arena *arena, t_node *node, char *str, int count)
 		argv_pntr[count] = str;
 	return(argv_pntr); //should return the WORD node for ARGV
 }
+
+
+
+// char	**expand_words_to_argv(t_arena *arena, t_node *node)
+// {
+// 	t_arena		temp_arena;
+// 	uint32_t	len;
+// 	uint32_t	i;
+// 	char		**argvec;
+// 	char		*arg;
+
+// 	while (i < node->token.string_len)
+// 	{
+// 		if (node->token.string)
+// 	}
+
+// }
+
+
 
 
 // eli siis.
@@ -232,7 +251,7 @@ void expand(t_arena *arena, t_minishell *m, t_node *tree)
 			if (tree->token.type == WORD)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
-				tree->token.u_data.argv = travel_tree(arena, tree, str, 0);						   // if we encounter weird issues its probably
+				tree->token.argv = travel_tree(arena, tree, str, 0);						   // if we encounter weird issues
 				tree->left = NULL;																   // it's probably because of this
 				break ;
 			}
