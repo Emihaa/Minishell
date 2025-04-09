@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 15:25:09 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/08 17:42:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,13 @@ int		redirect_append(char **file_name, t_minishell *m);
 
 void	wait_for_sub_processes(t_minishell *minishell);
 
+
+// export stuff
+void builtin_export(t_minishell *m, int argc, char **argv);
+int char_pos(char *s, char c);
+void print_export_env(char **env);
+void swap_pntrs(char **p1, char **p2);
+int is_sorted(char **pntr_array, int size);
 
 // envi stuff
 char **create_env(char **envp, t_minishell *m);

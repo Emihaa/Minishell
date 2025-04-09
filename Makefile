@@ -6,7 +6,7 @@
 #    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/07 20:40:02 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/08 17:43:03 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,11 +45,12 @@ SOURCES =	minishell.c		utils.c				arena_utils.c	\
 			lexer.c												\
 			tree.c			tree_nodes.c		tree_utils.c	\
 			expand.c		expand_redirect.c	expand_utils.c	\
-			heredoc.c		heredoc_utils.c		env.c			\
+			heredoc.c		heredoc_utils.c						\
 			redirect.c		redirect_utils.c					\
 			execute.c		execute_utils.c						\
 			error.c			write_functions.c					\
 			builtin.c											\
+			export.c		export_utils.c		env.c			\
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
