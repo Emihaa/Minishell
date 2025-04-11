@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 23:39:21 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/11 21:37:52 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,17 +70,18 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 	while (1)
 	{
 		c = lexer->line[lexer->line_index + len];
-		len = match_quote(lexer, c, len);
+		if (is_quote(c))
+		{
+			len = match_quote(lexer, c, len);
+			c = lexer->line[lexer->line_index + len];
+		}
 		if (is_delimiter(c))
 			break ;
 		len += 1;
 	}
-	token = (t_token)
-	{
-		.type = type,
-		.string_len = len,
-		.string = &lexer->line[lexer->line_index],
-	};
+	token.type = type;
+	token.string_len = len;
+	token.string = &lexer->line[lexer->line_index];
 	lexer->line_index += len;
 	return (token);
 }

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 22:12:46 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/11 21:39:04 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 {
 	rl_event_hook = heredoc_event_hook;
 	*line = readline("> ");
-	if (*line == NULL || g_int == SIGINT)
+	if (*line == NULL || g_int == SIGINT) // do this for other signals maybe
 	{
 		if (g_int == SIGINT)
 		{

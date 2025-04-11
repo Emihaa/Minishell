@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   expand_vision.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/12 00:16:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/11 23:59:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ uint32_t	copy_in_double_quote(t_arena *arena, t_minishell *m, t_token *data, uin
 	return (index + len + 1);
 }
 
+
 int	copy_exit_code(t_arena *arena, int exit_code)
 {
 	uint8_t	len;
@@ -170,6 +171,124 @@ int	copy_exit_code(t_arena *arena, int exit_code)
 	return(2);
 }
 
+uint32_t match_single_quote(char *str)
+{
+	uint32_t len;
+
+	len = 0;
+	while(str[len] != '\'' && str[len] != '\0')
+	{
+		len += 1;
+	}
+	return (len);
+}
+
+
+
+// GO TO SLEEP
+// THIS IS SHIT
+uint32_t count_argument_size(t_minishell *m, t_token *data)
+{
+	uint32_t i;
+	uint32_t len;
+
+	i = 0;
+	len = 0;
+	while (i < data->string_len)
+	{
+		while (!is_special_char(data->string[i]))
+		{
+			i += 1;
+			len += 1;
+		}
+		if (data->string[i] == '\'')
+		{
+			i += 1;
+			len += match_single_quote(data->string[i]);
+			i += len;
+			if (data->string[i] == '\'')
+				i += 1;
+		}
+		else if (data->string[i] == '"')
+		{
+			i += 1;
+			while (data->string[i] != '"')
+			{
+				i += 1;
+				len += 1;
+				if (data->string[i] == '$')
+				{
+					if (data->string[i + 1] == '?')
+					{
+						i += 2;
+						len += num_len(m->exit_status);
+					}
+					else if (is_valid_var_start(data->string[i + 1]))
+					{
+						char *env_var;
+						env_var = find_env_var(data->string[++i], data->string_len - i, &i, get_minishell(NULL)->envp);
+						if (env_var != NULL)
+							len += ft_strlen(env_var);
+					}
+				}
+			}
+		}
+		else if (data->string[i] == '$')
+		{
+			if (data->string[i + 1] == '?')
+			{
+				i += 2;
+				len += num_len(m->exit_status);
+			}
+			else if (is_valid_var_start(data->string[i + 1]))
+			{
+				char *env_var;
+				env_var = find_env_var(data->string[++i], data->string_len - i, &i, get_minishell(NULL)->envp);
+				if (env_var != NULL)
+				{
+					int j = 0;
+					while (!is_space(env_var[j]) && env_var[j] != '\0')
+					{
+						j += 1;
+						len += 1;
+					}
+
+				}
+				
+			}
+		}
+	}
+	return (len);
+}
+
+
+// mitas jos sama logiikka ku alkuperasessa expandissa mut rekursio
+// tapahtuu vaan per argumentti
+// stackoverflow voi silti tapahtua mut vaan jos tulee jotain oooooooo sekoilenkohan
+
+
+// mitas jos jos jos siis
+// jos jos jos jos jos jos jos jos jos
+// rekursio tallentaa mista indeksista memmove ja kuinka paljon
+// varmaan melkee sama logiikka oikeesti ku siin alkuperasessa
+// emma tiia ;_;
+
+
+// lenght based string string__join thing ??
+
+
+
+void	create_argument(t_arena *a, t_minishell *m, t_token *data)
+{
+	
+}
+
+
+
+
+
+
+
 char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 {
 	t_arena		temp_arena;
@@ -179,44 +298,29 @@ char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 	char		**arg_vec;
 	char		*arg;
 	bool		got_argument;
+	uint32_t	argument_len;
+	char		*current_str;
+
 
 	temp_arena = arena_new(sizeof(*arg_vec) * 1024); //will kindof need to be growable
 	arg_vec_temp = xarena_alloc(&temp_arena, sizeof(*arg_vec) * 0);
 	arg_count = 0;
 	while (node)
 	{
-		i = 0;
-		got_argument = false;
-		arg = xarena_alloc(arena, sizeof(char) * 0);
-		while (i < node->token.string_len)
+		argument_len = 0;
+		current_str = node->token.string;
+		while (got_argument = false)
 		{
-			i = copy_until_special_char(arena, &node->token, i);
-			if (is_quote(node->token.string[i]))
+			i = 0;
+			while (!is_special_char(current_str[i]))
+				i += 1;
+			argument_len += 1;
+			if (is_quote(current_str[i]))
 			{
-				if (node->token.string[i] == '\'')
-					i = copy_in_single_quote(arena, &node->token, i + 1);
-				else if ('"')
-					i = copy_in_double_quote(arena, m, &node->token, i + 1);
-				got_argument = true;
+				if (current_str[i] == '\'')
+					i + match_single_quote(&current_str[i]);
 			}
-			else if (node->token.string[i] == '$')
-			{
-				if (is_valid_var_start(node->token.string[i + 1]))
-					//copy_env_var_and_split()
-					i = copy_full_env_var(arena, &node->token, i + 1);
-				else if (node->token.string[i + 1] ==  '?')
-					i += copy_exit_code(arena, m->exit_status);
-				else
-					write_to_arena(arena, &node->token.string[i], 1);
-				got_argument = true;
-			}
-		}
-		if (got_argument == true)
-		{
-			xarena_alloc(arena, sizeof(char) * 1);
-			xarena_alloc(&temp_arena, sizeof(*arg_vec) * 1);
-			arg_vec_temp[arg_count] = arg;
-			arg_count += 1;
+			
 		}
 		node = node->left;
 	}

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:31:01 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 23:32:25 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/11 23:28:00 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ uint32_t eat_space(char *str)
 		i++;
 	return (i);
 }
-
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env)
 {
+// WILL NOT WORK PROPERLY IF ENV HAS NULLS BETWEEN StRINGS
 	uint32_t len;
 	char c;
 

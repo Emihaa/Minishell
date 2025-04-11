@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   expand_thingy.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/09 23:36:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/12 00:31:00 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,17 +74,15 @@ int	is_special_char(char c)
 	return(is_quote(c) || c == '$');
 }
 
-void write_to_arena(t_arena *arena, const char *src, uint32_t len, bool *got_argument)
+void write_to_arena(t_arena *arena, const char *src, uint32_t len)
 {
 	char *dest;
 
-	if (len > 0)
-		*got_argument = true;
 	dest = xarena_alloc(arena, sizeof(char) * len);
 	ft_memmove(dest, src, len);
 }
 // maybe dest is not needed
-uint32_t	copy_until_special_char(t_arena *arena, t_token *data, const uint32_t start, bool *got_argument)
+uint32_t	copy_until_special_char(t_arena *arena, t_token *data, const uint32_t start)
 {
 	uint32_t len;
 
@@ -95,11 +93,11 @@ uint32_t	copy_until_special_char(t_arena *arena, t_token *data, const uint32_t s
 			break ;
 		len += 1;
 	}
-	write_to_arena(arena, &data->string[start], len, got_argument);
+	write_to_arena(arena, &data->string[start], len);
 	return (len);
 }
 
-uint32_t	copy_in_single_quote(t_arena *arena, t_token *data, uint32_t start, bool *got_argument)
+uint32_t	copy_in_single_quote(t_arena *arena, t_token *data, uint32_t start)
 {
 	uint32_t len;
 
@@ -110,11 +108,11 @@ uint32_t	copy_in_single_quote(t_arena *arena, t_token *data, uint32_t start, boo
 			break ;
 		len += 1;
 	}
-	write_to_arena(arena, &data->string[start], len, got_argument);
+	write_to_arena(arena, &data->string[start], len);
 	return (start + len + 1);
 }
 
-uint32_t copy_full_env_var(t_arena *arena, t_token *data, uint32_t start, bool *got_argument)
+uint32_t copy_full_env_var(t_arena *arena, t_token *data, uint32_t start)
 {
 	const char *env_var = find_env_var(&data->string[start], data->string_len - start, &start, get_minishell(NULL)->envp);
 	uint32_t len;
@@ -122,11 +120,11 @@ uint32_t copy_full_env_var(t_arena *arena, t_token *data, uint32_t start, bool *
 	if (env_var == NULL)
 		return (0);
 	len = ft_strlen(env_var);
-	write_to_arena(arena, env_var, len, got_argument);
+	write_to_arena(arena, env_var, len);
 	return (start);
 }
 
-uint32_t	copy_in_double_quote(t_arena *arena, t_token *data, uint32_t index, bool *got_argument)
+uint32_t	copy_in_double_quote(t_arena *arena, t_minishell *m, t_token *data, uint32_t index)
 {
 	uint32_t len;
 
@@ -137,72 +135,118 @@ uint32_t	copy_in_double_quote(t_arena *arena, t_token *data, uint32_t index, boo
 			break ;
 		if (data->string[index + len] == '$')
 		{
-			if (is_valid_var_start(data->string[index + len]))
+			if (data->string[index + len + 1] ==  '?')
+				index += copy_exit_code(arena, m->exit_status);
+			else if (is_valid_var_start(data->string[index + len]))
 			{
-				write_to_arena(arena, &data->string[index], len, got_argument);
+				write_to_arena(arena, &data->string[index], len);
 				index += len;
-				index = copy_full_env_var(arena, data, index, got_argument);
+				index = copy_full_env_var(arena, data, index);
 				len = 0;
-				continue ;
 			}
+			else
+				len += 1;
 		}
-		len += 1;
+		else
+			len += 1;
+
 	}
-	write_to_arena(arena, &data->string[index], len, got_argument);
+	write_to_arena(arena, &data->string[index], len);
 	return (index + len + 1);
 }
 
-char	**create_argv(t_arena *arena, t_node *node)
+int	copy_exit_code(t_arena *arena, int exit_code)
+{
+	uint8_t	len;
+	char	*dest;
+
+	len = num_len(exit_code);
+	dest =  xarena_alloc(arena, len);
+	while(len-- > 0)
+	{
+		dest[len] = (exit_code % 10) + '0';
+		exit_code /= 10;
+	}
+	return(2);
+}
+
+char *create_argument(t_arena *arena, t_minishell *m, t_token *data, t_token *prev)
+{
+	char *arg;
+	bool got_argument;
+	uint32_t i;
+
+	i = 0;
+	got_argument = false;
+	arg = xarena_alloc(arena, sizeof(*arg) * 0);
+	if (prev != NULL)
+		handle_leftover(arena, prev);
+	while (i < data->string_len)
+	{
+		i = copy_until_special_char(arena, data, i);
+		if (is_quote(data->string[i]))
+		{
+			if (data->string[i] == '\'')
+				i = copy_in_single_quote(arena, data, i + 1);
+			else if ('"')
+				i = copy_in_double_quote(arena, m, data, i + 1);
+			got_argument = true;
+		}
+		else if (data->string[i] == '$')
+		{
+			if (is_valid_var_start(data->string[i + 1]))
+				//copy_env_var_and_split()
+				i = copy_full_env_var(arena, data, i + 1);
+			else if (data->string[i + 1] ==  '?')
+				i += copy_exit_code(arena, m->exit_status);
+			else
+				write_to_arena(arena, data->string[i], 1);
+			got_argument = true;
+		}
+	}
+	if (got_argument == false)
+		return (NULL);
+	(void)xarena_alloc(arena, sizeof(*arg) * 1); // add thing that moves entire argument to new arena chunk if not enough space
+	return (arg);
+}
+
+
+typedef struct s_string
+{
+	uint32_t len;
+	char	 *data;
+} t_string;
+
+
+char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 {
 	t_arena		temp_arena;
-	uint32_t	i;
 	uint32_t	arg_count;
 	char		**arg_vec_temp;
 	char		**arg_vec;
 	char		*arg;
-	bool		got_argument;
+	t_token		prev;
 
 	temp_arena = arena_new(sizeof(*arg_vec) * 1024); //will kindof need to be growable
 	arg_vec_temp = xarena_alloc(&temp_arena, sizeof(*arg_vec) * 0);
 	arg_count = 0;
 	while (node)
 	{
-		i = 0;
-		got_argument = false;
-		arg = xarena_alloc(arena, sizeof(char) * 0);
-		while (i < node->token.string_len)
+		arg = create_argument(arena, m, &node->token, NULL);
+		if (arg != NULL)
 		{
-			i = copy_until_special_char(arena, &node->token, i, &got_argument);
-			if (is_quote(node->token.string[i]))
-			{
-				if (node->token.string[i] == '\'')
-					i = copy_in_single_quote(arena, &node->token, i + 1, &got_argument);
-				else
-					i = copy_in_double_quote(arena, &node->token, i + 1, &got_argument);
-				got_argument = true;
-			}
-			else if (node->token.string[i] == '$')
-			{
-				if (is_valid_var_start(node->token.string[i + 1]))
-				{
-					//copy_env_var_and_split()
-					i = copy_full_env_var(arena, &node->token, i + 1, &got_argument);
-					continue ;
-				}
-				write_to_arena(arena, &node->token.string[i], 1, &got_argument);
-			}
-		}
-		if (got_argument == true)
-		{
-			xarena_alloc(arena, sizeof(char) * 1);
 			xarena_alloc(&temp_arena, sizeof(*arg_vec) * 1);
 			arg_vec_temp[arg_count] = arg;
 			arg_count += 1;
 		}
+		if (node->token.string_len > 0)
+			continue ; 	// this is just one idea
+						// we need some way to make the next argument starting with what is left
+						// of the env_var and continuing within the same node
 		node = node->left;
 	}
 
-	arg_vec = arena_alloc(arena, sizeof(char *) * (arg_count + 1));
+	arg_vec = arena_alloc(arena, sizeof(*arg_vec) * (arg_count + 1));
 	ft_memmove(arg_vec, arg_vec_temp, sizeof(*arg_vec_temp) * arg_count);
 	arena_delete(&temp_arena);
 	return (arg_vec);
@@ -245,7 +289,7 @@ int expand(t_arena *arena, t_minishell *m, t_node *tree)
 			if (tree->token.type == WORD)
 			{
 				str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
-				tree->token.argv = create_argv(arena, tree);					   // if we encounter weird issues
+				tree->token.argv = create_argv(arena, m, tree);					   // if we encounter weird issues
 				tree->left = NULL;																   // it's probably because of this
 				break ;
 			}
