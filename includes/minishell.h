@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 23:08:11 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/11 22:11:22 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,9 +215,12 @@ void print_export_env(char **env);
 void swap_pntrs(char **p1, char **p2);
 int is_sorted(char **pntr_array, int size);
 
+// unset stuff
+void builtin_unset(t_minishell *m, int argc, char **argv);
+
 // envi stuff
 char **create_env(t_minishell *m, char **envp);
-char **create_new_env(t_minishell *m , char **envp);
+int create_new_env(t_minishell *m , char **envp);
 char **print_export(t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 

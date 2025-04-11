@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 23:08:24 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/11 21:18:09 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,8 +261,13 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->heredoc_fds = heredoc_fds_arr;
 	minishell->heredoc_count = 0;
 	minishell->envp_size = 0;
-	minishell->env_capacity = 0;
+	minishell->env_capacity = 64;
 	minishell->envp = create_env(minishell, envp); // <---------- @TODO Emilia
+	if (!minishell->envp)
+	{
+		put_str_nl(STDERR_FILENO, "allocation failure");
+		error_exit(minishell, 1); // @TODO: error cheking
+	}		
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
