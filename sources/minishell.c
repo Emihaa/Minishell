@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 22:11:52 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 00:23:37 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,11 +215,11 @@ void read_loop(t_minishell *m)
 		m->line = readline("minishell> ");
 		if (m->line == NULL)
 			break ;
+		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		m->line_counter += 1;
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
 			continue ;
-		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		tree = parser(&m->node_arena, m, &m->line[i]);
 		if (tree != NULL)
 			minishell_exec_loop(m, tree);
@@ -261,7 +261,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->heredoc_fds = heredoc_fds_arr;
 	minishell->heredoc_count = 0;
 	minishell->envp_size = 0;
-	minishell->envp = create_env(envp, minishell); // <---------- @TODO Emilia
+	minishell->envp = envp;//create_env(envp, minishell); // <---------- @TODO Emilia
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;

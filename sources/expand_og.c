@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand_thingy.c                                    :+:      :+:    :+:   */
+/*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/12 00:31:00 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/12 00:16:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,83 +170,58 @@ int	copy_exit_code(t_arena *arena, int exit_code)
 	return(2);
 }
 
-char *create_argument(t_arena *arena, t_minishell *m, t_token *data, t_token *prev)
-{
-	char *arg;
-	bool got_argument;
-	uint32_t i;
-
-	i = 0;
-	got_argument = false;
-	arg = xarena_alloc(arena, sizeof(*arg) * 0);
-	if (prev != NULL)
-		handle_leftover(arena, prev);
-	while (i < data->string_len)
-	{
-		i = copy_until_special_char(arena, data, i);
-		if (is_quote(data->string[i]))
-		{
-			if (data->string[i] == '\'')
-				i = copy_in_single_quote(arena, data, i + 1);
-			else if ('"')
-				i = copy_in_double_quote(arena, m, data, i + 1);
-			got_argument = true;
-		}
-		else if (data->string[i] == '$')
-		{
-			if (is_valid_var_start(data->string[i + 1]))
-				//copy_env_var_and_split()
-				i = copy_full_env_var(arena, data, i + 1);
-			else if (data->string[i + 1] ==  '?')
-				i += copy_exit_code(arena, m->exit_status);
-			else
-				write_to_arena(arena, data->string[i], 1);
-			got_argument = true;
-		}
-	}
-	if (got_argument == false)
-		return (NULL);
-	(void)xarena_alloc(arena, sizeof(*arg) * 1); // add thing that moves entire argument to new arena chunk if not enough space
-	return (arg);
-}
-
-
-typedef struct s_string
-{
-	uint32_t len;
-	char	 *data;
-} t_string;
-
-
 char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 {
 	t_arena		temp_arena;
+	uint32_t	i;
 	uint32_t	arg_count;
 	char		**arg_vec_temp;
 	char		**arg_vec;
 	char		*arg;
-	t_token		prev;
+	bool		got_argument;
 
 	temp_arena = arena_new(sizeof(*arg_vec) * 1024); //will kindof need to be growable
 	arg_vec_temp = xarena_alloc(&temp_arena, sizeof(*arg_vec) * 0);
 	arg_count = 0;
 	while (node)
 	{
-		arg = create_argument(arena, m, &node->token, NULL);
-		if (arg != NULL)
+		i = 0;
+		got_argument = false;
+		arg = xarena_alloc(arena, sizeof(char) * 0);
+		while (i < node->token.string_len)
 		{
+			i = copy_until_special_char(arena, &node->token, i);
+			if (is_quote(node->token.string[i]))
+			{
+				if (node->token.string[i] == '\'')
+					i = copy_in_single_quote(arena, &node->token, i + 1);
+				else if ('"')
+					i = copy_in_double_quote(arena, m, &node->token, i + 1);
+				got_argument = true;
+			}
+			else if (node->token.string[i] == '$')
+			{
+				if (is_valid_var_start(node->token.string[i + 1]))
+					//copy_env_var_and_split()
+					i = copy_full_env_var(arena, &node->token, i + 1);
+				else if (node->token.string[i + 1] ==  '?')
+					i += copy_exit_code(arena, m->exit_status);
+				else
+					write_to_arena(arena, &node->token.string[i], 1);
+				got_argument = true;
+			}
+		}
+		if (got_argument == true)
+		{
+			xarena_alloc(arena, sizeof(char) * 1);
 			xarena_alloc(&temp_arena, sizeof(*arg_vec) * 1);
 			arg_vec_temp[arg_count] = arg;
 			arg_count += 1;
 		}
-		if (node->token.string_len > 0)
-			continue ; 	// this is just one idea
-						// we need some way to make the next argument starting with what is left
-						// of the env_var and continuing within the same node
 		node = node->left;
 	}
 
-	arg_vec = arena_alloc(arena, sizeof(*arg_vec) * (arg_count + 1));
+	arg_vec = arena_alloc(arena, sizeof(char *) * (arg_count + 1));
 	ft_memmove(arg_vec, arg_vec_temp, sizeof(*arg_vec_temp) * arg_count);
 	arena_delete(&temp_arena);
 	return (arg_vec);

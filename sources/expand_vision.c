@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/11 23:59:54 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/12 21:30:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,11 +276,23 @@ uint32_t count_argument_size(t_minishell *m, t_token *data)
 
 // lenght based string string__join thing ??
 
-
-
-void	create_argument(t_arena *a, t_minishell *m, t_token *data)
+typedef struct s_string
 {
-	
+	uint32_t len;
+	char	 *data;
+} t_string;
+
+t_string	create_argument_segment(t_arena *a, t_minishell *m, t_node *node)
+{
+	t_string str;
+
+	str.len = 0;
+	str.data = node->token.string;
+	while (str.len < node->token.string_len)
+	{
+		while (!is_special_char(str.data[str.len]))
+			str.len += 1;
+	}
 }
 
 

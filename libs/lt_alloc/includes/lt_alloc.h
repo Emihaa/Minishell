@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lt_alloc.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:59:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/03/24 18:04:05 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/12 21:37:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@
 
 typedef struct s_arena
 {
-	uint64_t	capacity;
-	uint64_t	size;
-	uint8_t		*data;
+	uint64_t		capacity;
+	uint64_t		size;
+	uint8_t			*data;
+	struct s_arena	*next;
 }	t_arena;
 
 typedef struct s_arena_temp

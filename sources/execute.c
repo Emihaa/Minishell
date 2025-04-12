@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 21:31:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/12 20:24:53 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int	execute_command(t_minishell *m, char **argv, int status)
 		if (pid == -1)
 			syscall_failure(m); // @TODO: error cheking
 		if (pid == 0)
-			error_exit(m, 0);
+			error_exit(m, 1); // @todo check if this exit code is correct
 		m->command_count += 1;
 		m->last_pid = pid;
 		return (1);
