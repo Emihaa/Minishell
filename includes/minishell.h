@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 21:33:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 16:47:49 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,10 @@
 
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
-#include "../libs/lt_alloc/includes/lt_alloc.h" 
+#include "../libs/lt_arena/includes/lt_arena.h" 
 #include "../libs/libft/includes/libft.h"
 
+#include <errno.h> // errno
 #include <stddef.h> // size_t
 #include <unistd.h>	//for write, pipe etc.
 #include <sys/types.h>  // pid_t
@@ -74,8 +75,7 @@ typedef struct s_minishell
 	pid_t			last_pid;
 	int			exit_status;
 	char		*line;
-	t_arena		node_arena;
-	t_arena		scratch_arena;
+	t_arena		*node_arena;
 	char		**envp;
 	int			envp_size;
 }	t_minishell;
@@ -245,8 +245,8 @@ void builtin_pwd(int fd);
 
 
 // execute stuff
-pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin);
-int	execute_command(t_minishell *m, char **argv, int status);
+pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin builtin);
+int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status);
 
 void close_pipe(t_minishell *m);
 void execve_failure(t_minishell *m, char *cmd);

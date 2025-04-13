@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_alloc_arena_temp.c                              :+:      :+:    :+:   */
+/*   lt_arena_temp.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 16:43:43 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/26 19:05:44 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 15:14:24 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_alloc.h"
+#include "../includes/lt_arena.h"
 
 t_arena_temp arena_temp_begin(t_arena *a)
 {

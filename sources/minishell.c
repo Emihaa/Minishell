@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 00:23:37 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 19:26:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,11 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			printf("pid == %i\n", pid);
 			printf("exit_status before = %i\n", minishell->exit_status);
 			if (WIFSIGNALED(wstatus))
+			{
 				minishell->exit_status = WTERMSIG(wstatus) + 128;
+				if (__WCOREDUMP(wstatus))
+					put_str_nl(STDERR_FILENO, "Core Dumped"); // need to check this
+			}
 			else if (WIFEXITED(wstatus))
 				minishell->exit_status = WEXITSTATUS(wstatus);
 			else
@@ -158,7 +162,7 @@ int do_redir(t_minishell *m, t_token *data)
 	return (status);
 }
 
-int minishell_exec_loop(t_minishell *m, t_node *tree)
+int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	t_node *current_head;
 	int status;
@@ -176,7 +180,7 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 		{
 			status = do_redir(m, &tree->token);
 			if (tree->token.type == WORD || status != 0)
-				if (execute_command(m, tree->token.argv, status))
+				if (execute_command(arena, m, tree->token.argv, status))
 					break ;
 			tree = tree->left;	
 		}
@@ -220,25 +224,33 @@ void read_loop(t_minishell *m)
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
 			continue ;
-		tree = parser(&m->node_arena, m, &m->line[i]);
+		tree = parser(m->node_arena, m, &m->line[i]);
 		if (tree != NULL)
-			minishell_exec_loop(m, tree);
+			minishell_exec_loop(m->node_arena, m, tree);
 		wait_for_sub_processes(m);
 		free(m->line);
 		m->line = NULL;
-		arena_reset(&m->node_arena);
+		t_arena *temp = m->node_arena;
+		for (int i = 0; temp != NULL; i++)
+		{
+			printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
+			printf("data of [%i]as chars: %.*s\n", i, (int)temp->size, temp->data);
+			temp = temp->next;
+		}
+		arena_trim(m->node_arena);
+		arena_reset(m->node_arena);
 	}
 }
 
 // add env clean up here @TODO Emilia
 void minishell_cleanup(t_minishell *minishell)
 {
-	arena_delete(&minishell->node_arena);
+	arena_delete(minishell->node_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
-	while (minishell->envp_size >= 0)
-		free(minishell->envp[minishell->envp_size--]);
-	free(minishell->envp);
+	// while (minishell->envp_size >= 0)
+	// 	free(minishell->envp[minishell->envp_size--]);
+	// free(minishell->envp);
 }
 
 // set default values for the minishell struct
@@ -249,7 +261,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	static int heredoc_fds_arr[16] = {0};
 
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
-	if (minishell->node_arena.data == NULL)
+	if (minishell->node_arena == NULL)
 	{
 		put_str_nl(STDERR_FILENO, "allocation failure");
 		error_exit(minishell, 1); // @TODO: error cheking

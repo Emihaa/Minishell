@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
+#    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 16:02:01 by ltaalas           #+#    #+#              #
-#    Updated: 2025/03/24 17:39:21 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/13 18:13:23 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,11 +28,11 @@ BIN_DIR = build
 OBJ_DIR = objects
 INC_DIR = includes
 
-NAME = lt_alloc.a
+NAME = lt_arena.a
  
-SOURCES = 	lt_alloc_new_delete.c	lt_alloc_arena.c	lt_alloc_arena_temp.c
+SOURCES = 	lt_arena_new_delete.c	lt_arena.c	lt_arena_temp.c lt_arena_strings.c
 
-HEADERS = $(addprefix $(INC_DIR)/, lt_alloc.h)
+HEADERS = $(addprefix $(INC_DIR)/, lt_arena.h)
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 BONUS_OBJECTS = $(addprefix $(OBJ_DIR)/, $(BONUS_SOURCES:.c=.o))

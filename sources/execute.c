@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/12 20:24:53 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 19:58:11 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,9 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 	const uint32_t	cmd_str_len = ft_strlen(cmd);
 	uint32_t		i;
 	char			*path;
-	char			*cmd_with_path;
+	t_string		str;
 
+	str = (t_string){0};
 	path = find_env_var("PATH", 4, &i, m->envp);
 	if (path == NULL || *path == '\0')
 		return (cmd);
@@ -27,31 +28,31 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 		i = 0;
 		while (path[i] != ':' && path[i] != '\0')
 			i++;
-		cmd_with_path = arena_alloc(a, sizeof(char) * (i + cmd_str_len + 2));
-		ft_memmove(cmd_with_path, path, i);
-		cmd_with_path[i] = '/';
-		ft_memmove(&cmd_with_path[i + 1], cmd, cmd_str_len);
-		if (access(cmd_with_path, F_OK) == 0)
-			return (cmd_with_path);
-		arena_unalloc(a, sizeof(char) * (i + cmd_str_len + 2));
+		arena_append_str_buf(a, &str, path, i);
+		arena_append_str_buf(a, &str, "/", 1);
+		arena_append_str_buf(a, &str, cmd, cmd_str_len);
+		arena_null_terminate_string(a, &str);
+		if (access(str.base, F_OK) == 0)
+			return (str.base);
+		arena_unalloc(a, str.capacity);
 		path += i + (path[i] == ':');
 	}
 	command_not_found(m, cmd);
 	return (NULL);
 }
 
-void run_command(t_minishell *m, char **argv)
+void run_command(t_arena *arena, t_minishell *m, char **argv)
 {
 	char *cmd_with_path;
 
 	cmd_with_path = argv[0];
 	if (ft_strchr(cmd_with_path, '/') == NULL)
-		cmd_with_path = get_cmd_with_path(&m->node_arena, m, argv[0]); // replace with proper command finding function
+		cmd_with_path = get_cmd_with_path(arena, m, argv[0]); // replace with proper command finding function
 	execve(cmd_with_path, argv, m->envp); // just have execve catch most error values
 	execve_failure(m, argv[0]);
 }
 
-pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
+pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin builtin)
 {
 	pid_t	pid;
 
@@ -74,13 +75,13 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 			(void)execute_builtin(m, argv, builtin);
 			error_exit(m, 0);
 		}
-		run_command(m, argv);
+		run_command(arena, m, argv);
 	}
 	m->command_count += 1;
 	return (pid);
 }
 
-int	execute_command(t_minishell *m, char **argv, int status)
+int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status)
 {
 	pid_t pid;
 	t_builtin builtin_type;
@@ -104,6 +105,6 @@ int	execute_command(t_minishell *m, char **argv, int status)
 		execute_builtin(m, argv, builtin_type);
 		return (1);
 	}
-	m->last_pid = execute_subprocess(m, argv, builtin_type);
+	m->last_pid = execute_subprocess(arena, m, argv, builtin_type);
 	return (1);	
 }

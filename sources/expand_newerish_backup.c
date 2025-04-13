@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   expand.c                                           :+:      :+:    :+:   */
+/*   expand_newerish_backup.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/13 21:03:50 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 19:33:04 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void write_to_arena(t_arena *arena, t_arg *arg, const char *src, uint32_t len)
 	arg->size += len;
 }
 
-void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str, int exit_code)
+void	copy_exit_code(t_arena *arena, t_arg *arg, int exit_code)
 {
 	int	len;
 	int i;
@@ -116,12 +116,12 @@ void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str, int exit_code)
 		buff[i] = (exit_code % 10) + '0';
 		exit_code /= 10;
 	}
-	arena_append_str_buf(arena, str, buff, len);
+	write_to_arena(arena, arg, buff, len);
 	arg->i += 2;
 }
 
 // maybe dest is not needed
-void	copy_until_special_char(t_arena *arena, t_arg *arg, t_string *str)
+void	copy_until_special_char(t_arena *arena, t_arg *arg)
 {
 	uint32_t len;
 
@@ -134,11 +134,11 @@ void	copy_until_special_char(t_arena *arena, t_arg *arg, t_string *str)
 	}
 	if (len > 0)
 		arg->exist = true;
-	arena_append_str_buf(arena, str, &arg->data_str[arg->i], len);
+	write_to_arena(arena, arg, &arg->data_str[arg->i], len);
 	arg->i += len;
 }
 
-void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
+void	copy_in_single_quote(t_arena *arena, t_arg *arg)
 {
 	uint32_t len;
 
@@ -150,7 +150,7 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 			break ;
 		len += 1;
 	}
-	arena_append_str_buf(arena, str, &arg->data_str[arg->i], len);
+	write_to_arena(arena, arg, &arg->data_str[arg->i],len);
 	arg->i += len + 1;
 }
 uint32_t get_key_len(char *src, uint32_t src_len)
@@ -177,8 +177,9 @@ int	get_env_var_index(char *key, uint32_t key_len, t_minishell *m)
 	{
 		while(m->envp[i] != NULL)
 		{
-			if (ft_strncmp(key, m->envp[i], key_len) == 0 && m->envp[i][key_len] == '=')
+			if (ft_strncmp(key, m->envp[i], key_len) && m->envp[i][key_len] == '=')
 			{
+
 				return (i);
 			}
 			i += 1;
@@ -187,7 +188,7 @@ int	get_env_var_index(char *key, uint32_t key_len, t_minishell *m)
 	return (-1);
 }
 
-void	copy_full_env_var(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+void	copy_full_env_var(t_arena *arena, t_minishell *m, t_arg *arg)
 {
 	//const char *env_var = find_env_var(&data->string[start], arg->data_len - arg->i, &start, m->envp);
 	uint32_t key_len;
@@ -195,35 +196,39 @@ void	copy_full_env_var(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str
 	int index;
 
 	key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
+	printf("keylen: %i\n", key_len);
+	printf("key: %.*s\n", key_len, &arg->data_str[arg->i]);
 	index = get_env_var_index(&arg->data_str[arg->i], key_len, m);
+	printf("index: %i\n", index);
 	if (index != -1)
 	{
-		var_len = ft_strlen(&m->envp[index][key_len + 1]);
-		arena_append_str_buf(arena, str, &m->envp[index][key_len + 1], var_len);
+		printf("var: %s\n", &m->envp[index][key_len]);
+		var_len = ft_strlen(&m->envp[index][key_len]);
+		write_to_arena(arena, arg, &m->envp[index][key_len], var_len);
 	}
 	arg->i += key_len;
 }
 
-void expand_variable_in_quotes(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+void expand_variable_in_quotes(t_arena *arena, t_minishell *m, t_arg *arg)
 {
 	if (arg->data_str[arg->i + 1] == '?')
 	{
-		copy_exit_code(arena, arg, str, m->exit_status);
+		copy_exit_code(arena, arg, m->exit_status);
 		
 	}
 	else if (is_valid_var_start(arg->data_str[arg->i + 1]))
 	{
 		arg->i += 1;
-		copy_full_env_var(arena, m, arg, str);
+		copy_full_env_var(arena, m, arg);
 	}
 	else
 	{
-		arena_append_str_buf(arena, str, &arg->data_str[arg->i], 1);
+		write_to_arena(arena, arg, &arg->data_str[arg->i], 1);
 		arg->i += 1;
 	}
 }
 
-void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg)
 {
 	uint32_t len;
 
@@ -235,15 +240,15 @@ void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *
 			break ;
 		if (arg->data_str[arg->i + len] == '$')
 		{
-			arena_append_str_buf(arena, str, &arg->data_str[arg->i], len);
+			write_to_arena(arena, arg, &arg->data_str[arg->i], len);
 			arg->i += len;
-			expand_variable_in_quotes(arena, m, arg, str);
+			expand_variable_in_quotes(arena, m, arg);
 			len = 0;
 		}
 		else
 			len += 1;
 	}
-	arena_append_str_buf(arena, str, &arg->data_str[arg->i], len);
+	write_to_arena(arena, arg, &arg->data_str[arg->i], len);
 	arg->i += len;
 	if (arg->data_str[arg->i] == '"')
 		arg->i += 1;
@@ -269,51 +274,42 @@ void	init_arg(t_arena *arena, t_token *data, t_arg *arg)
 char *create_argument(t_arena *arena, t_minishell *m, t_token *data, t_token *prev)
 {
 	t_arg	arg;
-	t_string str;
 
-	str.backing_arena = NULL;
-	str.base = NULL;
-	str.capacity = 0;
-	str.size = 0;
 	(void)prev;
-	arg.data_str = data->string;
-	arg.data_len = data->string_len;
-	arg.i = 0;
-	arg.exist = false;
 	// if (prev != NULL)
 	// 	handle_leftover(arena, prev);
 	init_arg(arena, data, &arg);
-	while (arg.i < arg.data_len)
+	while (arg.i < data->string_len)
 	{
-		copy_until_special_char(arena, &arg, &str);
-		if (is_quote(arg.data_str[arg.i]))
+		copy_until_special_char(arena, &arg);
+		if (is_quote(data->string[arg.i]))
 		{
-			if (arg.data_str[arg.i] == '\'')
-				copy_in_single_quote(arena, &arg, &str);
+			if (data->string[arg.i] == '\'')
+				copy_in_single_quote(arena, &arg);
 			else
-				copy_in_double_quote(arena, m, &arg, &str);
+				copy_in_double_quote(arena, m, &arg);
 			arg.exist = true;
 		}
-		else if (arg.data_str[arg.i] == '$')
+		else if (data->string[arg.i] == '$')
 		{
-			if (is_valid_var_start(arg.data_str[arg.i + 1]))
+			if (is_valid_var_start(data->string[arg.i + 1]))
 			{
 
 				//copy_env_var_and_split()
 				arg.i += 1;
-				copy_full_env_var(arena, m, &arg, &str);
+				copy_full_env_var(arena, m, &arg);
 			}
-			else if (arg.data_str[arg.i + 1] ==  '?')
-				copy_exit_code(arena, &arg, &str, m->exit_status);
+			else if (data->string[arg.i + 1] ==  '?')
+				copy_exit_code(arena, &arg, m->exit_status);
 			else
-				arena_append_str_buf(arena, &str, &arg.data_str[arg.i++], 1);
+				write_to_arena(arena, &arg, &data->string[arg.i], 1);
 			arg.exist = true;
 		}
 	}
 	if (arg.exist == false)
 		return (NULL);
-	arena_null_terminate_string(arena, &str); // add thing that moves entire argument to new arena chunk if not enough space
-	return (str.base);
+	write_to_arena(arena, &arg, "\0", 1); // add thing that moves entire argument to new arena chunk if not enough space
+	return (arg.arg);
 }
 
 
