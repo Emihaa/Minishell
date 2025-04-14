@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/11 22:11:22 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/14 23:22:07 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,11 @@ int char_pos(char *s, char c);
 void print_export_env(char **env);
 void swap_pntrs(char **p1, char **p2);
 int is_sorted(char **pntr_array, int size);
+void env_sort(char **pntr_array, int size);
+int find_slot(t_minishell *m);
+int check_match(t_minishell *m, char *s);
+int spelling_check(t_minishell *m, char *s);
+
 
 // unset stuff
 void builtin_unset(t_minishell *m, int argc, char **argv);
@@ -221,7 +226,7 @@ void builtin_unset(t_minishell *m, int argc, char **argv);
 // envi stuff
 char **create_env(t_minishell *m, char **envp);
 int create_new_env(t_minishell *m , char **envp);
-char **print_export(t_minishell *m);
+void print_export(t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 
 //general utils stuff

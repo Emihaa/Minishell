@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/07 17:58:58 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/14 23:41:46 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,6 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 // }
 
 
-// @TODO: signals in the end
 // add before return line:
 // print_tree(tree, 1);
 // if you want the tree to be printed

@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/11 21:18:09 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/14 19:20:04 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 	return (0);
 }
 
+// @TODO cntrl+C on CAT gives two new newlines
 static 
 int read_loop_event_hook(void)
 {
