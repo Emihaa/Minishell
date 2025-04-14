@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:59:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/14 02:32:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/14 20:48:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stddef.h> // size_t
 # include <stdint.h> // sized int types
 
-#define DEFAULT_ARENA_CAPACITY 20//(1024 * 1024 * 256)
+#define DEFAULT_ARENA_CAPACITY 32//(1024 * 1024 * 256)
 
 typedef struct s_arena
 {
@@ -54,7 +54,7 @@ typedef struct
 	t_arena		*memory;
 	char		*base;
 	size_t		size;
-	//size_t		capacity;
+	size_t		capacity;
 } t_string;
 
 // ARENA strings
@@ -66,6 +66,6 @@ void	arena_null_terminate_string(t_arena *arena, t_string *str);
 t_string start_string(t_arena *a, char *src, size_t len);
 int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len);
 int	string_find_new_memory(t_arena *a, t_string *str, size_t new_size);
-int terminate_and_truncate_string(t_arena *a, t_string *str);
-void string_reset(t_arena *a, t_string *str);
+int terminate_and_commit_string(t_arena *a, t_string *str);
+void string_delete(t_string *str);
 #endif

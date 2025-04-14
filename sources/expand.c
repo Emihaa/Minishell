@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/14 02:35:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/14 18:52:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,10 +265,8 @@ void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *
 // }
 // return status
 
-void	init_arg(t_arena *arena, t_token *data, t_arg *arg)
+void	init_arg(t_token *data, t_arg *arg)
 {
-	arg->arg = xarena_alloc(arena, sizeof(*arg->arg) * 0);
-	arg->size = 0;
 	arg->i = 0;
 	arg->data_len = data->string_len;
 	arg->data_str = data->string;
@@ -281,15 +279,11 @@ char *create_argument(t_arena *arena, t_minishell *m, t_token *data, t_token *pr
 	t_arg	arg;
 	t_string str;
 
-	str = start_string(arena, NULL, 0);
+	str = (t_string){0};
 	(void)prev;
-	arg.data_str = data->string;
-	arg.data_len = data->string_len;
-	arg.i = 0;
-	arg.exist = false;
 	// if (prev != NULL)
 	// 	handle_leftover(arena, prev);
-	//5nit_arg(arena, data, &arg);
+	init_arg(data, &arg);
 	while (arg.i < arg.data_len)
 	{
 		copy_until_special_char(arena, &arg, &str);
@@ -319,7 +313,7 @@ char *create_argument(t_arena *arena, t_minishell *m, t_token *data, t_token *pr
 	}
 	if (arg.exist == false)
 		return (NULL);
-	terminate_and_truncate_string(arena, &str); // add thing that moves entire argument to new arena chunk if not enough space
+	terminate_and_commit_string(arena, &str); // add thing that moves entire argument to new arena chunk if not enough space
 	return (str.base);
 }
 
