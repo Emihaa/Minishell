@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/11 21:39:04 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 23:54:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,21 @@
 /*
 
 ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
-> 
+>
 bash: warning: here-document at line 1 delimited by end-of-file (wanted `DELIM')
-ltaalas@c1r3p1:~/projects/minishell/sources$ 
-ltaalas@c1r3p1:~/projects/minishell/sources$ 
-ltaalas@c1r3p1:~/projects/minishell/sources$ 
-ltaalas@c1r3p1:~/projects/minishell/sources$ 
-ltaalas@c1r3p1:~/projects/minishell/sources$ 
-ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$
+ltaalas@c1r3p1:~/projects/minishell/sources$
+ltaalas@c1r3p1:~/projects/minishell/sources$
+ltaalas@c1r3p1:~/projects/minishell/sources$
+ltaalas@c1r3p1:~/projects/minishell/sources$
+ltaalas@c1r3p1:~/projects/minishell/sources$
 ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
-> 
+>
 bash: warning: here-document at line 8 delimited by end-of-file (wanted `DELIM')
 ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
 0
 ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM | ls
-> 
+>
 bash: warning: here-document at line 10 delimited by end-of-file (wanted `DELIM')
  a.out	   heredoc.c	      'heredoc copy 3.c'  'heredoc copy.c'   lexer.c	   old_lexer_testing_shit   test.txt
  heredoc  'heredoc copy 2.c'  'heredoc copy 4.c'   lexer	     minishell.c   test			    tree.c
@@ -40,7 +40,7 @@ ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
 0
 ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM | >> >
 bash: syntax error near unexpected token `>'
-> 
+>
 bash: warning: here-document at line 12 delimited by end-of-file (wanted `DELIM')
 ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
 2
@@ -54,9 +54,9 @@ ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
 > asd
 > asd
 > asd
-> 
+>
 bash: warning: here-document at line 18 delimited by end-of-file (wanted `DELIM')
-ltaalas@c1r3p1:~/projects/minishell/sources$ 
+ltaalas@c1r3p1:~/projects/minishell/sources$
 
 */
 
@@ -64,7 +64,7 @@ static inline
 void print_eof_error(t_minishell *m, char *delimiter)
 {
 	FILE	*temp;
-	
+
 	temp = stdout;
 	stdout = stderr;
 	printf(EOF_ERROR, m->line_counter, delimiter);
@@ -166,7 +166,6 @@ int	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter
 {
 	const int	delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
 	char		*line;
-	uint32_t i;
 	int			read_rval;
 
 	while (1)
@@ -176,7 +175,6 @@ int	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter
 			break ;
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
-		i = 0;
 		heredoc_with_expansion_write_loop(minishell, write_fd, line);
 		if (put_char(write_fd, '\n'))
 			break ; // @TODO: error cheking
@@ -195,11 +193,11 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 	char			*delimiter;
 	uint32_t		new_size;
 	int				read_rval;
-	
+
 	if (create_heredoc_fds(fds) == -1)
 	syscall_failure(minishell);
 	temp_arena = arena_temp_begin(arena);
-	delimiter = arena_alloc(temp_arena.arena, sizeof(char) * data->string_len + 1); 
+	delimiter = arena_alloc(temp_arena.arena, sizeof(char) * data->string_len + 1);
 	new_size = set_quote_removed_string(delimiter, data);
 	arena_unalloc(temp_arena.arena, (data->string_len + 1) - new_size);
 	if (new_size < data->string_len)

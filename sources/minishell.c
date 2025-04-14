@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 19:26:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 23:52:24 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 sig_atomic_t g_int = 0;
 
 void print_expansion(char *line)
-{	
+{
 	//line++;
-	printf("%s\n", getenv(line));	
+	printf("%s\n", getenv(line));
 }
 
 char *get_token_name(t_token *token)
@@ -166,7 +166,7 @@ int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	t_node *current_head;
 	int status;
-	
+
 	m->pipe_side = -1;
 	status = 0;
 	while (tree)
@@ -182,7 +182,7 @@ int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 			if (tree->token.type == WORD || status != 0)
 				if (execute_command(arena, m, tree->token.argv, status))
 					break ;
-			tree = tree->left;	
+			tree = tree->left;
 		}
 		reset_redirect(m);
 		tree = current_head->right;
@@ -190,7 +190,7 @@ int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 	return (0);
 }
 
-static 
+static
 int read_loop_event_hook(void)
 {
 	if (g_int == SIGINT)
@@ -278,7 +278,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
 	minishell->pipe[WRITE] = -1;
-	minishell->last_pid = 0; 
+	minishell->last_pid = 0;
 	minishell->pids = NULL;
 	get_minishell(minishell);
 }
@@ -308,14 +308,11 @@ void signal_handler(int signal)
 // this one already works
 int main(int argc, char *argv[], char **envp)
 {
-	static char 	arr[ARG_MAX];
 	t_minishell minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTERM, SIG_IGN); //<-- why?
 
-
-	arr[0] = 7;
 	(void)argc;
 	(void)argv;
 	init_minishell(&minishell, envp);

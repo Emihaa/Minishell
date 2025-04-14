@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 19:58:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/14 02:52:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 	char			*path;
 	t_string		str;
 
-	str = (t_string){0};
-	path = find_env_var("PATH", 4, &i, m->envp);
+	str = start_string(a, NULL, 0);
+	path = get_env_var("PATH", 4, m->envp);
 	if (path == NULL || *path == '\0')
 		return (cmd);
 	while (*path != '\0')
@@ -28,18 +28,21 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 		i = 0;
 		while (path[i] != ':' && path[i] != '\0')
 			i++;
-		arena_append_str_buf(a, &str, path, i);
-		arena_append_str_buf(a, &str, "/", 1);
-		arena_append_str_buf(a, &str, cmd, cmd_str_len);
-		arena_null_terminate_string(a, &str);
+		append_to_string(a, &str, path, i);
+		append_to_string(a, &str, "/", 1);
+		append_to_string(a, &str, cmd, cmd_str_len);
+		terminate_and_truncate_string(a, &str);
+		printf("path: %s\n", str.base);
 		if (access(str.base, F_OK) == 0)
 			return (str.base);
-		arena_unalloc(a, str.capacity);
+		string_reset(a, &str);
+		//str.size = 0;
 		path += i + (path[i] == ':');
 	}
 	command_not_found(m, cmd);
 	return (NULL);
 }
+
 
 void run_command(t_arena *arena, t_minishell *m, char **argv)
 {
@@ -48,6 +51,16 @@ void run_command(t_arena *arena, t_minishell *m, char **argv)
 	cmd_with_path = argv[0];
 	if (ft_strchr(cmd_with_path, '/') == NULL)
 		cmd_with_path = get_cmd_with_path(arena, m, argv[0]); // replace with proper command finding function
+	t_arena *temp = arena;
+	size_t total = 0;
+	for (int i = 0; temp != NULL; i++)
+	{
+		total += temp->size;
+		printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
+		printf("data of [%i]as chars: %.*s\n", i, (int)temp->size, temp->data);
+		temp = temp->next;
+	}
+	printf("total: <%lu>\n", total);
 	execve(cmd_with_path, argv, m->envp); // just have execve catch most error values
 	execve_failure(m, argv[0]);
 }
@@ -106,5 +119,5 @@ int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status)
 		return (1);
 	}
 	m->last_pid = execute_subprocess(arena, m, argv, builtin_type);
-	return (1);	
+	return (1);
 }

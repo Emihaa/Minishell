@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 16:47:49 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/14 00:42:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
-#include "../libs/lt_arena/includes/lt_arena.h" 
+#include "../libs/lt_arena/includes/lt_arena.h"
 #include "../libs/libft/includes/libft.h"
 
 #include <errno.h> // errno
@@ -42,6 +42,10 @@
 #include <sys/stat.h>	// lstat !!! might not be used WATCH OUTTTTTAMSL:MF:ALMSG:LMA
 #include <signal.h>     // signal handling
 
+
+// find proper place for these thingies
+char *get_env_var(char *key, uint32_t key_len, char **envp);
+
 extern sig_atomic_t g_int;
 
 // maybe have all token types be negative except heredoc so that the type can be replace with an fd
@@ -55,7 +59,7 @@ typedef enum e_type
 	REDIRECT_APPEND	=	-257, // >>
 	// COMMAND		=	258,
 	// ARGUMENT		=	259,	 // @question with argv or not?
-	WORD			=	-260,	// generic word, could be command name or argument 
+	WORD			=	-260,	// generic word, could be command name or argument
 	END_OF_LINE		=	0,		// first WORD before a pipe is the command and the following ones are arguments
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
@@ -82,8 +86,8 @@ typedef struct s_minishell
 
 
 // LUKA: maybe use this? idunno probably  not
-// 
-typedef union u_data 
+//
+typedef union u_data
 {
 	char	*string;
 	char	**command_argv;
@@ -129,7 +133,7 @@ typedef struct s_node
 
 	struct s_node *root; // previous node this is connected to
 	struct s_node *left; // struct on the under left
-	struct s_node *right; // struct on the under right 
+	struct s_node *right; // struct on the under right
 } t_node;
 
 // minishell main stuff

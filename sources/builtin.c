@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/12 23:10:09 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/13 23:54:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void builtin_exit(t_minishell *m, char **argv)
 		printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 		m->exit_status = 2;
 	}
-	else if (argc > 1) 
+	else if (argc > 1)
 	{
 		m->exit_status = ft_atoi(argv[1]);
 	}
@@ -150,7 +150,7 @@ void builtin_env(char **envp)
 // 	if (directory[0] == '/') // step 3
 // 	{
 // 		curpath = directory;
-		
+
 // 	}
 // 	(directory[0] == '.')
 // 	chdir()
@@ -183,13 +183,17 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 	if (command == BUILTIN_ECHO)
 		builtin_echo(argv, m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_CD)
+	{
 		; // @TODO: add command
+	}
 	if (command == BUILTIN_PWD)
 		builtin_pwd(m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_ENV)
 		builtin_env(m->envp); // @TODO: add command
 	if (command == BUILTIN_UNSET)
+	{
 		; // @TODO: add command
+	}
 	if (command == BUILTIN_EXPORT)
 		print_export(m); // @TODO: add command
 	return (0);
