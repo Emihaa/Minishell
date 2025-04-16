@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 23:52:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/15 18:58:04 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	pid_t		pid;
 
 	i = 0;
-	printf("command count: %o\n", minishell->command_count); // Debug stuff
-	printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
+	// printf("command count: %o\n", minishell->command_count); // Debug stuff
+	// printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -108,8 +108,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			perror("wait issue");
 		if (pid == minishell->last_pid)
 		{
-			printf("pid == %i\n", pid);
-			printf("exit_status before = %i\n", minishell->exit_status);
+			// printf("pid == %i\n", pid);
+			// printf("exit_status before = %i\n", minishell->exit_status);
 			if (WIFSIGNALED(wstatus))
 			{
 				minishell->exit_status = WTERMSIG(wstatus) + 128;
@@ -120,8 +120,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 				minishell->exit_status = WEXITSTATUS(wstatus);
 			else
 				minishell->exit_status = 1;
-			printf("wstatus: %d\n", wstatus);
-			printf("exit_status after = %i\n", minishell->exit_status);
+			// printf("wstatus: %d\n", wstatus);
+			// printf("exit_status after = %i\n", minishell->exit_status);
 
 		}
 		i++;
@@ -230,13 +230,13 @@ void read_loop(t_minishell *m)
 		wait_for_sub_processes(m);
 		free(m->line);
 		m->line = NULL;
-		t_arena *temp = m->node_arena;
-		for (int i = 0; temp != NULL; i++)
-		{
-			printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
-			printf("data of [%i]as chars: %.*s\n", i, (int)temp->size, temp->data);
-			temp = temp->next;
-		}
+		// t_arena *temp = m->node_arena;
+		// for (int i = 0; temp != NULL; i++)
+		// {
+		// 	printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
+		// 	printf("data of [%i]as chars: %.*s\n", i, (int)temp->size, temp->data);
+		// 	temp = temp->next;
+		// }
 		arena_trim(m->node_arena);
 		arena_reset(m->node_arena);
 	}

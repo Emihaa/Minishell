@@ -6,30 +6,37 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/14 23:58:04 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/16 23:25:31 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+static inline
+void	delete_temp_string(t_string *str)
+{
+	arena_unalloc(str->memory, str->size);
+	str->memory = NULL;
+	str->base = NULL;
+	str->size = 0;
+	str->capacity = 0;
+}
 
-char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
+char *get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 {
 	const uint32_t	cmd_str_len = ft_strlen(cmd);
 	uint32_t		i;
-	char			*path;
 	t_string		str;
 
-	str = (t_string){0};
-	path = get_env_var("PATH", 4, m->envp);
 	if (path == NULL || *path == '\0')
 		return (cmd);
+	str = (t_string){0};
 	while (*path != '\0')
 	{
 		i = 0;
 		while (path[i] != ':' && path[i] != '\0')
 			i++;
-		if (string_find_new_memory(a, &str, i + cmd_str_len + 1))
+		if (string_find_new_memory(a, &str, i + cmd_str_len + 2))
 		 	syscall_failure(m); // error exit?
 		append_to_string(a, &str, path, i);
 		append_to_string(a, &str, "/", 1);
@@ -37,7 +44,7 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 		terminate_and_commit_string(a, &str);
 		if (access(str.base, F_OK) == 0)
 			return (str.base);
-		string_delete(&str);
+		delete_temp_string(&str);
 		path += i + (path[i] == ':');
 	}
 	command_not_found(m, cmd);
@@ -47,11 +54,15 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *cmd)
 
 void run_command(t_arena *arena, t_minishell *m, char **argv)
 {
+	char *path;
 	char *cmd_with_path;
-
+	
 	cmd_with_path = argv[0];
 	if (ft_strchr(cmd_with_path, '/') == NULL)
-		cmd_with_path = get_cmd_with_path(arena, m, argv[0]); // replace with proper command finding function
+	{
+		path = get_env_var_value("PATH", 4, m->envp);
+		cmd_with_path = get_cmd_with_path(arena, m, path,argv[0]); // replace with proper command finding function
+	}
 	t_arena *temp = arena;
 	size_t total = 0;
 	for (int i = 0; temp != NULL; i++)

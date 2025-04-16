@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 23:54:56 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/15 18:38:52 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,38 @@ int count_argc(char **argv)
 	return (count);
 }
 
+bool	ft_strtol(const char *nptr, int64_t *dest)
+{
+	int64_t	num;
+	int		sign;
+
+	num = 0;
+	while (ft_is_white_space(*nptr))
+		nptr++;
+	sign = 0 - (*nptr == '-') + (*nptr != '-');
+	if ((*nptr == '-' || *nptr == '+'))
+		nptr++;
+	if (*nptr < '0' || *nptr > '9')
+		return (0);
+	while (*nptr >= '0' && *nptr <= '9')
+	{
+		num = 10 * num + (*nptr++ - '0');
+		if (num < 0)
+			return (0);
+	}
+	*dest = (num * sign);
+	return (1);
+}
+
+
 int str_is_numeric(char *str)
 {
+	int64_t temp;
 	int i;
 
 	i = 0;
+	if (ft_strtol(str, &temp) == 0)
+		return (0);
 	if (*str == '-' || *str == '+')
 		i += 1;
 	while (ft_isdigit(str[i]))
@@ -70,14 +97,14 @@ void builtin_exit(t_minishell *m, char **argv)
 {
 	const int argc = count_argc(argv);
 
-	write(1, "exit\n", 5);
+	write_bytes(STDERR_FILENO, "exit\n", 5);
 	if (argc > 1 && str_is_numeric(argv[1]) == false)
 	{
 		stdout = stderr;
 		printf("minishell: exit: %s: numeric argument required\n", argv[1]);
 		m->exit_status = 2;
 	}
-	else if (argc > 1)
+	else if (argc == 2)
 	{
 		m->exit_status = ft_atoi(argv[1]);
 	}
@@ -93,10 +120,15 @@ void builtin_exit(t_minishell *m, char **argv)
 
 //pwd command
 //propably need file dupping (dup2)
-void	builtin_pwd(int fd)
+void	builtin_pwd(t_minishell *m, int fd)
 {
 	char current_path[PATH_MAX];
-	(void)getcwd(current_path, PATH_MAX);
+	if (getcwd(current_path, PATH_MAX) == NULL)
+	{
+		m->exit_status = 1;
+		perror("minishell: pwd:");
+		return ;
+	}
 	(void)put_str_nl(fd, current_path);
 }
 
@@ -187,7 +219,7 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 		; // @TODO: add command
 	}
 	if (command == BUILTIN_PWD)
-		builtin_pwd(m->redir_fds[WRITE]); // @TODO: add command
+		builtin_pwd(m, m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_ENV)
 		builtin_env(m->envp); // @TODO: add command
 	if (command == BUILTIN_UNSET)

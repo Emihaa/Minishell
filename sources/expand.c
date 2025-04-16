@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/14 18:52:54 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 01:03:13 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,32 +77,11 @@ int	is_special_char(char c)
 
 typedef struct s_arg
 {
-	char	*arg;
 	char	*data_str;
-	uint32_t size;
 	uint32_t data_len;
 	uint32_t i;
 	bool	exist;
 } t_arg;
-
-void write_to_arena(t_arena *arena, t_arg *arg, const char *src, uint32_t len)
-{
-	char *dest;
-
-	if (arg->size + len > arena->capacity - arena->size)
-	{
-		(void)arena_unalloc(arena, arg->size);
-		dest = xarena_alloc(arena, sizeof(*arg->arg) * (arg->size + len));
-		(void)ft_memmove(dest, arg->arg, arg->size);
-		ft_memmove(&arg->arg[arg->size], src, len);
-		arg->size += len;
-		arg->arg = dest;
-		return ;
-	}
-	dest = xarena_alloc(arena, sizeof(char) * len);
-	ft_memmove(dest, src, len);
-	arg->size += len;
-}
 
 void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str, int exit_code)
 {
@@ -154,23 +133,24 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 	append_to_string(arena, str, &arg->data_str[arg->i], len);
 	arg->i += len + 1;
 }
+
 uint32_t get_key_len(char *src, uint32_t src_len)
 {
-	uint32_t len;
+	uint32_t i;
 
-	len = 0;
-	while (len < src_len)
+	i = 0;
+	while (i < src_len)
 	{
-		if (src[len] != '_' && ft_isalnum(src[len]) == false)
+		if (src[i] != '_' && ft_isalnum(src[i]) == false)
 			break ;
-		len += 1;
+		i += 1;
 	}
-	return (len);
+	return (i);
 }
 
 int	get_env_key_index(char *key, uint32_t key_len, char **envp)
 {
-	uint32_t i;
+	int	i;
 
 	i = 0;
 	printf("key: %.*s\n", key_len, key);
@@ -178,7 +158,8 @@ int	get_env_key_index(char *key, uint32_t key_len, char **envp)
 	{
 		while(envp[i] != NULL)
 		{
-			if (ft_strncmp(key, envp[i], key_len) == 0 && envp[i][key_len] == '=')
+			if (ft_strncmp(key, envp[i], key_len) == 0
+			&& (envp[i][key_len] == '=' || envp[i][key_len] == '\0'))
 			{
 				return (i);
 			}
@@ -188,12 +169,14 @@ int	get_env_key_index(char *key, uint32_t key_len, char **envp)
 	return (-1);
 }
 
-char *get_env_var(char *key, uint32_t key_len, char **envp)
+char *get_env_var_value(char *key, uint32_t key_len, char **envp)
 {
 	int index;
 
 	index = get_env_key_index(key, key_len, envp);
 	if (index < 0)
+		return (NULL);
+	if (envp[index][key_len] == '\0' || envp[index][key_len + 1] == '\0')
 		return (NULL);
 	return (&envp[index][key_len + 1]);
 }
@@ -205,7 +188,7 @@ void	copy_full_env_var(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str
 	char		*env_var;
 
 	key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
-	env_var = get_env_var(&arg->data_str[arg->i], key_len, m->envp);
+	env_var = get_env_var_value(&arg->data_str[arg->i], key_len, m->envp);
 	if (env_var != NULL)
 	{
 		var_len = ft_strlen(env_var);
@@ -274,44 +257,96 @@ void	init_arg(t_token *data, t_arg *arg)
 
 }
 
-char *create_argument(t_arena *arena, t_minishell *m, t_token *data, t_token *prev)
+int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
-	t_arg	arg;
+	uint32_t len;
+
+	len = 0;
+	arg->exist = false;
+	printf("str: %s len: %u\n", leftover->data_str, leftover->data_len);
+	if (len < leftover->data_len)
+	{
+		while (!is_space(leftover->data_str[len]) && len < leftover->data_len)
+			len += 1;
+		append_to_string(arena, str, leftover->data_str, len);
+		if (is_space(leftover->data_str[len]))
+		{
+			terminate_and_commit_string(arena, str);
+			len += eat_space(&leftover->data_str[len]);
+			leftover->data_str = &leftover->data_str[len];
+			leftover->data_len = ft_strlen(&leftover->data_str[len]);
+			leftover->i = 0;
+			return (1);
+		}
+		arg->exist = true;
+	}
+	leftover->data_len -= len;
+	return (0);
+}
+
+int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
+{
+	uint32_t len;
+	uint32_t key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
+	char *var = get_env_var_value(&arg->data_str[arg->i], key_len, get_minishell(NULL)->envp);
+	
+	arg->i += key_len;
+	if (var == NULL)
+		return (0);
+	len = 0;
+	while (!is_space(var[len]) && var[len] != '\0')
+		len += 1;
+	append_to_string(arena, str, var, len);
+	if (is_space(var[len]))
+	{
+		if (len > 0)
+			arg->exist = true;
+		len += eat_space(&var[len]);
+		leftover->data_str = &var[len];
+		leftover->data_len = ft_strlen(&var[len]);
+		leftover->i = 0;
+		printf("str: %s len: %u\n", leftover->data_str, leftover->data_len);
+		return (1);
+	}
+	arg->exist = true;
+	return (0);
+}
+
+char *create_argument(t_arena *arena, t_minishell *m, t_arg *arg, t_arg *leftover)
+{
 	t_string str;
 
 	str = (t_string){0};
-	(void)prev;
-	// if (prev != NULL)
-	// 	handle_leftover(arena, prev);
-	init_arg(data, &arg);
-	while (arg.i < arg.data_len)
+	if (handle_leftover(arena, &str, arg, leftover))
+		return (str.base);
+	while (arg->i < arg->data_len)
 	{
-		copy_until_special_char(arena, &arg, &str);
-		if (is_quote(arg.data_str[arg.i]))
+		copy_until_special_char(arena, arg, &str);
+		if (is_quote(arg->data_str[arg->i]))
 		{
-			if (arg.data_str[arg.i] == '\'')
-				copy_in_single_quote(arena, &arg, &str);
+			if (arg->data_str[arg->i] == '\'')
+				copy_in_single_quote(arena, arg, &str);
 			else
-				copy_in_double_quote(arena, m, &arg, &str);
-			arg.exist = true;
+				copy_in_double_quote(arena, m, arg, &str);
+			arg->exist = true;
 		}
-		else if (arg.data_str[arg.i] == '$')
+		else if (arg->data_str[arg->i] == '$')
 		{
-			if (is_valid_var_start(arg.data_str[arg.i + 1]))
+			if (is_valid_var_start(arg->data_str[arg->i + 1]))
 			{
-
-				//copy_env_var_and_split()
-				arg.i += 1;
-				copy_full_env_var(arena, m, &arg, &str);
+				arg->i += 1;
+				if (copy_env_var_and_split(arena, &str, arg, leftover))
+					break ;
+				continue ;
 			}
-			else if (arg.data_str[arg.i + 1] ==  '?')
-				copy_exit_code(arena, &arg, &str, m->exit_status);
+			else if (arg->data_str[arg->i + 1] ==  '?')
+				copy_exit_code(arena, arg, &str, m->exit_status);
 			else
-				append_to_string(arena, &str, &arg.data_str[arg.i], 1);
-			arg.exist = true;
+				append_to_string(arena, &str, &arg->data_str[arg->i], 1);
+			arg->exist = true;
 		}
 	}
-	if (arg.exist == false)
+	if (arg->exist == false)
 		return (NULL);
 	terminate_and_commit_string(arena, &str); // add thing that moves entire argument to new arena chunk if not enough space
 	return (str.base);
@@ -324,44 +359,55 @@ char *create_argument(t_arena *arena, t_minishell *m, t_token *data, t_token *pr
 // 	char	 *data;
 // } t_string;
 
+typedef struct s_arg_vec
+{
+	size_t size;
+	size_t capacity;
+	char	**data;
+} t_arg_vec;
+
+void init_argv(t_arena *arena, t_arg_vec *argv)
+{
+	# define ARGV_DEFAULT_SIZE 64;
+	argv->capacity = ARGV_DEFAULT_SIZE;
+	argv->data = xarena_alloc(arena, sizeof(*argv->data) * (argv->capacity + 1));
+	argv->size = 0;
+}
 
 char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 {
-	t_arena		*temp_arena;
-	uint32_t	arg_count;
-	char		**arg_vec_temp;
-	char		**arg_vec;
+	t_arg_vec	argv;
 	char		*arg;
-	//t_token		prev;
+	static t_arg arg_vars = {0};
+	static t_arg left_over = {0};
 
-	temp_arena = arena_new(sizeof(*arg_vec) * 1024); //will kindof need to be growable
-	arg_vec_temp = xarena_alloc(temp_arena, sizeof(*arg_vec) * 0);
-	arg_count = 0;
 	while (node)
 	{
-		arg = create_argument(arena, m, &node->token, NULL);
+		if (left_over.data_len <= 0)
+			init_arg(&node->token, &arg_vars);	
+		arg = create_argument(arena, m, &arg_vars, &left_over);
 		if (arg != NULL)
 		{
-			xarena_alloc(temp_arena, sizeof(*arg_vec) * 1);
-			arg_vec_temp[arg_count] = arg;
-			arg_count += 1;
+			if (argv.capacity <= argv.size)
+			{
+				argv.data = arena_realloc(arena, argv.data,
+						argv.capacity * sizeof(*argv.data),
+						sizeof(*argv.data) * ((argv.capacity * 2) + 1));
+				argv.capacity *= 2;
+			}
+			argv.data[argv.size] =	 arg;
+			argv.size += 1;
 		}
-		// if (node->token.string_len > 0)
-		// 	continue ; 	// this is just one idea
-						// we need some way to make the next argument starting with what is left
-						// of the env_var and continuing within the same node
+		if (left_over.data_len > 0)
+			continue ;
 		node = node->left;
 	}
-	arg_vec = arena_alloc(arena, sizeof(*arg_vec) * (arg_count + 1));
-	ft_memmove(arg_vec, arg_vec_temp, sizeof(*arg_vec_temp) * arg_count);
-	arena_delete(temp_arena);
-	return (arg_vec);
+	return (argv.data);
 }
 
 
 
 
-// eli siis.
 // first time i go through the tree, i do expansion of the words
 // field splitting and handle the quates
 // go through the tree second time and gather all the words of same branch under same string

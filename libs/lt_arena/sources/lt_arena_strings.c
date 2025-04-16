@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/14 20:45:25 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/16 20:40:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,62 +48,6 @@ void	*arena_memmove(void *dest, const void *src, size_t n)
 	}
 	return (dest);
 }
-
-// void	arena_append_str_buf(t_arena *arena, t_string *dest, char *src, size_t src_len)
-// {
-// #define	ARENA_INIT_CAP 16
-
-// 	size_t new_capacity;
-
-// 	if (dest->size + src_len >= dest->capacity)
-// 	{
-// 		new_capacity = dest->capacity;
-// 		if (new_capacity == 0)
-// 			new_capacity = ARENA_INIT_CAP;
-// 		while (dest->size + src_len > new_capacity)
-// 			new_capacity *= 2;
-// 		dest->base = arena_realloc(
-// 			arena,
-// 			dest->base,
-// 			dest->capacity,
-// 			new_capacity);
-// 		dest->capacity = new_capacity;
-// 	}
-// 	arena_memmove(&dest->base[dest->size], src, sizeof(*dest->base) * src_len);
-// 	dest->size += src_len;
-// }
-// // seems problematic
-// void	arena_null_terminate_string(t_arena *arena, t_string *str)
-// {
-// 	if (str->size >= str->capacity)
-// 	{
-// 		str->base = arena_realloc(arena, str->base, str->size, str->size + 1);
-// 		if (str->base == NULL)
-// 		{
-// 			; // PANIC
-// 		}
-// 	}
-// 	arena_unalloc(arena, str->capacity);
-// 	arena_alloc_no_zero(arena, str->size + 1);
-// 	str->base[str->size++] = '\0';
-// }
-
-
-
-// t_string start_string(t_arena *a, char *src, size_t len)
-// {
-// 	t_string string;
-
-// 	while (a->capacity < a->size + len)
-// 		a = a->next;
-// 	string.memory = a;
-// 	string.base = arena_alloc(a, len);
-// 	if (string.base == NULL)
-// 		return ((t_string){0});
-// 	(void)arena_memmove(string.base, src, len);
-// 	string.size = len;
-// 	return (string);
-// }
 
 t_arena *find_free_arena(t_arena *a, size_t size)
 {
@@ -155,14 +99,6 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 	return (0);
 }
 
-void string_delete(t_string *str)
-{
-	arena_unalloc(str->memory, str->size);
-	str->memory = NULL;
-	str->base = NULL;
-	str->size = 0;
-	str->capacity = 0;
-}
 // terminate and resrve
 int terminate_and_commit_string(t_arena *a, t_string *str)
 {
@@ -176,5 +112,6 @@ int terminate_and_commit_string(t_arena *a, t_string *str)
 	str->base[str->size] = '\0';
 	str->size += 1;
 	str->memory->size += str->size;
+	str->capacity = str->size;
 	return (0);
 }

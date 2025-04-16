@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/14 00:42:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/16 20:48:18 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 
 
 // find proper place for these thingies
-char *get_env_var(char *key, uint32_t key_len, char **envp);
+char *get_env_var_value(char *key, uint32_t key_len, char **envp);
 
 extern sig_atomic_t g_int;
 
@@ -245,7 +245,7 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command);
 
 void builtin_exit(t_minishell *m, char **argv);
 void builtin_echo(char *argv[], int fd);
-void builtin_pwd(int fd);
+void builtin_pwd(t_minishell *m, int fd);
 
 
 // execute stuff
