@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/14 23:22:07 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/15 23:05:57 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,10 +218,14 @@ void env_sort(char **pntr_array, int size);
 int find_slot(t_minishell *m);
 int check_match(t_minishell *m, char *s);
 int spelling_check(t_minishell *m, char *s);
+int	export_add(t_minishell *m, char *s);
 
 
 // unset stuff
 void builtin_unset(t_minishell *m, int argc, char **argv);
+
+// cd stuff
+void builtin_cd(t_minishell *m, int argc, char **argv);
 
 // envi stuff
 char **create_env(t_minishell *m, char **envp);

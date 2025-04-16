@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/14 19:20:04 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/15 17:42:14 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,6 +301,10 @@ void signal_handler(int signal)
 // returns NULL to readline(), clean up and exit
 // but only does this if input is empty
 // this one already works
+
+// @TODO: if we are on child process then we dont want the parent to get any signals
+// so we need to have the signal(SIGINT, SIG_ING); on parent if we are on child process
+// remember also to return the signal handling
 int main(int argc, char *argv[], char **envp)
 {
 	static char 	arr[ARG_MAX];

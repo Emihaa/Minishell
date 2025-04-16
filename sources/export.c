@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 16:43:07 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/14 23:34:20 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/16 21:33:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int	export_add(t_minishell *m, char *s)
 	pos = check_match(m, s);
 	if (pos != -1)
 	{
+		free(m->envp[pos]);
 		m->envp[pos] = ft_strdup(s);
 		return (0);
 	}

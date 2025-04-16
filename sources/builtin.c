@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/11 17:56:14 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/15 18:01:35 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 	if (command == BUILTIN_ECHO)
 		builtin_echo(argv, m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_CD)
-		; // @TODO: add command
+		builtin_cd(m, count_argc(argv), argv); // @TODO: add command
 	if (command == BUILTIN_PWD)
 		builtin_pwd(m->redir_fds[WRITE]); // @TODO: add command
 	if (command == BUILTIN_ENV)

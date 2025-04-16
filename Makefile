@@ -6,7 +6,7 @@
 #    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/14 20:28:53 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/15 17:59:55 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,7 +51,7 @@ SOURCES =	minishell.c		utils.c				arena_utils.c		\
 			error.c			write_functions.c						\
 			builtin.c												\
 			export.c		export_utils.c		export_print_utils.c\
-			unset.c			env.c									\
+			unset.c			env.c				cd.c				\
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 

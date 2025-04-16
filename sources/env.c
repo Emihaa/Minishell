@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:43:59 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/14 23:39:03 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/16 20:55:17 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	create_new_env(t_minishell *m, char **envp)
 
 // env is always double the capacity what i am copying
 // for export space
+// @TODO I am leaking here
 char	**create_env(t_minishell *m, char **envp)
 {
 	char	**env_copy;
@@ -55,7 +56,7 @@ char	**create_env(t_minishell *m, char **envp)
 	}
 	while (envp[i])
 	{	
-		env_copy[i] = ft_strdup(envp[i]);
+		env_copy[i] = ft_strdup(envp[i]); //<- why does this leak?
 		if (!env_copy[i])
 			return (NULL);
 		i++;
