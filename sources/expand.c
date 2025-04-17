@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 18:47:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 18:51:36 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,12 +276,12 @@ int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 
 int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
-	uint32_t key_len = get_key_len(&arg->data_str[arg->i],
-									arg->data_len - arg->i);
-	char *var = get_env_var_value(&arg->data_str[arg->i], key_len,
-									get_minishell(NULL)->envp);
-	uint32_t len;
+	uint32_t	key_len; 
+	char		*var;
+	uint32_t	len;
 	
+	key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
+	var = get_env_var_value(&arg->data_str[arg->i], key_len, get_minishell(NULL)->envp);
 	arg->i += key_len;
 	if (var == NULL)
 		return (0);
