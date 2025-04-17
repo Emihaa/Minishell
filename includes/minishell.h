@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 18:29:39 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 19:07:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,7 @@ void builtin_unset(t_minishell *m, int argc, char **argv);
 void builtin_cd(t_minishell *m, int argc, char **argv);
 
 // envi stuff
+void	builtin_env(char **envp);
 char **create_env(t_minishell *m, char **envp);
 int create_new_env(t_minishell *m , char **envp);
 void print_export(t_minishell *m);
