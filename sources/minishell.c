@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 18:33:26 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:07:11 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			{
 				minishell->exit_status = WTERMSIG(wstatus) + 128;
 				if (__WCOREDUMP(wstatus))
-					put_str_nl(STDERR_FILENO, "Core Dumped"); // need to check this
+					put_str(STDERR_FILENO, "Core Dumped\n"); // need to check this
 			}
 			else if (WIFEXITED(wstatus))
 				minishell->exit_status = WEXITSTATUS(wstatus);
@@ -266,7 +266,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena == NULL)
 	{
-		put_str_nl(STDERR_FILENO, "allocation failure");
+		put_str(STDERR_FILENO, "allocation failure\n");
 		error_exit(minishell, 1); // @TODO: error cheking
 	}
 	minishell->line = NULL;
@@ -280,7 +280,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->envp = create_env(minishell, envp); // <---------- @TODO Emilia
 	if (!minishell->envp)
 	{
-		put_str_nl(STDERR_FILENO, "allocation failure");
+		put_str(STDERR_FILENO, "allocation failure\n");
 		error_exit(minishell, 1); // @TODO: error cheking
 	}		
 	minishell->redir_fds[READ] = STDIN_FILENO;
