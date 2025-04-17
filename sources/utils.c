@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 19:25:59 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:16:45 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 uint8_t	num_len(uint32_t num)
 {
-	uint8_t i;
+	uint8_t	i;
 
 	i = 0;
 	if (num == 0)
@@ -26,15 +26,17 @@ uint8_t	num_len(uint32_t num)
 	}
 	return (i);
 }
+
+// || c == '\n' maybe?
 inline
 bool	is_space(char c)
 {
-	return (c == ' ' || c == '\t'); // || c == '\n' maybe?
+	return (c == ' ' || c == '\t');
 }
 
-t_minishell *get_minishell(t_minishell *m)
+t_minishell	*get_minishell(t_minishell *m)
 {
-	static t_minishell *minishell;
+	static t_minishell	*minishell;
 
 	if (m == NULL)
 		return (minishell);

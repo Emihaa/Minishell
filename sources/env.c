@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:43:59 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/16 20:55:17 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:27:31 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,28 @@ int	create_new_env(t_minishell *m, char **envp)
 	env_copy[i] = NULL;
 	free(envp);
 	m->envp = env_copy;
-	printf("created new env!\n");
 	return (0);
+}
+
+// check if '=' on env and print that line otherwise skip
+void	builtin_env(char **envp)
+{
+	int	i;
+
+	i = 0;
+	if (envp == NULL)
+		return ;
+	while (envp[i])
+	{
+		if (ft_strchr(envp[i], '='))
+			printf("%s\n", envp[i]);
+		i += 1;
+	}
 }
 
 // env is always double the capacity what i am copying
 // for export space
-// @TODO I am leaking here
+// @TODO i am leaking here
 char	**create_env(t_minishell *m, char **envp)
 {
 	char	**env_copy;
@@ -48,7 +63,6 @@ char	**create_env(t_minishell *m, char **envp)
 		m->envp_size++;
 	if (m->envp_size >= m->env_capacity)
 		m->env_capacity = (m->envp_size * 2);
-	printf("env size %d env capacity %d\n", m->envp_size, m->env_capacity);
 	env_copy = ft_calloc(m->env_capacity + 1, sizeof(char *));
 	if (!env_copy)
 	{
