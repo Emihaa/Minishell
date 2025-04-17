@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 23:54:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:50:59 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,23 +116,23 @@ int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 	return (read_rval);
 }
 
-int write_env_variable(char *string, const uint32_t start, int fd, t_minishell *m)
+int write_env_variable(char *str, const uint32_t start, int fd, t_minishell *m)
 {
 	uint32_t		len;
 	char			*env_var;
 
-	if (is_valid_var_start(string[start + 1]) == false)
+	if (is_valid_var_start(str[start + 1]) == false)
 	{
-		if (string[start + 1] == '?')
+		if (str[start + 1] == '?')
 		{
 			ft_putnbr_fd(m->exit_status, fd);
 			return (1);
 		}
-		write(fd, &string[start], 1);
+		write(fd, &str[start], 1);
 		return (0);
 	}
 	len = 0;
-	env_var = find_env_var(&string[start + 1], ft_strlen(&string[start + 1]), &len, m->envp);
+	env_var = get_env_var_value(str, get_key_len(str, ft_strlen(str)));
 	(void)put_str(fd, env_var);
 	return (len);
 }
