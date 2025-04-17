@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 21:44:27 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:59:09 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 	arg->i += len + 1;
 }
 
-// this and the tree below
+// this and the three below
 uint32_t get_key_len(char *src, uint32_t src_len)
 {
 	uint32_t i;
@@ -255,6 +255,7 @@ void	handle_quote(t_arena *arena, t_arg *arg, t_string *str)
 	arg->exist = true;
 }
 
+// luka sais fix this
 char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 {
 	t_string str;

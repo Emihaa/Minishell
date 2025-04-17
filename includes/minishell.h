@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 21:38:28 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 22:13:48 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,7 +244,6 @@ int check_match(t_minishell *m, char *s);
 int spelling_check(t_minishell *m, char *s);
 int	export_add(t_minishell *m, char *s);
 
-
 // unset stuff
 void builtin_unset(t_minishell *m, int argc, char **argv);
 
@@ -257,6 +256,9 @@ char **create_env(t_minishell *m, char **envp);
 int create_new_env(t_minishell *m , char **envp);
 void print_export(t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
+int	get_env_key_index(char *key, uint32_t key_len, char **envp);
+uint32_t get_key_len(char *src, uint32_t src_len);
+char *get_env_var_value(char *key, uint32_t key_len);
 
 //general utils stuff
 uint32_t	set_quote_removed_string(char *string, t_token *data);
