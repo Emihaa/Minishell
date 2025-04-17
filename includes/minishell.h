@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 19:07:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 21:38:28 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@
 
 
 // find proper place for these thingies
-char *get_env_var_value(char *key, uint32_t key_len, char **envp);
+char *get_env_var_value(char *key, uint32_t key_len);
 
 extern sig_atomic_t g_int;
 
@@ -169,6 +169,26 @@ typedef struct s_expand_vars
 	bool had_quote;
 	char *env_var;
 }	t_expand_vars;
+
+typedef struct s_arg_vec
+{
+	size_t size;
+	size_t capacity;
+	char	**data;
+} t_arg_vec;
+
+typedef struct s_arg
+{
+	char	*data_str;
+	uint32_t data_len;
+	uint32_t i;
+	bool	exist;
+} t_arg;
+
+# define ARGV_DEFAULT_SIZE 64;
+void init_argv(t_arena *arena, t_arg_vec *argv);
+void init_arg(t_token *data, t_arg *arg_vars);
+int	is_special_char(char c);
 
 int	expand(t_arena *arena, t_minishell *m, t_node *tree);
 

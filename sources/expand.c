@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 21:42:19 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:44:27 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,70 +25,14 @@
 // after expansion is done, we will still move forward to node.left.left if not NULL
 
 
-static inline
-char *set_env_var(t_expand_vars *v, t_node *node)
+void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str)
 {
-	// This seems problematic
-	// node->token.string_len is the total length of the string so seems like index should be deducted from it
-	// otherwise there is risk of indexing over the string len;
-	v->i += 1;
-	v->env_var = find_env_var	(
-									&node->token.string[v->i],
-									node->token.string_len,
-									&v->i,
-									get_minishell(NULL)->envp
-								);
-	return (v->env_var);
-}
-
-int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
-{
-	if (is_valid_var_start(node->token.string[v->i + 1]) == false)
-	{
-		if (node->token.string[v->i + 1] == '?')
-			return (small_itoa(v, str));
-		if (is_quote(node->token.string[v->i + 1]))
-			v->i += 1;
-		else
-			str[v->len++] = node->token.string[v->i++];
-		return (0);
-	}
-	if (set_env_var(v, node) == NULL)
-		return (0);
-	if (v->quote == '"')
-	{
-		while (*v->env_var != '\0')
-			str[v->len++] = *v->env_var++;
-		return (0); // no field split, spaces and tabs are spaces and tabs and dollar dollar
-	} 				// else need to do more additional recursions and tabs and spaces are '\0'
-	v->env_var += eat_space(v->env_var);
-	while (is_space(*v->env_var) == false && *v->env_var != '\0')
-		str[v->len++] = *v->env_var++;
-	if (*v->env_var == '\0')
-		return (0);
-	v->env_var += eat_space(v->env_var);
-	return (1);
-}
-
-int	is_special_char(char c)
-{
-	return(is_quote(c) || c == '$');
-}
-
-typedef struct s_arg
-{
-	char	*data_str;
-	uint32_t data_len;
-	uint32_t i;
-	bool	exist;
-} t_arg;
-
-void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str, int exit_code)
-{
+	int exit_code;
 	int	len;
 	int i;
 	char buff[3];
 
+	exit_code = get_minishell(NULL)->exit_status;
 	len = num_len(exit_code);
 	i = len;
 	while(i--)
@@ -170,10 +114,14 @@ int	get_env_key_index(char *key, uint32_t key_len, char **envp)
 	return (-1);
 }
 
-char *get_env_var_value(char *key, uint32_t key_len, char **envp)
+char *get_env_var_value(char *key, uint32_t key_len)
 {
 	int index;
+	char **envp;
 
+	envp = get_minishell(NULL)->envp;
+	if (envp == NULL)
+		return (NULL);
 	index = get_env_key_index(key, key_len, envp);
 	if (index < 0)
 		return (NULL);
@@ -182,14 +130,14 @@ char *get_env_var_value(char *key, uint32_t key_len, char **envp)
 	return (&envp[index][key_len + 1]);
 }
 
-void	copy_full_env_var(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t	key_len;
 	uint32_t	var_len;
 	char		*env_var;
 
 	key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
-	env_var = get_env_var_value(&arg->data_str[arg->i], key_len, m->envp);
+	env_var = get_env_var_value(&arg->data_str[arg->i], key_len);
 	if (env_var != NULL)
 	{
 		var_len = ft_strlen(env_var);
@@ -198,17 +146,17 @@ void	copy_full_env_var(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str
 	arg->i += key_len;
 }
 
-void expand_variable_in_quotes(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+void expand_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 {
 	if (arg->data_str[arg->i + 1] == '?')
 	{
-		copy_exit_code(arena, arg, str, m->exit_status);
+		copy_exit_code(arena, arg, str);
 
 	}
 	else if (is_valid_var_start(arg->data_str[arg->i + 1]))
 	{
 		arg->i += 1;
-		copy_full_env_var(arena, m, arg, str);
+		copy_full_env_var(arena, arg, str);
 	}
 	else
 	{
@@ -217,7 +165,7 @@ void expand_variable_in_quotes(t_arena *arena, t_minishell *m, t_arg *arg, t_str
 	}
 }
 
-void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t len;
 
@@ -231,7 +179,7 @@ void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *
 		{
 			append_to_string(arena, str, &arg->data_str[arg->i], len);
 			arg->i += len;
-			expand_variable_in_quotes(arena, m, arg, str);
+			expand_variable_in_quotes(arena, arg, str);
 			len = 0;
 		}
 		else
@@ -242,12 +190,6 @@ void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *
 	if (arg->data_str[arg->i] == '"')
 		arg->i += 1;
 }
-
-// handle_leftover(t_arena *arena, t_token *prev)
-// {
-
-// }
-// return status
 
 int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
@@ -282,7 +224,7 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 	uint32_t	len;
 	
 	key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
-	var = get_env_var_value(&arg->data_str[arg->i], key_len, get_minishell(NULL)->envp);
+	var = get_env_var_value(&arg->data_str[arg->i], key_len);
 	arg->i += key_len;
 	if (var == NULL)
 		return (0);
@@ -304,16 +246,16 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 	return (0);
 }
 
-void	handle_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+void	handle_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
 	if (arg->data_str[arg->i] == '\'')
 		copy_in_single_quote(arena, arg, str);
 	else
-		copy_in_double_quote(arena, m, arg, str);
+		copy_in_double_quote(arena, arg, str);
 	arg->exist = true;
 }
 
-char *create_argument(t_arena *arena, t_minishell *m, t_arg *arg, t_arg *leftover)
+char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 {
 	t_string str;
 
@@ -324,7 +266,7 @@ char *create_argument(t_arena *arena, t_minishell *m, t_arg *arg, t_arg *leftove
 	{
 		copy_until_special_char(arena, arg, &str);
 		if (is_quote(arg->data_str[arg->i]))
-			handle_quote(arena, m, arg, &str);
+			handle_quote(arena, arg, &str);
 		else if (arg->data_str[arg->i] == '$')
 		{
 			if (is_valid_var_start(arg->data_str[arg->i + 1]))
@@ -335,7 +277,7 @@ char *create_argument(t_arena *arena, t_minishell *m, t_arg *arg, t_arg *leftove
 				continue ;
 			}
 			else if (arg->data_str[arg->i + 1] ==  '?')
-				copy_exit_code(arena, arg, &str, m->exit_status);
+				copy_exit_code(arena, arg, &str);
 			else
 				append_to_string(arena, &str, &arg->data_str[arg->i], 1);
 			arg->exist = true;
@@ -354,30 +296,11 @@ char *create_argument(t_arena *arena, t_minishell *m, t_arg *arg, t_arg *leftove
 // 	char	 *data;
 // } t_string;
 
-typedef struct s_arg_vec
-{
-	size_t size;
-	size_t capacity;
-	char	**data;
-} t_arg_vec;
 
-void init_argv(t_arena *arena, t_arg_vec *argv)
-{
-	# define ARGV_DEFAULT_SIZE 64;
-	argv->capacity = ARGV_DEFAULT_SIZE;
-	argv->data = xarena_alloc(arena, sizeof(*argv->data) * (argv->capacity + 1));
-	argv->size = 0;
-}
 
-void init_arg(t_token *data, t_arg *arg_vars)
-{
-	arg_vars->data_len = data->string_len;
-	arg_vars->data_str = data->string;
-	arg_vars->i = 0;
-	arg_vars->exist = false;
-}
 
-char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
+
+char	**create_argv(t_arena *arena, t_node *node)
 {
 	static t_arg arg_vars = {0};
 	static t_arg left_over = {0};
@@ -389,7 +312,7 @@ char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 	{
 		if (left_over.data_len <= 0)
 			init_arg(&node->token, &arg_vars);	
-		arg = create_argument(arena, m, &arg_vars, &left_over);
+		arg = create_argument(arena, &arg_vars, &left_over);
 		if (arg != NULL)
 		{
 			if (argv.capacity <= argv.size)
@@ -445,7 +368,7 @@ int expand(t_arena *arena, t_minishell *m, t_node *tree)
 			if (tree->token.type == WORD)
 			{
 				// str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
-				tree->token.argv = create_argv(arena, m, tree);					   // if we encounter weird issues
+				tree->token.argv = create_argv(arena, tree);					   // if we encounter weird issues
 				tree->left = NULL;																   // it's probably because of this
 				break ;
 			}
