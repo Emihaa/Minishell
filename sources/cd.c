@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 17:49:49 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:34:17 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static char	*arena_strjoin(t_minishell *m, char *s1, char *s2)
 		len1 = ft_strlen(s1);
 	if (s2)
 		len2 = ft_strlen(s2);
-	temp = xarena_alloc(&m->node_arena, len1 + len2 + 1);
+	temp = xarena_alloc(m->node_arena, len1 + len2 + 1);
 	if (s1)
 		ft_memmove(temp, s1, len1);
 	if (s2)

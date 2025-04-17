@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 18:25:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 18:47:41 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,22 +248,12 @@ void	copy_in_double_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *
 // }
 // return status
 
-void	init_arg(t_token *data, t_arg *arg)
-{
-	arg->i = 0;
-	arg->data_len = data->string_len;
-	arg->data_str = data->string;
-	arg->exist = false;
-
-}
-
 int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
 	uint32_t len;
 
 	len = 0;
 	arg->exist = false;
-	printf("str: %s len: %u\n", leftover->data_str, leftover->data_len);
 	if (len < leftover->data_len)
 	{
 		while (!is_space(leftover->data_str[len]) && len < leftover->data_len)
@@ -286,8 +276,10 @@ int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 
 int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
-	uint32_t key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
-	char *var = get_env_var_value(&arg->data_str[arg->i], key_len, get_minishell(NULL)->envp);
+	uint32_t key_len = get_key_len(&arg->data_str[arg->i],
+									arg->data_len - arg->i);
+	char *var = get_env_var_value(&arg->data_str[arg->i], key_len,
+									get_minishell(NULL)->envp);
 	uint32_t len;
 	
 	arg->i += key_len;
@@ -305,7 +297,6 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 		leftover->data_str = &var[len];
 		leftover->data_len = ft_strlen(&var[len]);
 		leftover->i = 0;
-		printf("str: %s len: %u\n", leftover->data_str, leftover->data_len);
 		return (1);
 	}
 	arg->exist = true;
@@ -379,11 +370,12 @@ void init_argv(t_arena *arena, t_arg_vec *argv)
 
 char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 {
-	t_arg_vec	argv;
-	char		*arg;
 	static t_arg arg_vars = {0};
 	static t_arg left_over = {0};
+	t_arg_vec	argv;
+	char		*arg;
 
+	init_argv(arena, &argv);
 	while (node)
 	{
 		if (left_over.data_len <= 0)
@@ -393,12 +385,12 @@ char	**create_argv(t_arena *arena, t_minishell *m, t_node *node)
 		{
 			if (argv.capacity <= argv.size)
 			{
-				argv.data = arena_realloc(arena, argv.data,
-						argv.capacity * sizeof(*argv.data),
-						sizeof(*argv.data) * ((argv.capacity * 2) + 1));
 				argv.capacity *= 2;
+				argv.data = arena_realloc(arena, argv.data,
+						argv.size * sizeof(*argv.data),
+						sizeof(*argv.data) * (argv.capacity + 1));
 			}
-			argv.data[argv.size] =	 arg;
+			argv.data[argv.size] = arg;
 			argv.size += 1;
 		}
 		if (left_over.data_len > 0)
