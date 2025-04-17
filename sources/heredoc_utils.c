@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/08 19:10:35 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 00:39:22 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,12 +92,32 @@ int	create_heredoc_fds(int fds[2])
 	return (return_val);
 }
 
-int heredoc_event_hook(void)
+void	print_eof_error(t_minishell *m, char *delimiter)
 {
-	if (g_int == SIGINT)
+	FILE	*temp;
+
+	temp = stdout;
+	stdout = stderr;
+	printf(EOF_ERROR, m->line_counter, delimiter);
+	stdout = temp;
+}
+
+int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
+{
+	rl_event_hook = heredoc_event_hook;
+	*line = readline("> ");
+	if (*line == NULL || g_int == SIGINT) // do this for other signals maybe
 	{
-		rl_done = 1;
-		return (1);
+		if (g_int == SIGINT)
+		{
+			minishell->exit_status = SIGINT + 128;
+			g_int = 0;
+			return (-2);
+		}
+		if (!*line)
+			print_eof_error(minishell, delimiter); // should this be on stderror?
+		return (-1);
 	}
+	minishell->line_counter += 1;
 	return (0);
 }

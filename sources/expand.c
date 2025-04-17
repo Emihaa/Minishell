@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 21:57:18 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 01:01:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,6 +254,7 @@ void	handle_quote(t_arena *arena, t_arg *arg, t_string *str)
 	arg->exist = true;
 }
 
+// luka sais fix this
 char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 {
 	t_string str;
