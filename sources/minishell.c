@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 23:07:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 00:29:11 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ void read_loop(t_minishell *m)
 		m->heredoc_count = 0;
 		m->line = readline("minishell> ");	
 		if (m->line == NULL)
-			break ;
+			builtin_exit(m, NULL) ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		m->line_counter += 1;
 		i += eat_space(m->line);
@@ -251,9 +251,9 @@ void minishell_cleanup(t_minishell *minishell)
 	arena_delete(minishell->node_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
-	// while (minishell->envp_size >= 0)
-	// 	free(minishell->envp[minishell->envp_size--]);
-	// free(minishell->envp);
+	while (minishell->envp_size >= 0)
+		free(minishell->envp[minishell->envp_size--]);
+	free(minishell->envp);
 }
 
 // set default values for the minishell struct
