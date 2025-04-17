@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 21:35:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 21:57:18 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 	arg->i += len + 1;
 }
 
-uint32_t get_key_len(char *src, uint32_t src_len)
+uint32_t	get_key_len(char *src, uint32_t src_len)
 {
 	uint32_t i;
 
@@ -113,7 +113,7 @@ int	get_env_key_index(char *key, uint32_t key_len, char **envp)
 	return (-1);
 }
 
-char *get_env_var_value(char *key, uint32_t key_len)
+char	*get_env_var_value(char *key, uint32_t key_len)
 {
 	int index;
 	char **envp;
@@ -287,17 +287,6 @@ char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 	terminate_and_commit_string(arena, &str); // add thing that moves entire argument to new arena chunk if not enough space
 	return (str.base);
 }
-
-
-// typedef struct s_string
-// {
-// 	uint32_t len;
-// 	char	 *data;
-// } t_string;
-
-
-
-
 
 char	**create_argv(t_arena *arena, t_node *node)
 {

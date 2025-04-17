@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 21:35:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 21:55:24 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	init_argv(t_arena *arena, t_arg_vec *argv)
 			sizeof(*argv->data) * (argv->capacity + 1));
 	argv->size = 0;
 }
+
 int	is_special_char(char c)
 {
 	return(is_quote(c) || c == '$');

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 19:19:56 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/02 20:34:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:05:01 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,6 @@ int	write_bytes(int fd, char *str, size_t bytes_to_write)
 		bytes_to_write -= bytes_written;
 	}
 	return (0);
-}
-
-int	put_str_nl(int fd, char *str)
-{
-	int r_val;
-
-	r_val = 0;
-	if (str != NULL)
-	{
-		if (write_bytes(fd, str, ft_strlen(str)) == -1)
-			return (-1);
-	}
-	r_val = write_bytes(fd, "\n", 1);
-	return (r_val);
 }
 
 int	put_str(int fd, char *str)
