@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 23:09:47 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:16:49 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static inline
 void	ambigous_redirect(char *file_name)
 {
 	stdout = stderr;
-	printf("minishell: %s: ambigous redirect\n");
+	printf("minishell: %s: ambigous redirect\n", file_name);
 // 	(void)put_str(STDERR_FILENO, "minishell: ");
 // 	if (file_name != NULL)
 // 		(void)put_str(STDERR_FILENO, file_name);
