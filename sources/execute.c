@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/09 21:27:44 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 17:58:16 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin)
 	if (pid == (pid_t)(-1))
 		syscall_failure(m); // @TODO: error cheking
 	if (pid == 0)
-	{
+	{ // we are inside child, so ignore SIGINT in parent
 		apply_redirect(m);
 		close_pipe(m);
 		if (builtin != BUILTIN_FALSE)

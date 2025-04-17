@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/15 17:42:14 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:07:12 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	i = 0;
 	printf("command count: %o\n", minishell->command_count); // Debug stuff
 	printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
+	signal(SIGINT, SIG_IGN);
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -122,6 +123,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		}
 		i++;
 	}
+	signal(SIGINT, signal_handler);
 }
 
 int store_heredoc(t_minishell *m, int fd)
@@ -213,7 +215,7 @@ void read_loop(t_minishell *m)
 		rl_event_hook = read_loop_event_hook;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		m->line = readline("minishell> ");
+		m->line = readline("minishell> ");	
 		if (m->line == NULL)
 			break ;
 		m->line_counter += 1;
