@@ -6,125 +6,59 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:43:59 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/08 00:26:59 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/16 20:55:17 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static
-int char_pos(char *s, char c)
+// the og env is full, so we will create a new one with double the capacity
+int	create_new_env(t_minishell *m, char **envp)
 {
-	int i;
+	char	**env_copy;
+	int		i;
 
 	i = 0;
-	while (s[i])
-	{
-		if (s[i] == c)
-			return(i);
+	env_copy = ft_calloc((m->env_capacity * 2) + 1, sizeof(char *));
+	if (!env_copy)
+		return (1);
+	while (i < m->env_capacity)
+	{	
+		env_copy[i] = envp[i];
 		i++;
 	}
+	m->env_capacity = m->env_capacity * 2;
+	env_copy[i] = NULL;
+	free(envp);
+	m->envp = env_copy;
+	printf("created new env!\n");
 	return (0);
 }
 
-static
-void print_export_env(char **env)
+// env is always double the capacity what i am copying
+// for export space
+// @TODO I am leaking here
+char	**create_env(t_minishell *m, char **envp)
 {
-	int i;
-	int size;
-	char *temp;
+	char	**env_copy;
+	int		i;
 
-	i = 0;
-	size = 0;
-	temp = NULL;
-	while (env[i])
-	{
-		size = char_pos(env[i], '=') + 1;
-		temp = ft_strchr(env[i], '=') + 1;
-		printf("declare -x %.*s\"%s\"\n", size, env[i], temp);
-		i++;
-	}
-}
-
-static
-void swap_pntrs(char **p1, char **p2)
-{
-	char *temp;
-
-	temp = *p1;
-	*p1 = *p2;
-	*p2 = temp;
-}
-
-int is_sorted(char **pntr_array, int size)
-{
-	int i;
-
-	i = 0;
-	while (i < size - 1)
-	{
-		if (ft_strncmp(pntr_array[i], pntr_array[i + 1], 1024) > 0)
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-void env_sort(char **pntr_array, int size)
-{
-	int i;
-
-	while (1)
-	{
-		i = 0;
-		while (i < size - 1)
-		{
-			if (ft_strncmp(pntr_array[i], pntr_array[i + 1], 1024) > 0)
-			{
-				swap_pntrs(&pntr_array[i], &pntr_array[i + 1]);
-			}
-			i++;
-		}
-		if (is_sorted(pntr_array, size))
-			break;
-	}
-}
-
-char **print_export(t_minishell *m)
-{
-	char **pntr_array;
-	int i;
-
-	i = 0;
-	pntr_array = malloc(sizeof(char *) * (m->envp_size + 1));
-	if (!pntr_array)
-		return (NULL);
-	while (i < m->envp_size)
-	{
-		pntr_array[i] = m->envp[i];
-		i++;
-	}
-	pntr_array[i] = NULL;
-	i = 0;
-	env_sort(pntr_array, m->envp_size);
-	print_export_env(pntr_array);
-	return (pntr_array);
-}
-
-char **create_env(char **envp, t_minishell *m)
-{
-	char **env_copy;
-	int i;
-	
 	i = 0;
 	while (envp[m->envp_size])
 		m->envp_size++;
-	env_copy = malloc (sizeof(char *) * (m->envp_size + 1));
+	if (m->envp_size >= m->env_capacity)
+		m->env_capacity = (m->envp_size * 2);
+	printf("env size %d env capacity %d\n", m->envp_size, m->env_capacity);
+	env_copy = ft_calloc(m->env_capacity + 1, sizeof(char *));
 	if (!env_copy)
+	{
 		return (NULL);
+	}
 	while (envp[i])
 	{	
-		env_copy[i] = ft_strdup(envp[i]);
+		env_copy[i] = ft_strdup(envp[i]); //<- why does this leak?
+		if (!env_copy[i])
+			return (NULL);
 		i++;
 	}
 	env_copy[i] = NULL;

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/16 23:25:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 18:32:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,7 @@ pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin 
 	if (pid == (pid_t)(-1))
 		syscall_failure(m); // @TODO: error cheking
 	if (pid == 0)
-	{
-		// signal(SIGINT, SIG_DFL);
+	{ // we are inside child, so ignore SIGINT in parent
 		apply_redirect(m);
 		close_pipe(m);
 		if (builtin != BUILTIN_FALSE)

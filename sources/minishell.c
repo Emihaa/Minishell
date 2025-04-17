@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/15 18:58:04 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 18:33:26 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,9 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	pid_t		pid;
 
 	i = 0;
-	// printf("command count: %o\n", minishell->command_count); // Debug stuff
-	// printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
+	printf("command count: %o\n", minishell->command_count); // Debug stuff
+	printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
+	signal(SIGINT, SIG_IGN);
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -126,6 +127,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		}
 		i++;
 	}
+	signal(SIGINT, signal_handler);
 }
 
 int store_heredoc(t_minishell *m, int fd)
@@ -190,7 +192,8 @@ int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 	return (0);
 }
 
-static
+// @TODO cntrl+C on CAT gives two new newlines
+static 
 int read_loop_event_hook(void)
 {
 	if (g_int == SIGINT)
@@ -216,7 +219,7 @@ void read_loop(t_minishell *m)
 		rl_event_hook = read_loop_event_hook;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		m->line = readline("minishell> ");
+		m->line = readline("minishell> ");	
 		if (m->line == NULL)
 			break ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
@@ -273,7 +276,13 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->heredoc_fds = heredoc_fds_arr;
 	minishell->heredoc_count = 0;
 	minishell->envp_size = 0;
-	minishell->envp = envp;//create_env(envp, minishell); // <---------- @TODO Emilia
+	minishell->env_capacity = 64;
+	minishell->envp = create_env(minishell, envp); // <---------- @TODO Emilia
+	if (!minishell->envp)
+	{
+		put_str_nl(STDERR_FILENO, "allocation failure");
+		error_exit(minishell, 1); // @TODO: error cheking
+	}		
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
@@ -306,6 +315,10 @@ void signal_handler(int signal)
 // returns NULL to readline(), clean up and exit
 // but only does this if input is empty
 // this one already works
+
+// @TODO: if we are on child process then we dont want the parent to get any signals
+// so we need to have the signal(SIGINT, SIG_ING); on parent if we are on child process
+// remember also to return the signal handling
 int main(int argc, char *argv[], char **envp)
 {
 	t_minishell minishell;

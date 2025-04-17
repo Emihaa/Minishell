@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/16 20:48:18 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 18:29:39 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_minishell
 	t_arena		*node_arena;
 	char		**envp;
 	int			envp_size;
+	int			env_capacity;
 }	t_minishell;
 
 
@@ -211,9 +212,29 @@ int		redirect_append(char **file_name, t_minishell *m);
 void	wait_for_sub_processes(t_minishell *minishell);
 
 
+// export stuff
+void builtin_export(t_minishell *m, int argc, char **argv);
+int char_pos(char *s, char c);
+void print_export_env(char **env);
+void swap_pntrs(char **p1, char **p2);
+int is_sorted(char **pntr_array, int size);
+void env_sort(char **pntr_array, int size);
+int find_slot(t_minishell *m);
+int check_match(t_minishell *m, char *s);
+int spelling_check(t_minishell *m, char *s);
+int	export_add(t_minishell *m, char *s);
+
+
+// unset stuff
+void builtin_unset(t_minishell *m, int argc, char **argv);
+
+// cd stuff
+void builtin_cd(t_minishell *m, int argc, char **argv);
+
 // envi stuff
-char **create_env(char **envp, t_minishell *m);
-char **print_export(t_minishell *m);
+char **create_env(t_minishell *m, char **envp);
+int create_new_env(t_minishell *m , char **envp);
+void print_export(t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 
 //general utils stuff
