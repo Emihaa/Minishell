@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 18:22:19 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 18:25:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,9 +315,9 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 void	handle_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
 {
 	if (arg->data_str[arg->i] == '\'')
-		copy_in_single_quote(arena, arg, &str);
+		copy_in_single_quote(arena, arg, str);
 	else
-		copy_in_double_quote(arena, m, arg, &str);
+		copy_in_double_quote(arena, m, arg, str);
 	arg->exist = true;
 }
 
