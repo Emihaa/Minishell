@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
+#    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/15 17:59:55 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/17 18:29:53 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,8 +36,8 @@ LIBFT = $(LIB_DIR)/$(LIBFT_DIR)/build/libft.a
 FASTISH_DIR = lib_fastish
 FASTISH = $(LIB_DIR)/$(FASTISH_DIR)/build/fastish.a
 
-LT_ALLOC_DIR = lt_alloc
-LT_ALLOC = $(LIB_DIR)/$(LT_ALLOC_DIR)/build/lt_alloc.a
+LT_ARENA_DIR = lt_arena
+LT_ARENA = $(LIB_DIR)/$(LT_ARENA_DIR)/build/lt_arena.a
 
 NAME = minishell
 
@@ -75,10 +75,10 @@ fastish:
 	@make --no-print-directory -C $(LIB_DIR)/$(FASTISH_DIR)/ CC_FLAGS="$(CC_FLAGS)"
 	@$(RESET_COLOR)
 
-lt_alloc:
+lt_arena:
 	@echo "Cheking $@.a"
 	@$(BOLD_PURPLE)
-	@make --no-print-directory -C $(LIB_DIR)/$(LT_ALLOC_DIR)/ CC_FLAGS="$(CC_FLAGS)"
+	@make --no-print-directory -C $(LIB_DIR)/$(LT_ARENA_DIR)/ CC_FLAGS="$(CC_FLAGS)"
 	@$(RESET_COLOR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(OBJ_DIR)
@@ -95,15 +95,15 @@ $(OBJ_DIR):
 	@echo -n "Made $@ directory"
 	@$(RESET_COLOR)
 
-$(NAME): lt_alloc libft $(OBJECTS) | $(BIN_DIR)
+$(NAME): lt_arena libft $(OBJECTS) | $(BIN_DIR)
 	@make --no-print-directory $(BIN_DIR)/$(NAME)
 
 #	restucture to just have one LIBS or DEPENDENCIES variable
 
-$(BIN_DIR)/$(NAME): $(OBJECTS) $(LT_ALLOC) $(LIBFT) | $(BIN_DIR)
+$(BIN_DIR)/$(NAME): $(OBJECTS) $(LT_ARENA) $(LIBFT) | $(BIN_DIR)
 	@$(BOLD_GREEN)
 	@echo "Linking $(NAME)"
-	@cc $(CC_FLAGS) $(OBJECTS) $(LT_ALLOC) $(LIBFT) $(LINKS) \
+	@cc $(CC_FLAGS) $(OBJECTS) $(LT_ARENA) $(LIBFT) $(LINKS) \
 	-o $(BIN_DIR)/$(NAME)
 	@$(RESET_COLOR)
 	@echo "Built to $(BIN_DIR)/$(NAME)"
@@ -122,7 +122,7 @@ clean:
 	@echo "Cleaning $(NAME)/$(OBJ_DIR)/"
 	@$(RESET_COLOR)
 	rm -f $(OBJECTS)
-	@make -C $(LIB_DIR)/$(LT_ALLOC_DIR) clean --no-print-directory
+	@make -C $(LIB_DIR)/$(LT_ARENA_DIR) clean --no-print-directory
 	 @make -C $(LIB_DIR)/$(LIBFT_DIR) clean --no-print-directory
 # @make -C $(FASTISH_DIR) clean --no-print-directory
 	@$(RESET_COLOR)
@@ -136,7 +136,7 @@ fclean:
 	@echo "Deleting $(BIN_DIR)/$(NAME)"
 	@$(RESET_COLOR)
 	rm -f $(BIN_DIR)/$(NAME)
-	@make -C $(LIB_DIR)/$(LT_ALLOC_DIR) fclean --no-print-directory
+	@make -C $(LIB_DIR)/$(LT_ARENA_DIR) fclean --no-print-directory
 	@make -C $(LIB_DIR)/$(LIBFT_DIR) fclean --no-print-directory 
 # @make -C $(FASTISH_DIR) fclean --no-print-directory
 	@$(RESET_COLOR)

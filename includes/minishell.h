@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/15 23:05:57 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:29:39 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,10 @@
 
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
-#include "../libs/lt_alloc/includes/lt_alloc.h" 
+#include "../libs/lt_arena/includes/lt_arena.h"
 #include "../libs/libft/includes/libft.h"
 
+#include <errno.h> // errno
 #include <stddef.h> // size_t
 #include <unistd.h>	//for write, pipe etc.
 #include <sys/types.h>  // pid_t
@@ -41,6 +42,10 @@
 #include <sys/stat.h>	// lstat !!! might not be used WATCH OUTTTTTAMSL:MF:ALMSG:LMA
 #include <signal.h>     // signal handling
 
+
+// find proper place for these thingies
+char *get_env_var_value(char *key, uint32_t key_len, char **envp);
+
 extern sig_atomic_t g_int;
 
 // maybe have all token types be negative except heredoc so that the type can be replace with an fd
@@ -54,7 +59,7 @@ typedef enum e_type
 	REDIRECT_APPEND	=	-257, // >>
 	// COMMAND		=	258,
 	// ARGUMENT		=	259,	 // @question with argv or not?
-	WORD			=	-260,	// generic word, could be command name or argument 
+	WORD			=	-260,	// generic word, could be command name or argument
 	END_OF_LINE		=	0,		// first WORD before a pipe is the command and the following ones are arguments
 	ERROR			=	-404,	// so that distinction can be made in the lexer if that would be better
 }	t_type;
@@ -74,8 +79,7 @@ typedef struct s_minishell
 	pid_t			last_pid;
 	int			exit_status;
 	char		*line;
-	t_arena		node_arena;
-	t_arena		scratch_arena;
+	t_arena		*node_arena;
 	char		**envp;
 	int			envp_size;
 	int			env_capacity;
@@ -83,8 +87,8 @@ typedef struct s_minishell
 
 
 // LUKA: maybe use this? idunno probably  not
-// 
-typedef union u_data 
+//
+typedef union u_data
 {
 	char	*string;
 	char	**command_argv;
@@ -130,7 +134,7 @@ typedef struct s_node
 
 	struct s_node *root; // previous node this is connected to
 	struct s_node *left; // struct on the under left
-	struct s_node *right; // struct on the under right 
+	struct s_node *right; // struct on the under right
 } t_node;
 
 // minishell main stuff
@@ -166,7 +170,7 @@ typedef struct s_expand_vars
 	char *env_var;
 }	t_expand_vars;
 
-void expand(t_arena *arena, t_minishell *m, t_node *tree);
+int	expand(t_arena *arena, t_minishell *m, t_node *tree);
 
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
@@ -193,7 +197,7 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data);
 char	*create_temp_file_name(uint32_t heredoc_num);
 int		create_heredoc_fds(int fds[2]);
 int		heredoc_event_hook(void);
-
+void	close_heredocs(t_minishell *m); // in wrong file atm
 // testing possible redirect stuff
 #define WRITE	1
 #define READ	0
@@ -262,12 +266,12 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command);
 
 void builtin_exit(t_minishell *m, char **argv);
 void builtin_echo(char *argv[], int fd);
-void builtin_pwd(int fd);
+void builtin_pwd(t_minishell *m, int fd);
 
 
 // execute stuff
-pid_t	execute_subprocess(t_minishell *m, char **argv, t_builtin builtin);
-int	execute_command(t_minishell *m, char **argv, int status);
+pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin builtin);
+int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status);
 
 void close_pipe(t_minishell *m);
 void execve_failure(t_minishell *m, char *cmd);

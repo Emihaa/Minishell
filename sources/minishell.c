@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 18:07:12 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:33:26 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 sig_atomic_t g_int = 0;
 
 void print_expansion(char *line)
-{	
+{
 	//line++;
-	printf("%s\n", getenv(line));	
+	printf("%s\n", getenv(line));
 }
 
 char *get_token_name(t_token *token)
@@ -109,16 +109,20 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			perror("wait issue");
 		if (pid == minishell->last_pid)
 		{
-			printf("pid == %i\n", pid);
-			printf("exit_status before = %i\n", minishell->exit_status);
+			// printf("pid == %i\n", pid);
+			// printf("exit_status before = %i\n", minishell->exit_status);
 			if (WIFSIGNALED(wstatus))
-				minishell->exit_status = WSTOPSIG(wstatus) + wstatus;
+			{
+				minishell->exit_status = WTERMSIG(wstatus) + 128;
+				if (__WCOREDUMP(wstatus))
+					put_str_nl(STDERR_FILENO, "Core Dumped"); // need to check this
+			}
 			else if (WIFEXITED(wstatus))
 				minishell->exit_status = WEXITSTATUS(wstatus);
 			else
 				minishell->exit_status = 1;
-			printf("wstatus: %d\n", wstatus);
-			printf("exit_status after = %i\n", minishell->exit_status);
+			// printf("wstatus: %d\n", wstatus);
+			// printf("exit_status after = %i\n", minishell->exit_status);
 
 		}
 		i++;
@@ -160,11 +164,11 @@ int do_redir(t_minishell *m, t_token *data)
 	return (status);
 }
 
-int minishell_exec_loop(t_minishell *m, t_node *tree)
+int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	t_node *current_head;
 	int status;
-	
+
 	m->pipe_side = -1;
 	status = 0;
 	while (tree)
@@ -178,9 +182,9 @@ int minishell_exec_loop(t_minishell *m, t_node *tree)
 		{
 			status = do_redir(m, &tree->token);
 			if (tree->token.type == WORD || status != 0)
-				if (execute_command(m, tree->token.argv, status))
+				if (execute_command(arena, m, tree->token.argv, status))
 					break ;
-			tree = tree->left;	
+			tree = tree->left;
 		}
 		reset_redirect(m);
 		tree = current_head->right;
@@ -218,30 +222,38 @@ void read_loop(t_minishell *m)
 		m->line = readline("minishell> ");	
 		if (m->line == NULL)
 			break ;
+		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		m->line_counter += 1;
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
 			continue ;
-		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
-		tree = parser(&m->node_arena, m, &m->line[i]);
+		tree = parser(m->node_arena, m, &m->line[i]);
 		if (tree != NULL)
-			minishell_exec_loop(m, tree);
+			minishell_exec_loop(m->node_arena, m, tree);
 		wait_for_sub_processes(m);
 		free(m->line);
 		m->line = NULL;
-		arena_reset(&m->node_arena);
+		// t_arena *temp = m->node_arena;
+		// for (int i = 0; temp != NULL; i++)
+		// {
+		// 	printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
+		// 	printf("data of [%i]as chars: %.*s\n", i, (int)temp->size, temp->data);
+		// 	temp = temp->next;
+		// }
+		arena_trim(m->node_arena);
+		arena_reset(m->node_arena);
 	}
 }
 
 // add env clean up here @TODO Emilia
 void minishell_cleanup(t_minishell *minishell)
 {
-	arena_delete(&minishell->node_arena);
+	arena_delete(minishell->node_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
-	while (minishell->envp_size >= 0)
-		free(minishell->envp[minishell->envp_size--]);
-	free(minishell->envp);
+	// while (minishell->envp_size >= 0)
+	// 	free(minishell->envp[minishell->envp_size--]);
+	// free(minishell->envp);
 }
 
 // set default values for the minishell struct
@@ -252,7 +264,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	static int heredoc_fds_arr[16] = {0};
 
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
-	if (minishell->node_arena.data == NULL)
+	if (minishell->node_arena == NULL)
 	{
 		put_str_nl(STDERR_FILENO, "allocation failure");
 		error_exit(minishell, 1); // @TODO: error cheking
@@ -275,7 +287,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
 	minishell->pipe[WRITE] = -1;
-	minishell->last_pid = 0; 
+	minishell->last_pid = 0;
 	minishell->pids = NULL;
 	get_minishell(minishell);
 }
@@ -309,14 +321,11 @@ void signal_handler(int signal)
 // remember also to return the signal handling
 int main(int argc, char *argv[], char **envp)
 {
-	static char 	arr[ARG_MAX];
 	t_minishell minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTERM, SIG_IGN); //<-- why?
 
-
-	arr[0] = 7;
 	(void)argc;
 	(void)argv;
 	init_minishell(&minishell, envp);
