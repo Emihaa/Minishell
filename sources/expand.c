@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 19:06:17 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 21:42:19 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 	arg->i += len + 1;
 }
 
+// this and the tree below
 uint32_t get_key_len(char *src, uint32_t src_len)
 {
 	uint32_t i;

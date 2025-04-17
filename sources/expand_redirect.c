@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/08 19:10:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 19:16:10 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ void expand_redirect(t_arena *arena, t_node *node)
 	
 	// printf("--- redirect_out expand ---\n");
 	// printf("token string: %.*s\n", node->token.string_len, node->token.u_data.string);
-	argv = arena_alloc(arena, sizeof(*argv) * 2);
+	argv = xarena_alloc(arena, sizeof(*argv) * 2);
  	expand_action(arena, node, str, &*argv);
 	node->token.argv = argv;
 	// printf("redirect argv_pntr[0]: %s, pntr: %p\n", argv[0],  argv[0]);
