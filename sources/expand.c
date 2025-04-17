@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 01:03:13 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 18:22:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,9 +286,9 @@ int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 
 int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
-	uint32_t len;
 	uint32_t key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
 	char *var = get_env_var_value(&arg->data_str[arg->i], key_len, get_minishell(NULL)->envp);
+	uint32_t len;
 	
 	arg->i += key_len;
 	if (var == NULL)
@@ -312,6 +312,15 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 	return (0);
 }
 
+void	handle_quote(t_arena *arena, t_minishell *m, t_arg *arg, t_string *str)
+{
+	if (arg->data_str[arg->i] == '\'')
+		copy_in_single_quote(arena, arg, &str);
+	else
+		copy_in_double_quote(arena, m, arg, &str);
+	arg->exist = true;
+}
+
 char *create_argument(t_arena *arena, t_minishell *m, t_arg *arg, t_arg *leftover)
 {
 	t_string str;
@@ -323,13 +332,7 @@ char *create_argument(t_arena *arena, t_minishell *m, t_arg *arg, t_arg *leftove
 	{
 		copy_until_special_char(arena, arg, &str);
 		if (is_quote(arg->data_str[arg->i]))
-		{
-			if (arg->data_str[arg->i] == '\'')
-				copy_in_single_quote(arena, arg, &str);
-			else
-				copy_in_double_quote(arena, m, arg, &str);
-			arg->exist = true;
-		}
+			handle_quote(arena, m, arg, &str);
 		else if (arg->data_str[arg->i] == '$')
 		{
 			if (is_valid_var_start(arg->data_str[arg->i + 1]))
