@@ -6,11 +6,56 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/08 19:10:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 21:03:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
+
+static inline
+char *set_env_var(t_expand_vars *v, t_node *node)
+{
+	// This seems problematic
+	// node->token.string_len is the total length of the string so seems like index should be deducted from it
+	// otherwise there is risk of indexing over the string len;
+	v->i += 1;
+	v->env_var = find_env_var	(
+									&node->token.string[v->i],
+									node->token.string_len,
+									&v->i,
+									get_minishell(NULL)->envp
+								);
+	return (v->env_var);
+}
+
+int expansion_stuffs(t_node *node, t_expand_vars *v, char *str)
+{
+	if (is_valid_var_start(node->token.string[v->i + 1]) == false)
+	{
+		if (node->token.string[v->i + 1] == '?')
+			return (small_itoa(v, str));
+		if (is_quote(node->token.string[v->i + 1]))
+			v->i += 1;
+		else
+			str[v->len++] = node->token.string[v->i++];
+		return (0);
+	}
+	if (set_env_var(v, node) == NULL)
+		return (0);
+	if (v->quote == '"')
+	{
+		while (*v->env_var != '\0')
+			str[v->len++] = *v->env_var++;
+		return (0); // no field split, spaces and tabs are spaces and tabs and dollar dollar
+	} 				// else need to do more additional recursions and tabs and spaces are '\0'
+	v->env_var += eat_space(v->env_var);
+	while (is_space(*v->env_var) == false && *v->env_var != '\0')
+		str[v->len++] = *v->env_var++;
+	if (*v->env_var == '\0')
+		return (0);
+	v->env_var += eat_space(v->env_var);
+	return (1);
+}
 
 
 static void	memmove_name(t_arena *arena, t_node *node, char *str, char **argv)
