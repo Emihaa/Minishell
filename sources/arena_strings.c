@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 22:37:48 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 23:04:34 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,6 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 // terminate and resrve
 int terminate_and_commit_string(t_arena *a, t_string *str)
 {
-	#include <stdio.h>
-	printf("<%lu> <%lu> <%lu>\n", str->size, str->memory->size, str->memory->capacity);
 	if (str->capacity < str->size + 1)
 	{
 		if (string_find_new_memory(a, str, str->size + 1))

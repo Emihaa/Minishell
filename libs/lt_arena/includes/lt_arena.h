@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:59:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 22:34:10 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 23:10:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stddef.h> // size_t
 # include <stdint.h> // sized int types
 
-#define DEFAULT_ARENA_CAPACITY 128//(1024 * 1024 * 256)
+#define DEFAULT_ARENA_CAPACITY (1024 * 1024 * 256)
 
 typedef struct s_arena
 {
