@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/01 16:02:01 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/13 18:13:23 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/18 20:57:10 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,8 +29,8 @@ OBJ_DIR = objects
 INC_DIR = includes
 
 NAME = lt_arena.a
- 
-SOURCES = 	lt_arena_new_delete.c	lt_arena.c	lt_arena_temp.c lt_arena_strings.c
+
+SOURCES = 	lt_arena_new_delete.c	lt_arena.c	lt_arena_temp.c
 
 HEADERS = $(addprefix $(INC_DIR)/, lt_arena.h)
 

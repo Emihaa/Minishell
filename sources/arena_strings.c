@@ -1,26 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_arena_strings.c                                 :+:      :+:    :+:   */
+/*   arena_strings.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/16 20:40:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 20:56:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_arena.h"
-
-size_t	arena_strlen(char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
+#include "../includes/minishell.h"
 
 void	*arena_memmove(void *dest, const void *src, size_t n)
 {
