@@ -3,14 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   expand_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 21:43:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/18 21:15:15 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h" 
+#include "../includes/minishell.h"
+
+char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env)
+{
+// WILL NOT WORK PROPERLY IF ENV HAS NULLS BETWEEN StRINGS
+	uint32_t len;
+	char c;
+
+	len = 0;
+	while (len < str_len)
+	{
+		c = str[len];
+		if (c != '_' && ft_isalnum(c) == false)
+			break ;
+		len += 1;
+	}
+	if (env != NULL && len > 0)
+	{
+		while (*env != NULL)
+		{
+			if (ft_strncmp(str, *env, len) == 0 && (*env)[len] == '=')
+			{
+				*index += len;
+				return(&(*env)[len + 1]); // watch out maybe problem
+			}
+			env++;
+		}
+	}
+	*index += len;
+	return (NULL);
+}
 
 static inline
 char *set_env_var(t_expand_vars *v, t_node *node)
@@ -105,7 +135,7 @@ static void	expand_action(t_arena *arena, t_node *node, char *str, char **argv)
 	v.len = 0;
 	v.quote = '\0';
 	v.env_var = NULL;
-	
+
 	str = arena_alloc_no_zero(arena, sizeof(char) * v.len);
 	while (v.i < node->token.string_len)
 	{
@@ -132,21 +162,21 @@ static void	expand_action(t_arena *arena, t_node *node, char *str, char **argv)
 // if $PATH expansion gives out more than one word, argv[1] != NULL and will indicate
 // 'ambigious redirect' later in code
 // > asd = argv[0] = 'asd' arvgv[1] = 'NULL'
-// if *argv[1] != NULL, argv[0] = "$PATH" <- 
+// if *argv[1] != NULL, argv[0] = "$PATH" <-
 // the string should stay the same as the og expand string
-// else if *argv[1] == NULL, argv[0] = "Omppu" <- 
+// else if *argv[1] == NULL, argv[0] = "Omppu" <-
 // the string changes to the expanded file name
 void expand_redirect(t_arena *arena, t_node *node)
 {
 	char **argv;
 	char *str = NULL;
-	
+
 	// printf("--- redirect_out expand ---\n");
 	// printf("token string: %.*s\n", node->token.string_len, node->token.u_data.string);
 	argv = xarena_alloc(arena, sizeof(*argv) * 2);
  	expand_action(arena, node, str, &*argv);
 	node->token.argv = argv;
 	// printf("redirect argv_pntr[0]: %s, pntr: %p\n", argv[0],  argv[0]);
-	// printf("redirect argv_pntr[1]: %s, pntr: %p\n", argv[1],  argv[1]);	
+	// printf("redirect argv_pntr[1]: %s, pntr: %p\n", argv[1],  argv[1]);
 	// printf("--- out expand done ---\n");
 }

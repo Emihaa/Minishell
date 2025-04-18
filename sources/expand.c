@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/18 01:01:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 22:05:21 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,43 +24,7 @@
 // into the same argument
 // after expansion is done, we will still move forward to node.left.left if not NULL
 
-
-void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str)
-{
-	int exit_code;
-	int	len;
-	int i;
-	char buff[3];
-
-	exit_code = get_minishell(NULL)->exit_status;
-	len = num_len(exit_code);
-	i = len;
-	while(i--)
-	{
-		buff[i] = (exit_code % 10) + '0';
-		exit_code /= 10;
-	}
-	append_to_string(arena, str, buff, len);
-	arg->i += 2;
-}
-
 // maybe dest is not needed
-void	copy_until_special_char(t_arena *arena, t_arg *arg, t_string *str)
-{
-	uint32_t len;
-
-	len = 0;
-	while (arg->i + len < arg->data_len)
-	{
-		if (is_special_char(arg->data_str[arg->i + len]))
-			break ;
-		len += 1;
-	}
-	if (len > 0)
-		arg->exist = true;
-	append_to_string(arena, str, &arg->data_str[arg->i], len);
-	arg->i += len;
-}
 
 void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
@@ -76,92 +40,6 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 	}
 	append_to_string(arena, str, &arg->data_str[arg->i], len);
 	arg->i += len + 1;
-}
-
-uint32_t	get_key_len(char *src, uint32_t src_len)
-{
-	uint32_t i;
-
-	i = 0;
-	while (i < src_len)
-	{
-		if (src[i] != '_' && ft_isalnum(src[i]) == false)
-			break ;
-		i += 1;
-	}
-	return (i);
-}
-
-int	get_env_key_index(char *key, uint32_t key_len, char **envp)
-{
-	int	i;
-
-	i = 0;
-	printf("key: %.*s\n", key_len, key);
-	if (key_len > 0)
-	{
-		while(envp[i] != NULL)
-		{
-			if (ft_strncmp(key, envp[i], key_len) == 0
-			&& (envp[i][key_len] == '=' || envp[i][key_len] == '\0'))
-			{
-				return (i);
-			}
-			i += 1;
-		}
-	}
-	return (-1);
-}
-
-char	*get_env_var_value(char *key, uint32_t key_len)
-{
-	int index;
-	char **envp;
-
-	envp = get_minishell(NULL)->envp;
-	if (envp == NULL)
-		return (NULL);
-	index = get_env_key_index(key, key_len, envp);
-	if (index < 0)
-		return (NULL);
-	if (envp[index][key_len] == '\0' || envp[index][key_len + 1] == '\0')
-		return (NULL);
-	return (&envp[index][key_len + 1]);
-}
-
-void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
-{
-	uint32_t	key_len;
-	uint32_t	var_len;
-	char		*env_var;
-
-	key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
-	env_var = get_env_var_value(&arg->data_str[arg->i], key_len);
-	if (env_var != NULL)
-	{
-		var_len = ft_strlen(env_var);
-		append_to_string(arena, str, env_var, var_len);
-	}
-	arg->i += key_len;
-}
-
-void expand_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
-{
-	if (arg->data_str[arg->i + 1] == '?')
-	{
-		copy_exit_code(arena, arg, str);
-
-	}
-	else if (is_valid_var_start(arg->data_str[arg->i + 1]))
-	{
-		arg->i += 1;
-		copy_full_env_var(arena, arg, str);
-	}
-	else
-	{
-		append_to_string(arena, str, &arg->data_str[arg->i], 1);
-		arg->i += 1;
-	}
 }
 
 void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
@@ -218,11 +96,11 @@ int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 
 int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
-	uint32_t	key_len; 
+	uint32_t	key_len;
 	char		*var;
 	uint32_t	len;
-	
-	key_len = get_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
+
+	key_len = get_env_key_len(&arg->data_str[arg->i], arg->data_len - arg->i);
 	var = get_env_var_value(&arg->data_str[arg->i], key_len);
 	arg->i += key_len;
 	if (var == NULL)
@@ -264,7 +142,7 @@ char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 		return (str.base);
 	while (arg->i < arg->data_len)
 	{
-		copy_until_special_char(arena, arg, &str);
+		copy_until_quote_or_var(arena, arg, &str);
 		if (is_quote(arg->data_str[arg->i]))
 			handle_quote(arena, arg, &str);
 		else if (arg->data_str[arg->i] == '$')
@@ -276,7 +154,7 @@ char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 					break ;
 				continue ;
 			}
-			else if (arg->data_str[arg->i + 1] ==  '?')
+			else if (arg->data_str[arg->i + 1] == '?')
 				copy_exit_code(arena, arg, &str);
 			else
 				append_to_string(arena, &str, &arg->data_str[arg->i], 1);
@@ -291,30 +169,27 @@ char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 
 char	**create_argv(t_arena *arena, t_node *node)
 {
-	static t_arg arg_vars = {0};
-	static t_arg left_over = {0};
+	t_arg arg_vars;
+	t_arg leftover;
 	t_arg_vec	argv;
 	char		*arg;
 
-	init_argv(arena, &argv);
+	arg_vars = (t_arg){0};
+	leftover = (t_arg){0};
+	init_argv(arena, &argv, ARGV_DEFAULT_SIZE);
 	while (node)
 	{
-		if (left_over.data_len <= 0)
-			init_arg(&node->token, &arg_vars);	
-		arg = create_argument(arena, &arg_vars, &left_over);
+		if (leftover.data_len <= 0)
+			init_arg(&node->token, &arg_vars);
+		arg = create_argument(arena, &arg_vars, &leftover);
 		if (arg != NULL)
 		{
 			if (argv.capacity <= argv.size)
-			{
-				argv.capacity *= 2;
-				argv.data = arena_realloc(arena, argv.data,
-						argv.size * sizeof(*argv.data),
-						sizeof(*argv.data) * (argv.capacity + 1));
-			}
+				realloc_argv(arena, &argv);
 			argv.data[argv.size] = arg;
 			argv.size += 1;
 		}
-		if (left_over.data_len > 0)
+		if (leftover.data_len > 0)
 			continue ;
 		node = node->left;
 	}

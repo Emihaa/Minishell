@@ -6,38 +6,11 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 20:56:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 22:37:48 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-void	*arena_memmove(void *dest, const void *src, size_t n)
-{
-	size_t		i;
-	char		*d;
-	const char	*s;
-
-	if (dest == NULL || src == NULL)
-		return (NULL);
-	d = dest;
-	s = src;
-	if ((uintptr_t)d < (uintptr_t)s)
-	{
-		i = 0;
-		while (i < n)
-		{
-			d[i] = s[i];
-			i += 1;
-		}
-	}
-	else
-	{
-		while (n-- > 0)
-			d[n] = s[n];
-	}
-	return (dest);
-}
 
 t_arena *find_free_arena(t_arena *a, size_t size)
 {
@@ -52,7 +25,7 @@ t_arena *find_free_arena(t_arena *a, size_t size)
 			capacity = DEFAULT_ARENA_CAPACITY;
 			if (capacity < size)
 				capacity = size;
-			a->next = arena_new(capacity);
+			a->next = arena_new(capacity); // maybe x_arenanew to exit instantly // maybe not
 			if (a->next == NULL)
 				return (NULL);
 		}
@@ -70,7 +43,7 @@ int	string_find_new_memory(t_arena *a, t_string *str, size_t new_size)
 	if (backing_memory == NULL)
 		return (-1);
 	new = arena_alloc(backing_memory, 0);
-	arena_memmove(new, str->base, str->size);
+	ft_memmove(new, str->base, str->size);
 	str->memory = backing_memory;
 	str->base = new;
 	str->capacity = backing_memory->capacity - backing_memory->size;
@@ -84,7 +57,7 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 		if (string_find_new_memory(a, str, str->size + src_len	))
 			return (-1);
 	}
-	arena_memmove(&str->base[str->size], src, src_len);
+	ft_memmove(&str->base[str->size], src, src_len);
 	str->size += src_len;
 	return (0);
 }

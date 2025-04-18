@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 01:01:48 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 22:20:05 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,6 @@ int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 }
 
 // @TODO cntrl+C on CAT gives two new newlines
-static 
 int read_loop_event_hook(void)
 {
 	if (g_int == SIGINT)
@@ -219,9 +218,9 @@ void read_loop(t_minishell *m)
 		rl_event_hook = read_loop_event_hook;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		m->line = readline("minishell> ");	
+		m->line = readline("minishell> ");
 		if (m->line == NULL)
-			builtin_exit(m, NULL) ;
+			break ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		m->line_counter += 1;
 		i += eat_space(m->line);
@@ -282,7 +281,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	{
 		put_str(STDERR_FILENO, "allocation failure\n");
 		error_exit(minishell, 1); // @TODO: error cheking
-	}		
+	}
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
@@ -325,12 +324,13 @@ int main(int argc, char *argv[], char **envp)
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGTERM, SIG_IGN); //<-- why?
-
+	// we might need to do some terminal status thing
+	// interactive and non interactive shell mode
 	(void)argc;
 	(void)argv;
 	init_minishell(&minishell, envp);
 	read_loop(&minishell);
 	minishell_cleanup(&minishell);
-	printf("exit\n"); // doesnt make sense
+	put_str(STDERR_FILENO, "exit\n");
     return (minishell.exit_status);
 }

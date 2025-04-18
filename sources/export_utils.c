@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 20:29:28 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 23:03:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/18 21:31:27 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 // 			i++;
 // 			continue ;
 // 		}
-// 		if (ft_strncmp(s, m->envp[i], size) == 0 && \
+// 		if (ft_strncmp(s, m->envp[i], size) == 0 &&
 // 		(m->envp[i][size] == '\0' || m->envp[i][size] == '='))
 // 			return (i);
 // 		i++;
@@ -71,7 +71,7 @@ int	spelling_check(t_minishell *m, char *s)
 		return (1);
 	}
 	while (s[i] != '\0' && s[i] != '=')
-	{	
+	{
 		if ((i == 0 && !ft_isalpha(s[i]) && s[i] != '_') || \
 		(i != 0 && !ft_isalnum(s[i]) && s[i] != '_'))
 		{

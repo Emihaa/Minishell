@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 00:39:57 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 22:36:36 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,10 +185,11 @@ typedef struct s_arg
 	bool	exist;
 } t_arg;
 
-# define ARGV_DEFAULT_SIZE 64;
-void init_argv(t_arena *arena, t_arg_vec *argv);
-void init_arg(t_token *data, t_arg *arg_vars);
-int	is_special_char(char c);
+# define ARGV_DEFAULT_SIZE 32
+void	init_argv(t_arena *arena, t_arg_vec *argv, size_t cap);
+void	init_arg(t_token *data, t_arg *arg_vars);
+int		realloc_argv(t_arena *arena, t_arg_vec *argv);
+int		is_quote_or_var(char c);
 
 int	expand(t_arena *arena, t_minishell *m, t_node *tree);
 
@@ -198,12 +199,18 @@ int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 
 int	quote_check(t_node *node, t_expand_vars *v);
 
-//expand_utils stuff
-bool	is_valid_var_start(char c);
-bool	is_quote(char c);
-uint32_t eat_space(char *str);
-int		small_itoa(t_expand_vars *v, char *str);
+
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
+uint32_t	set_quote_removed_string(char *string, t_token *data);
+
+//expand_utils stuff
+void	copy_until_quote_or_var(t_arena *arena, t_arg *arg, t_string *str);
+void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str);
+void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str);
+void	expand_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str);
+
+bool	is_valid_var_start(char c);
+int		small_itoa(t_expand_vars *v, char *str);
 
 // heredoc stuff
 # define HEREDOC_TEMP_NAME "./heredoc_temp"
@@ -259,18 +266,31 @@ int create_new_env(t_minishell *m , char **envp);
 void print_export(t_minishell *m);
 // char	*find_env_var(const t_token *data, const uint32_t start, uint32_t *index, char **env);
 int	get_env_key_index(char *key, uint32_t key_len, char **envp);
-uint32_t get_key_len(char *src, uint32_t src_len);
+uint32_t	get_env_key_len(char *src, uint32_t src_len);
 char *get_env_var_value(char *key, uint32_t key_len);
 
 //general utils stuff
-uint32_t	set_quote_removed_string(char *string, t_token *data);
 uint8_t		num_len(uint32_t num);
 bool		is_space(char c);
+uint32_t	eat_space(char *str);
+bool		is_quote(char c);
 t_minishell *get_minishell(t_minishell *m);
 
 // arena_utils stuff
 void *xarena_alloc(t_arena *arena, uint64_t size);
 void *xarena_alloc_no_zero(t_arena *arena, uint64_t size);
+t_arena *xarena_new(uint64_t cap);
+
+// ARENA strings
+size_t	arena_strlen(char *str);
+void	arena_append_str_buf(t_arena *arena, t_string *dest, char *src, size_t src_len);
+void	arena_null_terminate_string(t_arena *arena, t_string *str);
+
+t_string start_string(t_arena *a, char *src, size_t len);
+int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len);
+int	string_find_new_memory(t_arena *a, t_string *str, size_t new_size);
+int terminate_and_commit_string(t_arena *a, t_string *str);
+void string_delete(t_string *str);
 
 
 //builtin stuff

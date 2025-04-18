@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 16:43:07 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 22:05:16 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/18 21:22:57 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ void	print_export(t_minishell *m)
 // check if there is match in the env and strdup on top of that the new info
 // else see if there is empty space on the env, and strdup on the NULL point
 // if not space then recreate the env with double the size
-// @TODO _something doesnt show up on export but 
+// @TODO _something doesnt show up on export but
 // should be the last one on env print?
 int	export_add(t_minishell *m, char *s)
 {
 	int	pos;
 
 	// pos = check_match(m, s);
-	pos = get_env_key_index(s, get_key_len(s, ft_strlen(s)), m->envp);
+	pos = get_env_key_index(s, get_env_key_len(s, ft_strlen(s)), m->envp);
 	if (pos != -1)
 	{
 		free(m->envp[pos]);

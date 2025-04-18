@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/18 20:57:50 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/18 22:24:37 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,12 +51,14 @@ SOURCES =	minishell.c		utils.c		hooks.c											\
 			error.c			write_functions.c											\
 			builtin.c																	\
 			export.c		export_utils.c		export_print_utils.c					\
-			unset.c			env.c				cd.c									\
-			arena_utils.c	arena_string.c												\
+			unset.c			env.c				env_helpers.c		cd.c				\
+			arena_utils.c	arena_strings.c												\
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
-HEADERS = $(addprefix $(INC_DIR)/, minishell.h)
+HEADERS =	$(INC_DIR)/minishell.h \
+			$(LIB_DIR)/$(LT_ARENA_DIR)/$(INC_DIR)/lt_arena.h \
+			$(LIB_DIR)/$(LIBFT_DIR)/$(INC_DIR)/libft.h
 
 LINKS = $(addprefix -l, readline) # make this make any sense
 
