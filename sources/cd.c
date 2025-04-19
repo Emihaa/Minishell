@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 22:27:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/18 00:11:49 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ static void	cd_home(t_minishell *m)
 	char	*temp;
 	int		pos;
 
-	// pos = check_match(m, "HOME");
 	pos = get_env_key_index("HOME", 4, m->envp);
 	if (pos == -1)
 	{
@@ -54,7 +53,7 @@ static void	update_pwd(t_minishell *m)
 {
 	char	current_path[PATH_MAX];
 	char	*temp;
-	
+
 	temp = arena_strjoin(m, "OLDPWD=", get_env_var_value("PWD", 3));
 	export_add(m, temp);
 	if (getcwd(current_path, PATH_MAX) == NULL)

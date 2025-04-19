@@ -6,14 +6,14 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/05 19:25:37 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:23:46 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
 
 // token recognisation function
-void print_token_type(t_type *token_type)
+void	print_token_type(t_type *token_type)
 {
 	if (*token_type == PIPE)
 		ft_putstr_fd("|", 2);
@@ -34,15 +34,20 @@ void print_token_type(t_type *token_type)
 }
 
 // finds the main root head of tree
-t_node *find_head_root(t_node *node)
-{
-	if (node && node->root)
-		return (find_head_root(node->root));
-	return(node);  
+t_node	*find_head_root(t_node *node)
+{	
+	t_node	*temp;
+
+	temp = node;
+	while (temp && temp->root)
+	{
+		temp = temp->root;
+	}
+	return (temp);
 }
 
 // prints syntax error
-void *syntax_error(t_token *token, t_lexer *lexer)
+void	*syntax_error(t_token *token, t_lexer *lexer)
 {
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 	if (token->type != PIPE)
@@ -53,7 +58,7 @@ void *syntax_error(t_token *token, t_lexer *lexer)
 }
 
 // heredoc max limit for over 16 heredocs
-bool heredoc_limit(t_token *token, uint32_t *heredoc_count)
+bool	heredoc_limit(t_token *token, uint32_t *heredoc_count)
 {	
 	if (token->type == HERE_DOCUMENT)
 		(*heredoc_count)++; // LUKA: this used to be *heredoc_count++; this moved the pointer heredoc_count and then dereferenced it!

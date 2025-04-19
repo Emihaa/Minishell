@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 23:07:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:39:48 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,9 +251,9 @@ void minishell_cleanup(t_minishell *minishell)
 	arena_delete(minishell->node_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
-	// while (minishell->envp_size >= 0)
-	// 	free(minishell->envp[minishell->envp_size--]);
-	// free(minishell->envp);
+	while (minishell->envp_size >= 0)
+		free(minishell->envp[minishell->envp_size--]);
+	free(minishell->envp);
 }
 
 // set default values for the minishell struct

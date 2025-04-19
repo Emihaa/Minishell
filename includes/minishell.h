@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 22:13:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:32:09 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,6 +170,8 @@ typedef struct s_expand_vars
 	char *env_var;
 }	t_expand_vars;
 
+// Argument vector that holds the argument data inside it.
+// Also holds the info of memory capacity and currently used size
 typedef struct s_arg_vec
 {
 	size_t size;
@@ -177,6 +179,8 @@ typedef struct s_arg_vec
 	char	**data;
 } t_arg_vec;
 
+// Argument string info, lenght & index.
+// Boolean for argument.exist for NULL terminated argument(?)
 typedef struct s_arg
 {
 	char	*data_str;

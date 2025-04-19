@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 23:21:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 17:52:55 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,7 +329,6 @@ char	**create_argv(t_arena *arena, t_node *node)
 // go through the tree second time and gather all the words of same branch under same string
 // separated by \0
 // then create an array of pointers that point to the starting points of the string
-
 int expand(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	// char *str;

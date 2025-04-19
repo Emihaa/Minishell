@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:31:01 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/11 23:28:00 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/17 23:41:57 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,6 @@ bool	is_quote(char c)
 	return ((c == '"' || c == '\''));
 }
 
-inline 
-uint32_t eat_space(char *str)
-{
-	uint32_t i;
-
-	i = 0;
-	while (is_space(str[i]))
-		i++;
-	return (i);
-}
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env)
 {
 // WILL NOT WORK PROPERLY IF ENV HAS NULLS BETWEEN StRINGS

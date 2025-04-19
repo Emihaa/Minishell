@@ -6,11 +6,14 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 21:43:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/18 00:10:50 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
+
+// @TODO fix expand redirect. Get ridd of the set_env_var and expansion_stuffs
+// rewrite the stuff using the new expand functions
 
 static inline
 char *set_env_var(t_expand_vars *v, t_node *node)
