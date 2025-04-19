@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 23:43:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 23:55:10 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef enum e_type
 // @TODO: restucture to reduce memory footprint
 typedef struct s_minishell
 {
+	int			istty;
 	uint32_t	line_counter;
 	uint32_t	command_count;
 	uint32_t	heredoc_count;
@@ -196,7 +197,11 @@ void	init_arg(t_token *data, t_arg *arg_vars);
 int		realloc_argv(t_arena *arena, t_arg_vec *argv);
 int		is_quote_or_var(char c);
 
+// argv stuff
+char	**create_argv(t_arena *arena, t_node *node);
+
 int	expand(t_arena *arena, t_minishell *m, t_node *tree);
+int handle_variable(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover);
 void	handle_quote(t_arena *arena, t_arg *arg, t_string *str);
 
 // expand_redirect stuff
@@ -210,6 +215,20 @@ char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, cha
 uint32_t	set_quote_removed_string(char *string, t_token *data);
 
 //expand_utils stuff
+void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str);
+
+// expand_in_quotes_stuff
+void	handle_quote(t_arena *arena, t_arg *arg, t_string *str);
+void	handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str);
+
+void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str);
+
+void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str);
+
+void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str);
+
+
+
 void	copy_until_quote_or_var(t_arena *arena, t_arg *arg, t_string *str);
 void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str);
 void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str);

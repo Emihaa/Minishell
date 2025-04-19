@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 21:07:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 00:38:02 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status)
 	pid_t pid;
 	t_builtin builtin_type;
 
-	if (argv == NULL)
+	if (argv == NULL || argv[0] == NULL)
 		return (1);
 	if (status != 0)
 	{

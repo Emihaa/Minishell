@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 00:38:18 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/20 00:46:16 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void expand_action(t_arena *arena, t_node *node)
 			handle_quote(arena, &arg, &str);
 		else if (arg.data_str[arg.i] == '$')
 		{
-			if (handle_var(arena, &str, &arg, &left_over)) // then what? if it returns 1 then it is ambigious redirect??
+			if (handle_variable(arena, &str, &arg, &left_over)) // then what? if it returns 1 then it is ambigious redirect??
 			{
 				arg.exist = false;
 				break ;
