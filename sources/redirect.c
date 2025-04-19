@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 23:16:49 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 23:45:55 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,77 +16,59 @@
 
 // @TODO: restructure error messages
 // we might want to do some kind of printf thing with a buffer
-static inline
-void	ambigous_redirect(char *file_name)
+
+int	redirect_ambi(char *file_name)
 {
 	stdout = stderr;
 	printf("minishell: %s: ambigous redirect\n", file_name);
-// 	(void)put_str(STDERR_FILENO, "minishell: ");
-// 	if (file_name != NULL)
-// 		(void)put_str(STDERR_FILENO, file_name);
-// 	(void)put_str_nl(STDERR_FILENO, ": ambigous redirect");
+	return (1);
 }
 
 static inline
 void	open_failure(char *file_name)
 {
-	(void)put_str(STDERR_FILENO, "minishell: ");
-	perror(file_name);
+	stdout = stderr;
+	printf("minishell: %s: %s\n", file_name, strerror(errno));
 }
 
-int redirect_out(char **file_name, t_minishell *m)
+int redirect_out(char *file_name, t_minishell *m)
 {
 	int fd;
 
-	if (file_name[1] != NULL)
-	{
-		ambigous_redirect(file_name[0]);
-		return (1);
-	}
-	fd = open(file_name[0], O_CLOEXEC	| O_CREAT	| O_WRONLY	| O_TRUNC,
+	fd = open(file_name, O_CLOEXEC	| O_CREAT	| O_WRONLY	| O_TRUNC,
 							S_IWUSR		| S_IRUSR	| S_IRGRP	| S_IROTH);
 	if (fd == -1)
 	{
-		open_failure(file_name[0]);
+		open_failure(file_name);
 		return (1);
 	}
 	store_write_fd(fd, m);
 	return(0);
 }
 
-int redirect_append(char **file_name, t_minishell *m)
+int redirect_append(char *file_name, t_minishell *m)
 {
 	int	fd;
 
-	if (file_name[1] != NULL)
-	{
-		ambigous_redirect(file_name[0]);
-		return (1);
-	}
-	fd = open(file_name[0], O_CLOEXEC	| O_CREAT	| O_WRONLY	| O_APPEND,
+	fd = open(file_name, O_CLOEXEC	| O_CREAT	| O_WRONLY	| O_APPEND,
 							S_IWUSR		| S_IRUSR	| S_IRGRP	| S_IROTH);
 	if (fd == -1)
 	{
-		open_failure(file_name[0]);
+		open_failure(file_name);
 		return (1);
 	}
 	store_write_fd(fd, m);
 	return(0);
 }
 
-int	redirect_in(char **file_name, t_minishell *m)
+int	redirect_in(char *file_name, t_minishell *m)
 {
 	int	fd;
 
-	if (file_name[1] != NULL)
-	{
-		ambigous_redirect(file_name[0]);
-		return (1);
-	}
-	fd = open(file_name[0], O_CLOEXEC | O_RDONLY);
+	fd = open(file_name, O_CLOEXEC | O_RDONLY);
 	if (fd == -1)
 	{
-		open_failure(file_name[0]);
+		open_failure(file_name);
 		return (1);
 	}
 	store_read_fd(fd, m);

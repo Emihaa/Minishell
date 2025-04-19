@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 21:59:02 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 23:43:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,9 +240,10 @@ void	store_write_fd(int write_fd, t_minishell *minishell);
 void	store_read_fd(int read_fd, t_minishell *minishell);
 void	apply_redirect(t_minishell *minishell);
 void	reset_redirect(t_minishell *minishell);
-int		redirect_out(char **file_name, t_minishell *m);
-int		redirect_in(char **file_name, t_minishell *m);
-int		redirect_append(char **file_name, t_minishell *m);
+int		redirect_out(char *file_name, t_minishell *m);
+int		redirect_in(char *file_name, t_minishell *m);
+int		redirect_append(char *file_name, t_minishell *m);
+int		redirect_ambi(char *file_name);
 
 void	wait_for_sub_processes(t_minishell *minishell);
 
