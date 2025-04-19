@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 19:15:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 23:29:11 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,34 @@ void read_loop(t_minishell *m)
 	}
 }
 
+void exec_mode(t_minishell *m)
+{
+	t_node *tree;
+	uint32_t i;
+
+	while (1)
+	{
+		i = 0;
+		m->command_count = 0;
+		m->heredoc_count = 0;
+		m->line = readline(NULL);
+		if (m->line == NULL)
+			error_exit(m, m->exit_status);
+		m->line_counter += 1;
+		i += eat_space(m->line);
+		if (m->line[i] == '\0')
+			continue ;
+		tree = parser(m->node_arena, m, &m->line[i]);
+		if (tree != NULL)
+			minishell_exec_loop(m->node_arena, m, tree);
+		wait_for_sub_processes(m);
+		free(m->line);
+		m->line = NULL;
+		arena_trim(m->node_arena);
+		arena_reset(m->node_arena);
+	}
+}
+
 // add env clean up here @TODO Emilia
 void minishell_cleanup(t_minishell *minishell)
 {
@@ -262,6 +290,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 {
 	static int heredoc_fds_arr[16] = {0};
 
+	minishell->istty = isatty(STDIN_FILENO);
 	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
 	if (minishell->node_arena == NULL)
 	{
@@ -323,13 +352,19 @@ int main(int argc, char *argv[], char **envp)
 	t_minishell minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTERM, SIG_IGN); //<-- why?
+	signal(SIGTERM, SIG_IGN); 
+	
+
+	//<-- why?
 	// we might need to do some terminal status thing
 	// interactive and non interactive shell mode
 	(void)argc;
 	(void)argv;
 	init_minishell(&minishell, envp);
-	read_loop(&minishell);
+	if (minishell.istty)
+		read_loop(&minishell);
+	else 
+		exec_mode(&minishell);
 	minishell_cleanup(&minishell);
 	put_str(STDERR_FILENO, "exit\n");
     return (minishell.exit_status);
