@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 19:38:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 20:45:05 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,7 @@ int handle_var(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 	else if (arg->data_str[arg->i + 1] == '?')
 	{
 		copy_exit_code(arena, arg, str);
+		arg->exist = true;
 	}
 	else
 	{
