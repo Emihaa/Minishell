@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 18:45:03 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 19:35:02 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,28 @@ void	handle_quote(t_arena *arena, t_arg *arg, t_string *str)
 	arg->exist = true;
 }
 
+int handle_var(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
+{
+	if (is_valid_var_start(arg->data_str[arg->i + 1]))
+	{
+		arg->i += 1;
+		if (copy_env_var_and_split(arena, str, arg, leftover))
+			return (1);
+	}
+	else if (arg->data_str[arg->i + 1] == '?')
+	{
+		copy_exit_code(arena, arg, str);
+	}
+	else
+	{
+		append_to_string(arena, str, &arg->data_str[arg->i], 1);
+		arg->i += 1;
+		arg->exist = true;
+	}
+	return (0);
+}
+
+
 // luka sais fix this
 char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 {
@@ -147,18 +169,8 @@ char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 			handle_quote(arena, arg, &str);
 		else if (arg->data_str[arg->i] == '$')
 		{
-			if (is_valid_var_start(arg->data_str[arg->i + 1]))
-			{
-				arg->i += 1;
-				if (copy_env_var_and_split(arena, &str, arg, leftover))
-					break ;
-				continue ;
-			}
-			else if (arg->data_str[arg->i + 1] == '?')
-				copy_exit_code(arena, arg, &str);
-			else
-				append_to_string(arena, &str, &arg->data_str[arg->i], 1);
-			arg->exist = true;
+			if (handle_var(arena, &str, arg, leftover))
+				break ;
 		}
 	}
 	if (arg->exist == false)
