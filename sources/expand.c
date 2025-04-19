@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 19:35:02 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 19:38:35 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,8 +153,6 @@ int handle_var(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 	return (0);
 }
 
-
-// luka sais fix this
 char *create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 {
 	t_string str;

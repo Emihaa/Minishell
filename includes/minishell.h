@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 19:15:07 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 20:22:40 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef enum e_type
 	PIPE			=	-'|',
 	REDIRECT_IN		=	-'<',
 	REDIRECT_OUT	=	-'>',
+	REDIRECT_AMBI	=	-41, // if redirect is ambigious redirect
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	-257, // >>
 	// COMMAND		=	258,
