@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 19:36:12 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 19:39:50 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int realloc_argv(t_arena *arena, t_arg_vec *argv)
 	return (0);
 }
 
+// if char is quote or '$'
 int	is_quote_or_var(char c)
 {
 	return(is_quote(c) || c == '$');

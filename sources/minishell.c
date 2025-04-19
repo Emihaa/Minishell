@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 23:29:11 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 23:56:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,11 +156,13 @@ int do_redir(t_minishell *m, t_token *data)
 	if(data->type > 0) // maybe temp stuff
 		status = store_heredoc(m, data->type); // delimiter will still have quotes removed
 	else if (data->type == REDIRECT_OUT)
-		status = redirect_out(data->argv, m);
+		status = redirect_out(data->string, m);
 	else if (data->type == REDIRECT_IN)
-		status = redirect_in(data->argv, m);
+		status = redirect_in(data->string, m);
 	else if (data->type == REDIRECT_APPEND)
-		status = redirect_append(data->argv, m);
+		status = redirect_append(data->string, m);
+	else if (data->type == REDIRECT_AMBI)
+		status = redirect_ambi(data->string);
 	return (status);
 }
 

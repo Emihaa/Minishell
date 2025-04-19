@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 23:28:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 23:55:10 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef enum e_type
 	PIPE			=	-'|',
 	REDIRECT_IN		=	-'<',
 	REDIRECT_OUT	=	-'>',
+	REDIRECT_AMBI	=	-41, // if redirect is ambigious redirect
 	HERE_DOCUMENT	=	256, // <<
 	REDIRECT_APPEND	=	-257, // >>
 	// COMMAND		=	258,
@@ -201,13 +202,14 @@ char	**create_argv(t_arena *arena, t_node *node);
 
 int	expand(t_arena *arena, t_minishell *m, t_node *tree);
 int handle_variable(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover);
+void	handle_quote(t_arena *arena, t_arg *arg, t_string *str);
 
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 
 int	quote_check(t_node *node, t_expand_vars *v);
-
+int handle_var(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover);
 
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 uint32_t	set_quote_removed_string(char *string, t_token *data);
@@ -257,9 +259,10 @@ void	store_write_fd(int write_fd, t_minishell *minishell);
 void	store_read_fd(int read_fd, t_minishell *minishell);
 void	apply_redirect(t_minishell *minishell);
 void	reset_redirect(t_minishell *minishell);
-int		redirect_out(char **file_name, t_minishell *m);
-int		redirect_in(char **file_name, t_minishell *m);
-int		redirect_append(char **file_name, t_minishell *m);
+int		redirect_out(char *file_name, t_minishell *m);
+int		redirect_in(char *file_name, t_minishell *m);
+int		redirect_append(char *file_name, t_minishell *m);
+int		redirect_ambi(char *file_name);
 
 void	wait_for_sub_processes(t_minishell *minishell);
 
