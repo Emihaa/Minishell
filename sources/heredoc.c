@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 00:39:18 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 22:12:32 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 static
 int write_env_variable(char *str, const uint32_t start, int fd, t_minishell *m)
 {
-	uint32_t		len;
+	uint32_t		key_len;
 	char			*env_var;
 
 	if (is_valid_var_start(str[start + 1]) == false)
@@ -101,10 +101,10 @@ int write_env_variable(char *str, const uint32_t start, int fd, t_minishell *m)
 		write(fd, &str[start], 1);
 		return (0);
 	}
-	len = 0;
-	env_var = get_env_var_value(str, get_key_len(str, ft_strlen(str)));
+	key_len = get_env_key_len(&str[start + 1], ft_strlen(&str[start + 1]));
+	env_var = get_env_var_value(&str[start + 1], key_len);
 	(void)put_str(fd, env_var);
-	return (len);
+	return (key_len);
 }
 
 static

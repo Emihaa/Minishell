@@ -1,53 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lt_arena_strings.c                                 :+:      :+:    :+:   */
+/*   arena_strings.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/16 20:40:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 23:04:34 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/lt_arena.h"
-
-size_t	arena_strlen(char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i])
-		i++;
-	return (i);
-}
-
-void	*arena_memmove(void *dest, const void *src, size_t n)
-{
-	size_t		i;
-	char		*d;
-	const char	*s;
-
-	if (dest == NULL || src == NULL)
-		return (NULL);
-	d = dest;
-	s = src;
-	if ((uintptr_t)d < (uintptr_t)s)
-	{
-		i = 0;
-		while (i < n)
-		{
-			d[i] = s[i];
-			i += 1;
-		}
-	}
-	else
-	{
-		while (n-- > 0)
-			d[n] = s[n];
-	}
-	return (dest);
-}
+#include "../includes/minishell.h"
 
 t_arena *find_free_arena(t_arena *a, size_t size)
 {
@@ -62,7 +25,7 @@ t_arena *find_free_arena(t_arena *a, size_t size)
 			capacity = DEFAULT_ARENA_CAPACITY;
 			if (capacity < size)
 				capacity = size;
-			a->next = arena_new(capacity);
+			a->next = arena_new(capacity); // maybe x_arenanew to exit instantly // maybe not
 			if (a->next == NULL)
 				return (NULL);
 		}
@@ -80,7 +43,7 @@ int	string_find_new_memory(t_arena *a, t_string *str, size_t new_size)
 	if (backing_memory == NULL)
 		return (-1);
 	new = arena_alloc(backing_memory, 0);
-	arena_memmove(new, str->base, str->size);
+	ft_memmove(new, str->base, str->size);
 	str->memory = backing_memory;
 	str->base = new;
 	str->capacity = backing_memory->capacity - backing_memory->size;
@@ -94,7 +57,7 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 		if (string_find_new_memory(a, str, str->size + src_len	))
 			return (-1);
 	}
-	arena_memmove(&str->base[str->size], src, src_len);
+	ft_memmove(&str->base[str->size], src, src_len);
 	str->size += src_len;
 	return (0);
 }
@@ -102,8 +65,6 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 // terminate and resrve
 int terminate_and_commit_string(t_arena *a, t_string *str)
 {
-	#include <stdio.h>
-	printf("<%lu> <%lu> <%lu>\n", str->size, str->memory->size, str->memory->capacity);
 	if (str->capacity < str->size + 1)
 	{
 		if (string_find_new_memory(a, str, str->size + 1))

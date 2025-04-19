@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/18 00:38:17 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/18 22:24:37 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ LT_ARENA = $(LIB_DIR)/$(LT_ARENA_DIR)/build/lt_arena.a
 
 NAME = minishell
 
-SOURCES =	minishell.c		utils.c				arena_utils.c		hooks.c					\
+SOURCES =	minishell.c		utils.c		hooks.c											\
 			lexer.c																		\
 			tree.c			tree_nodes.c		tree_utils.c							\
 			expand.c		expand_redirect.c	expand_utils.c		expand_helpers.c	\
@@ -51,11 +51,14 @@ SOURCES =	minishell.c		utils.c				arena_utils.c		hooks.c					\
 			error.c			write_functions.c											\
 			builtin.c																	\
 			export.c		export_utils.c		export_print_utils.c					\
-			unset.c			env.c				cd.c									\
+			unset.c			env.c				env_helpers.c		cd.c				\
+			arena_utils.c	arena_strings.c												\
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
-HEADERS = $(addprefix $(INC_DIR)/, minishell.h)
+HEADERS =	$(INC_DIR)/minishell.h \
+			$(LIB_DIR)/$(LT_ARENA_DIR)/$(INC_DIR)/lt_arena.h \
+			$(LIB_DIR)/$(LIBFT_DIR)/$(INC_DIR)/libft.h
 
 LINKS = $(addprefix -l, readline) # make this make any sense
 
@@ -82,7 +85,7 @@ lt_arena:
 	@$(RESET_COLOR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(OBJ_DIR)
-	@$(GREEN) 
+	@$(GREEN)
 	cc $(CC_FLAGS) -c $< -o $@
 	@$(RESET_COLOR)
 
@@ -128,7 +131,7 @@ clean:
 	@$(RESET_COLOR)
 
 fclean:
-	@$(BOLD_ORANGE) 
+	@$(BOLD_ORANGE)
 	@echo "Cleaning $(OBJ_DIR)/$(NAME)"
 	@$(RESET_COLOR)
 	rm -f $(OBJECTS)
@@ -137,7 +140,7 @@ fclean:
 	@$(RESET_COLOR)
 	rm -f $(BIN_DIR)/$(NAME)
 	@make -C $(LIB_DIR)/$(LT_ARENA_DIR) fclean --no-print-directory
-	@make -C $(LIB_DIR)/$(LIBFT_DIR) fclean --no-print-directory 
+	@make -C $(LIB_DIR)/$(LIBFT_DIR) fclean --no-print-directory
 # @make -C $(FASTISH_DIR) fclean --no-print-directory
 	@$(RESET_COLOR)
 
@@ -158,6 +161,6 @@ profile: all
 optimize: CC_FLAGS += -O3 -mavx2 -msse4.2 -maes
 optimize: all
 
-.PHONY: all clean fclean re 
+.PHONY: all clean fclean re
 .PHONY: debug profile optimize no_built_in_optimize no_built_in_profile
 .PHONY: libft fastish

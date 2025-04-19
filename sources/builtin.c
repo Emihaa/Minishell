@@ -6,15 +6,15 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 00:35:05 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 21:42:43 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// @TODO: we need to figure out how we want to do file redirections 
+// @TODO: we need to figure out how we want to do file redirections
 // for builtins when run in the main process (parent)
-// one way would be to not redirect anything but just write into the fd that 
+// one way would be to not redirect anything but just write into the fd that
 // minishell->fds[WRITE] points to
 void	builtin_echo(char *argv[], int fd)
 {
@@ -94,14 +94,15 @@ int str_is_numeric(char *str)
 	return ((str[i] == '\0'));
 }
 
-// should it have int argc instead of count_argc function? 
+// should it have int argc instead of count_argc function?
 // add it to the execute_builtin?
 // or is this function called elsewhere as well?
 void	builtin_exit(t_minishell *m, char **argv)
 {
 	const int	argc = count_argc(argv);
 
-	write_bytes(STDERR_FILENO, "exit\n", 5);
+	if (m->pipe_side == -1)
+		write_bytes(STDERR_FILENO, "exit\n", 5);
 	if (argv != NULL)
 	{
 		if (argc > 1 && str_is_numeric(argv[1]) == false)

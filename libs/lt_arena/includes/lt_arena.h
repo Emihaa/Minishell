@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:59:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/16 22:48:13 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 23:10:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <stddef.h> // size_t
 # include <stdint.h> // sized int types
 
-#define DEFAULT_ARENA_CAPACITY 32//(1024 * 1024 * 256)
+#define DEFAULT_ARENA_CAPACITY (1024 * 1024 * 256)
 
 typedef struct s_arena
 {
@@ -43,6 +43,10 @@ void		*arena_alloc_no_zero(t_arena *a, uint64_t size);
 int			arena_unalloc(t_arena *a, uint64_t size);
 void		*arena_realloc(t_arena *arena, void *old, uint64_t old_siz, uint64_t new_siz);
 
+void		*arena_memmove(void *dest, const void *src, size_t n);
+void		*arena_realloc(t_arena *arena, void *old, uint64_t old_siz, uint64_t new_siz);
+
+
 void		arena_reset(t_arena *a);
 
 t_arena_temp	arena_temp_begin(t_arena *a);
@@ -57,15 +61,4 @@ typedef struct
 	size_t		capacity;
 } t_string;
 
-// ARENA strings
-size_t	arena_strlen(char *str);
-void	*arena_memmove(void *dest, const void *src, size_t n);
-void	arena_append_str_buf(t_arena *arena, t_string *dest, char *src, size_t src_len);
-void	arena_null_terminate_string(t_arena *arena, t_string *str);
-
-t_string start_string(t_arena *a, char *src, size_t len);
-int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len);
-int	string_find_new_memory(t_arena *a, t_string *str, size_t new_size);
-int terminate_and_commit_string(t_arena *a, t_string *str);
-void string_delete(t_string *str);
 #endif
