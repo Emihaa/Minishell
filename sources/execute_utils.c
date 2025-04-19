@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/05 20:02:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 20:39:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void execve_failure(t_minishell *m, char *cmd)
 		m->exit_status = 126;
 	stdout = stderr;
 	printf("minishell: %s: %s\n", cmd, strerror(errno));
-	error_exit(m, 0);
+	error_exit(m, -1);
 }
 
 void command_not_found(t_minishell *m, char *cmd)

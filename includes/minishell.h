@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 19:15:07 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 20:42:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -286,15 +286,10 @@ void *xarena_alloc_no_zero(t_arena *arena, uint64_t size);
 t_arena *xarena_new(uint64_t cap);
 
 // ARENA strings
-size_t	arena_strlen(char *str);
-void	arena_append_str_buf(t_arena *arena, t_string *dest, char *src, size_t src_len);
-void	arena_null_terminate_string(t_arena *arena, t_string *str);
 
-t_string start_string(t_arena *a, char *src, size_t len);
 int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len);
 int	string_find_new_memory(t_arena *a, t_string *str, size_t new_size);
 int terminate_and_commit_string(t_arena *a, t_string *str);
-void string_delete(t_string *str);
 
 
 //builtin stuff
