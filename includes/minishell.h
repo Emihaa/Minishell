@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 18:45:28 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 19:15:07 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@
 // find proper place for these thingies
 char *get_env_var_value(char *key, uint32_t key_len);
 
-extern sig_atomic_t g_int;
+extern volatile sig_atomic_t g_int;
 
 // maybe have all token types be negative except heredoc so that the type can be replace with an fd
 // @question are these the only tokens needed?
