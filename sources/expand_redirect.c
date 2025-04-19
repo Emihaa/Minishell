@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 23:35:25 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/20 00:38:18 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,8 @@ void expand_action(t_arena *arena, t_node *node)
 	t_string str;
 	t_arg arg;
 	t_arg left_over;
-	int i;
 	(void)arena;
 	
-	i = 0;
 	str = (t_string){0};
 	arg = (t_arg){0};
 	left_over = (t_arg){0};
@@ -39,22 +37,25 @@ void expand_action(t_arena *arena, t_node *node)
 		{
 			if (handle_var(arena, &str, &arg, &left_over)) // then what? if it returns 1 then it is ambigious redirect??
 			{
-				node->token.type = REDIRECT_AMBI;
-				printf("str: %s\n", node->token.string);
-				return ;
+				arg.exist = false;
+				break ;
 			}
 		}
 	}
-	append_to_string(arena, &str, node->token.string, i); // <-- is this even necessary if the string doesnt change?
-	if (str.size > 0)
-		node->token.string = str.base;
+	if (arg.exist == false)
+	{
+		node->token.type = REDIRECT_AMBI;
+		node->token.string = arg.data_str;
+	}
 	else
 	{
-		node->token.type = REDIRECT_AMBI;	
-		node->token.string = arg.data_str;
+		terminate_and_commit_string(arena, &str); // <-- is this even necessary if the string doesnt change?
+		node->token.string = str.base;
 	}
 	printf("str: %s\n", node->token.string);
 }
+
+// terminate_and_commit_string <- use this one instead
 
 void expand_redirect(t_arena *arena, t_node *node)
 {
