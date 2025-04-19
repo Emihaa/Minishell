@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
+#    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/17 22:17:39 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/18 00:38:17 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,7 @@ LT_ARENA = $(LIB_DIR)/$(LT_ARENA_DIR)/build/lt_arena.a
 
 NAME = minishell
 
-SOURCES =	minishell.c		utils.c				arena_utils.c							\
+SOURCES =	minishell.c		utils.c				arena_utils.c		hooks.c					\
 			lexer.c																		\
 			tree.c			tree_nodes.c		tree_utils.c							\
 			expand.c		expand_redirect.c	expand_utils.c		expand_helpers.c	\

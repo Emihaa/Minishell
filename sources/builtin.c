@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 18:59:36 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/18 00:35:05 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,21 +102,24 @@ void	builtin_exit(t_minishell *m, char **argv)
 	const int	argc = count_argc(argv);
 
 	write_bytes(STDERR_FILENO, "exit\n", 5);
-	if (argc > 1 && str_is_numeric(argv[1]) == false)
+	if (argv != NULL)
 	{
-		stdout = stderr;
-		printf("minishell: exit: %s: numeric argument required\n", argv[1]);
-		m->exit_status = 2;
-	}
-	else if (argc == 2)
-	{
-		m->exit_status = ft_atoi(argv[1]);
-	}
-	else if (argc > 2)
-	{
-		write_bytes(STDERR_FILENO, "minishell: exit: too many arguments\n", 36);
-		m->exit_status = 1;
-		return ;
+		if (argc > 1 && str_is_numeric(argv[1]) == false)
+		{
+			stdout = stderr;
+			printf("minishell: exit: %s: numeric argument required\n", argv[1]);
+			m->exit_status = 2;
+		}
+		else if (argc == 2)
+		{
+			m->exit_status = ft_atoi(argv[1]);
+		}
+		else if (argc > 2)
+		{
+			write_bytes(STDERR_FILENO, "minishell: exit: too many arguments\n", 36);
+			m->exit_status = 1;
+			return ;
+		}
 	}
 	minishell_cleanup(m);
 	exit(m->exit_status);
@@ -127,6 +130,7 @@ void	builtin_exit(t_minishell *m, char **argv)
 void	builtin_pwd(t_minishell *m, int fd)
 {
 	char current_path[PATH_MAX];
+
 	if (getcwd(current_path, PATH_MAX) == NULL)
 	{
 		m->exit_status = 1;

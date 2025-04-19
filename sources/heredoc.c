@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 23:50:59 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/18 00:39:18 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,37 +60,6 @@ ltaalas@c1r3p1:~/projects/minishell/sources$
 
 */
 
-static inline
-void print_eof_error(t_minishell *m, char *delimiter)
-{
-	FILE	*temp;
-
-	temp = stdout;
-	stdout = stderr;
-	printf(EOF_ERROR, m->line_counter, delimiter);
-	stdout = temp;
-}
-
-static
-int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
-{
-	rl_event_hook = heredoc_event_hook;
-	*line = readline("> ");
-	if (*line == NULL || g_int == SIGINT) // do this for other signals maybe
-	{
-		if (g_int == SIGINT)
-		{
-			minishell->exit_status = SIGINT + 128;
-			g_int = 0;
-			return (-2);
-		}
-		if (!*line)
-			print_eof_error(minishell, delimiter); // should this be on stderror?
-		return (-1);
-	}
-	minishell->line_counter += 1;
-	return (0);
-}
 
 static
 int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
@@ -116,6 +85,7 @@ int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 	return (read_rval);
 }
 
+static
 int write_env_variable(char *str, const uint32_t start, int fd, t_minishell *m)
 {
 	uint32_t		len;
@@ -188,18 +158,15 @@ int	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter
 
 int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 {
-	t_arena_temp	temp_arena;
 	int				fds[2];
 	char			*delimiter;
 	uint32_t		new_size;
 	int				read_rval;
 
 	if (create_heredoc_fds(fds) == -1)
-	syscall_failure(minishell);
-	temp_arena = arena_temp_begin(arena);
-	delimiter = arena_alloc(temp_arena.arena, sizeof(char) * data->string_len + 1);
+		syscall_failure(minishell);
+	delimiter = arena_alloc(arena, sizeof(char) * data->string_len + 1);
 	new_size = set_quote_removed_string(delimiter, data);
-	arena_unalloc(temp_arena.arena, (data->string_len + 1) - new_size);
 	if (new_size < data->string_len)
 		read_rval = heredoc_no_expansion(minishell, fds[WRITE], delimiter);
 	else
@@ -208,6 +175,5 @@ int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 	minishell->heredoc_count += 1;
 	if (read_rval == -2)
 		return (-2);
-	arena_temp_end(&temp_arena);
 	return (fds[READ]);
 }

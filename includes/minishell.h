@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 17:32:09 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:41:45 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,6 +222,8 @@ char	*create_temp_file_name(uint32_t heredoc_num);
 int		create_heredoc_fds(int fds[2]);
 int		heredoc_event_hook(void);
 void	close_heredocs(t_minishell *m); // in wrong file atm
+void	print_eof_error(t_minishell *m, char *delimiter);
+int		heredoc_read(t_minishell *minishell, char **line, char *delimiter);
 // testing possible redirect stuff
 #define WRITE	1
 #define READ	0

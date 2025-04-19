@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/17 23:39:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:42:33 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,7 +221,7 @@ void read_loop(t_minishell *m)
 		m->heredoc_count = 0;
 		m->line = readline("minishell> ");	
 		if (m->line == NULL)
-			break ;
+			builtin_exit(m, NULL) ;
 		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		m->line_counter += 1;
 		i += eat_space(m->line);
