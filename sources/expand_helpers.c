@@ -6,12 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 18:46:15 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 19:36:12 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+// copy the current arguments data to the struct
 void	init_arg(t_token *data, t_arg *arg_vars)
 {
 	arg_vars->data_len = data->string_len;
