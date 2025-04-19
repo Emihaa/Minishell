@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 00:20:18 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 01:09:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,10 +86,6 @@ void	copy_until_quote_or_var(t_arena *arena, t_arg *arg, t_string *str)
 	append_to_string(arena, str, &arg->data_str[arg->i], len);
 	arg->i += len;
 }
-
-
-
-
 
 // first time i go through the tree, i do expansion of the words
 // field splitting and handle the quates
