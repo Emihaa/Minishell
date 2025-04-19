@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 23:56:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 02:14:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	pid_t		pid;
 
 	i = 0;
-	printf("command count: %o\n", minishell->command_count); // Debug stuff
-	printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
+	// printf("command count: %o\n", minishell->command_count); // Debug stuff
+	// printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
 	signal(SIGINT, SIG_IGN);
 	while (i < minishell->command_count)
 	{

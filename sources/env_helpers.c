@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:17:54 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 21:22:00 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 01:30:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	get_env_key_index(char *key, uint32_t key_len, char **envp)
 	int	i;
 
 	i = 0;
-	printf("key: %.*s\n", key_len, key);
+	// printf("key: %.*s\n", key_len, key);
 	if (key_len > 0)
 	{
 		while(envp[i] != NULL)

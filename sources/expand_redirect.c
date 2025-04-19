@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 01:18:53 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/20 01:29:24 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	expand_action(t_arena *arena, t_node *node, t_string *str, t_arg *arg)
 		terminate_and_commit_string(arena, str); // <-- is this even necessary if the string doesnt change?
 		node->token.string = str->base;
 	}
-	printf("str: %s\n", node->token.string);
+	// printf("str: %s\n", node->token.string);
 }
 
 // terminate_and_commit_string <- use this one instead

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/20 00:02:52 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 01:26:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,8 @@ void execve_failure(t_minishell *m, char *cmd)
 	if (m->istty)
 		printf("minishell: %s: %s\n", cmd, strerror(errno));
 	else
-	printf("minishell: line %i: %s: %s\n", m->line_counter, cmd, strerror(errno));
-
-		error_exit(m, -1);
+		printf("minishell: line %i: %s: %s\n", m->line_counter, cmd, strerror(errno));
+	error_exit(m, -1);
 }
 
 void command_not_found(t_minishell *m, char *cmd)
@@ -48,5 +47,5 @@ void command_not_found(t_minishell *m, char *cmd)
 	else
 		printf("minishell: line %i: %s: command not found\n", m->line_counter, cmd);
 	m->exit_status = 127;
-	error_exit(m, 0);
+	error_exit(m, -1);
 }
