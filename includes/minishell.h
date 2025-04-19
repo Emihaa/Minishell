@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 20:44:54 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:59:02 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,13 +197,14 @@ int		realloc_argv(t_arena *arena, t_arg_vec *argv);
 int		is_quote_or_var(char c);
 
 int	expand(t_arena *arena, t_minishell *m, t_node *tree);
+void	handle_quote(t_arena *arena, t_arg *arg, t_string *str);
 
 // expand_redirect stuff
 void expand_redirect(t_arena *arena, t_node *node);
 int expansion_stuffs(t_node *node, t_expand_vars *v, char *str);
 
 int	quote_check(t_node *node, t_expand_vars *v);
-
+int handle_var(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover);
 
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 uint32_t	set_quote_removed_string(char *string, t_token *data);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   arena_strings.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 23:04:34 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 22:01:58 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 	return (0);
 }
 
-// terminate and resrve
+// terminate and reserve
 int terminate_and_commit_string(t_arena *a, t_string *str)
 {
 	if (str->capacity < str->size + 1)
