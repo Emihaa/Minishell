@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:31:01 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 19:33:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 19:39:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str)
 	}
 	append_to_string(arena, str, buff, len);
 	arg->i += 2;
-	arg->exist = true;
 }
 
 void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
