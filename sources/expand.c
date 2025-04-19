@@ -6,11 +6,20 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 23:56:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 00:20:18 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+
+static inline
+void	assign_leftover(char *var, uint32_t var_index, t_arg *leftover)
+{
+	var_index += eat_space(&var[var_index]);
+	leftover->data_str = &var[var_index];
+	leftover->data_len = ft_strlen(&var[var_index]);
+	leftover->i = 0;
+}
 
 int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
@@ -31,10 +40,8 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 	{
 		if (len > 0)
 			arg->exist = true;
-		len += eat_space(&var[len]);
-		leftover->data_str = &var[len];
-		leftover->data_len = ft_strlen(&var[len]);
-		leftover->i = 0;
+		if (leftover != NULL)
+			assign_leftover(var, len, leftover);
 		return (1);
 	}
 	arg->exist = true;

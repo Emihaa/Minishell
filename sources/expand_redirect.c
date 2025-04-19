@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 23:35:25 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/20 00:01:25 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void expand_action(t_arena *arena, t_node *node)
 			handle_quote(arena, &arg, &str);
 		else if (arg.data_str[arg.i] == '$')
 		{
-			if (handle_var(arena, &str, &arg, &left_over)) // then what? if it returns 1 then it is ambigious redirect??
+			if (handle_variable(arena, &str, &arg, &left_over)) // then what? if it returns 1 then it is ambigious redirect??
 			{
 				node->token.type = REDIRECT_AMBI;
 				printf("str: %s\n", node->token.string);
