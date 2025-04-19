@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_helpers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 22:45:31 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 18:46:15 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,10 @@ void	init_arg(t_token *data, t_arg *arg_vars)
 	arg_vars->exist = false;
 }
 
+// initialize argv.
+// capacity = default_size
+// data = arena allocated.
+// size = 0;
 void	init_argv(t_arena *arena, t_arg_vec *argv, size_t cap)
 {
 	argv->capacity = cap;

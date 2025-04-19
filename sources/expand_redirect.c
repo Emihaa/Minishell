@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_redirect.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/18 21:15:15 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/19 18:47:31 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,9 @@ char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, cha
 	*index += len;
 	return (NULL);
 }
+
+// @TODO fix expand redirect. Get ridd of the set_env_var and expansion_stuffs
+// rewrite the stuff using the new expand functions
 
 static inline
 char *set_env_var(t_expand_vars *v, t_node *node)
