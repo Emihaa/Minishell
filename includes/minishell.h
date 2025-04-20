@@ -6,13 +6,11 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 23:55:10 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 19:53:15 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 //@TODO: heredocuments have to be opened before any forking happens
-
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -312,7 +310,6 @@ t_arena *xarena_new(uint64_t cap);
 int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len);
 int	string_find_new_memory(t_arena *a, t_string *str, size_t new_size);
 int terminate_and_commit_string(t_arena *a, t_string *str);
-
 
 //builtin stuff
 typedef enum e_builtin

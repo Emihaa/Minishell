@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 21:42:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 19:30:09 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,6 +200,7 @@ t_builtin	check_for_builtin(char *command)
 
 int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 {
+	m->exit_status = EXIT_SUCCESS;
 	if (command == BUILTIN_EXIT)
 		builtin_exit(m, argv);
 	if (command == BUILTIN_ECHO)

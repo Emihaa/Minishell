@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 18:52:38 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/20 19:18:45 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ t_node	*find_head_root(t_node *node)
 // prints syntax error
 void	*syntax_error(t_token *token, t_lexer *lexer)
 {
-	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-	if (token->type != PIPE)
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2); //@TODO: syntax error should but minishell->exit_code to 2
+	if (token->type != PIPE)											// the printout could also probably be changes to use printf
 		*token = get_next_token(lexer);
 	print_token_type(&token->type);
 	ft_putstr_fd("'\n", 2);

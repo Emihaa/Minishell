@@ -6,12 +6,16 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 20:45:59 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 23:17:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 20:24:41 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+/// @brief copies from source arg the text within singlequotes into str
+/// @param arena used for allocations when necessary
+/// @param arg source data to be copied from
+/// @param str destinaton to copy to
 void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t len;
@@ -28,6 +32,11 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 	arg->i += len + 1;
 }
 
+/// @brief	copies from source arg the text within singlequotes into str
+///			and moves argument index forward by the length of the key
+/// @param arena used for allocations when necessary
+/// @param arg source data to be copied from
+/// @param str destinaton to copy to
 void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t	key_len;
@@ -44,6 +53,10 @@ void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
 	arg->i += key_len;
 }
 
+/// @brief helper to determine which function to call after encountering a $
+/// @param arena used for allocations when necessary
+/// @param str where to copy data to
+/// @param arg source data to be copied from
 void handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 {
 	if (is_valid_var_start(arg->data_str[arg->i + 1]))
@@ -62,6 +75,17 @@ void handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 	}
 }
 
+
+// copies from source arg to str within double quotes
+// if a $ is found copies the whole env variable
+// and moving index forward by the length of the key
+// need arena to reallocate str if necessary
+
+/// @brief	copies until a $ then expands the variable
+///			and continues until a delimiting quote or end of string
+/// @param arena used for allocations when necessary
+/// @param str where to copy data to
+/// @param arg source data to be copied from
 void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t len;
@@ -88,6 +112,11 @@ void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
 		arg->i += 1;
 }
 
+
+/// @brief call the correct function depending on the current char
+/// @param arena used for allocations when necessary
+/// @param str where to copy data to
+/// @param arg source data to be copied from
 void	handle_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
 	if (arg->data_str[arg->i] == '\'')

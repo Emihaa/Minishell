@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 18:32:49 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 19:17:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ t_node	*parser(t_arena *arena, t_minishell *m, char *line)
 	while (1)
 	{
 		token = get_next_token(&lexer);
-		if (token.type == END_OF_LINE)
+		if (token.type == END_OF_LINE) //@TODO: having a pipe as the last token should be a syntax error
 			break ;
 		if (heredoc_limit(&token, &m->heredoc_count))
 			return (NULL);
