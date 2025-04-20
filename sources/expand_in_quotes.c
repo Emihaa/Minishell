@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 20:45:59 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/20 20:24:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 20:28:35 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 /// @param str destinaton to copy to
 void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
-	uint32_t len;
+	uint32_t	len;
 
 	len = 0;
 	arg->i += 1;
@@ -57,7 +57,7 @@ void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
 /// @param arena used for allocations when necessary
 /// @param str where to copy data to
 /// @param arg source data to be copied from
-void handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
+void	handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 {
 	if (is_valid_var_start(arg->data_str[arg->i + 1]))
 	{
@@ -75,7 +75,6 @@ void handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 	}
 }
 
-
 // copies from source arg to str within double quotes
 // if a $ is found copies the whole env variable
 // and moving index forward by the length of the key
@@ -88,7 +87,7 @@ void handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 /// @param arg source data to be copied from
 void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
-	uint32_t len;
+	uint32_t	len;
 
 	arg->i += 1;
 	len = 0;
@@ -111,7 +110,6 @@ void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
 	if (arg->data_str[arg->i] == '"')
 		arg->i += 1;
 }
-
 
 /// @brief call the correct function depending on the current char
 /// @param arena used for allocations when necessary
