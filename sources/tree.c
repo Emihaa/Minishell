@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 19:17:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 22:40:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,31 +151,31 @@ t_node *insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 }
 
 
-// // Function to print the tree
-// static void print_tree(t_node *node, int depth)
-// {
-// 	int i = 0; 
-// 	if (!node)
-// 		return ;
-// 	while (i++ < depth)
-// 		printf("  ");
-// 	// Print current node
-// 	printf("[-- ");
-// 	print_token_type(&node->token.type);
-// 	printf(" -> %.*s\n", (int)node->token.string_len, node->token.u_data.string);
-// 	// Print left subtree
-// 	if (node->left)
-// 	{
-// 		printf(" L ");
-// 		print_tree(node->left, depth + 1);
-// 	}
-// 	// Print right subtree
-// 	if (node->right)
-// 	{
-// 		printf(" R ");
-// 		print_tree(node->right, depth + 1);
-// 	}
-// }
+// Function to print the tree
+static void print_tree(t_node *node, int depth)
+{
+	int i = 0; 
+	if (!node)
+		return ;
+	while (i++ < depth)
+		printf("  ");
+	// Print current node
+	printf("[-- ");
+	print_token_type(&node->token.type);
+	printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
+	// Print left subtree
+	if (node->left)
+	{
+		printf(" L ");
+		print_tree(node->left, depth + 1);
+	}
+	// Print right subtree
+	if (node->right)
+	{
+		printf(" R ");
+		print_tree(node->right, depth + 1);
+	}
+}
 
 
 // add before return line:
@@ -205,6 +205,7 @@ t_node	*parser(t_arena *arena, t_minishell *m, char *line)
 		prev_type = token.type;
 	}
 	tree = find_head_root(tree);
+	print_tree(tree, 1);
 	m->heredoc_count = 0;
 	if (expand(arena, m, tree)) // shiiit we need to return to the main readloop if heredoc is stopped by sigint. seems like we also need to make a sub process to get the exit value of 128 + signal
 		return (NULL);

@@ -33,9 +33,6 @@ LIB_DIR = libs
 LIBFT_DIR = libft
 LIBFT = $(LIB_DIR)/$(LIBFT_DIR)/build/libft.a
 
-FASTISH_DIR = lib_fastish
-FASTISH = $(LIB_DIR)/$(FASTISH_DIR)/build/fastish.a
-
 LT_ARENA_DIR = lt_arena
 LT_ARENA = $(LIB_DIR)/$(LT_ARENA_DIR)/build/lt_arena.a
 
@@ -71,12 +68,6 @@ libft:
 	@echo "Cheking libft.a"
 	@$(BOLD_PURPLE)
 	@make --no-print-directory -C $(LIB_DIR)/$(LIBFT_DIR)/ CC_FLAGS="$(CC_FLAGS)"
-	@$(RESET_COLOR)
-
-fastish:
-	@echo "Cheking fastish.a"
-	@$(BOLD_PURPLE)
-	@make --no-print-directory -C $(LIB_DIR)/$(FASTISH_DIR)/ CC_FLAGS="$(CC_FLAGS)"
 	@$(RESET_COLOR)
 
 lt_arena:
@@ -127,8 +118,7 @@ clean:
 	@$(RESET_COLOR)
 	rm -f $(OBJECTS)
 	@make -C $(LIB_DIR)/$(LT_ARENA_DIR) clean --no-print-directory
-	 @make -C $(LIB_DIR)/$(LIBFT_DIR) clean --no-print-directory
-# @make -C $(FASTISH_DIR) clean --no-print-directory
+	@make -C $(LIB_DIR)/$(LIBFT_DIR) clean --no-print-directory
 	@$(RESET_COLOR)
 
 fclean:

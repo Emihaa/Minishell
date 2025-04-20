@@ -6,12 +6,11 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 20:18:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 20:36:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
 
 /// @brief helper to assign the leftover
 /// @param var environment variable pointer

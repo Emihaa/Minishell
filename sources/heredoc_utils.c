@@ -6,20 +6,22 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 23:28:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 23:18:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// give an allocated dest pointer that is atleast the size of {data->u_data.string_len + 1}
+// give an allocated dest pointer that is atleast the size of
+// {data->u_data.string_len + 1}
 // will return the new size of the string that has quotes removed
 // the 
 uint32_t	set_quote_removed_string(char *dest, t_token *data)
 {
 	char		quote;
-	uint32_t	data_index; // feel like this or these should be renamde
+	uint32_t	data_index; 
 	uint32_t	dest_index;
+	// feel like this or these should be renamde
 
 	data_index = 0; 
 	dest_index = 0;
@@ -48,20 +50,20 @@ uint32_t	set_quote_removed_string(char *dest, t_token *data)
 // we need some kind of global heredoc count to check if it is under 17
 char	*create_temp_file_name(uint32_t heredoc_num)
 {
-	static char name_buf[30] = HEREDOC_TEMP_NAME;
-	uint32_t 	num_temp;
-	uint8_t 	i;
+	static char	name_buf[30] = HEREDOC_TEMP_NAME;
+	uint32_t	num_temp;
+	uint8_t		i;
 
 	num_temp = heredoc_num;
 	i = num_len(heredoc_num);
 	name_buf[NAME_BASE_LEN + i] = '\0';
-	while(i--)
+	while (i--)
 	{
 		name_buf[NAME_BASE_LEN + i] = (num_temp % 10) + '0';
 		num_temp = num_temp / 10;
 	}
 	heredoc_num += 1;
-	return(name_buf);
+	return (name_buf);
 }
 
 // @TODO: change to name to /tmp
@@ -69,15 +71,18 @@ char	*create_temp_file_name(uint32_t heredoc_num)
 int	create_heredoc_fds(int fds[2])
 {
 	uint32_t	heredoc_num;
-	char 		*file_name;
-	int 		return_val;
+	char		*file_name;
+	int			return_val;
 
 	return_val = 0;
 	heredoc_num = 1;
 	while (1)
 	{
 		file_name = create_temp_file_name(heredoc_num++);
-		fds[1] = open(file_name, O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY, S_IWUSR | S_IRUSR); 
+		fds[1] = open(
+				file_name,
+				O_EXCL | O_CREAT | O_CLOEXEC | O_WRONLY,
+				S_IWUSR | S_IRUSR);
 		if (fds[1] != -1)
 			break ;
 		if (errno == EEXIST)
@@ -102,7 +107,7 @@ void	print_eof_error(t_minishell *m, char *delimiter)
 	stdout = temp;
 }
 
-int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
+int	heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 {
 	if (minishell->istty == 1)
 		rl_event_hook = heredoc_event_hook;
@@ -116,7 +121,7 @@ int heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 			return (-2);
 		}
 		if (!*line)
-			print_eof_error(minishell, delimiter); // should this be on stderror?
+			print_eof_error(minishell, delimiter);
 		return (-1);
 	}
 	minishell->line_counter += 1;
