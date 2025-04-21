@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/20 23:00:57 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/21 15:57:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,13 +53,13 @@ void print_token(t_token *token)
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
 			token->type, get_token_name(token), (int)token->string_len, token->string);
 }
-
+/// @todo error cheking
 int	create_and_store_pipe(t_minishell *m, int8_t *side)
 {
 	if (*side == WRITE || *side == -1)
 	{
 		if (pipe(m->pipe) == -1)
-			syscall_failure(m); //@TODO: error cheking
+			syscall_failure(m);
 		store_write_fd(m->pipe[WRITE], m);
 		m->pipe[WRITE] = -1;
 		*side = READ;

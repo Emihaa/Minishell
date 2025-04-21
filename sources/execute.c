@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/20 22:26:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/21 19:39:43 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,11 @@ pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin 
 	pid_t	pid;
 
 	// debug stuff start
-	for (int i = 0; argv[i] != NULL; ++i) // @TODO: remove this
-	{
-		//printf("i: %i\n", i);
-		printf("argv[%i]: %s\n", i, argv[i]);
-	}
+	// for (int i = 0; argv[i] != NULL; ++i) // @TODO: remove this
+	// {
+	// 	//printf("i: %i\n", i);
+	// 	printf("argv[%i]: %s\n", i, argv[i]);
+	// }
 	// debug stuff end
 	pid = fork();
 	if (pid == (pid_t)(-1))
