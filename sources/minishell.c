@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/21 15:57:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/21 22:09:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,7 +258,7 @@ void exec_mode(t_minishell *m)
 		m->command_count = 0;
 		m->heredoc_count = 0;
 		// char *line = get_next_line(STDIN_FILENO, buff);
-		m->line = readline("minishell> ");
+		m->line = readline(NULL);
 		if (m->line == NULL)
 			error_exit(m, m->exit_status);
 		// m->line = ft_strtrim(line, "\n");
