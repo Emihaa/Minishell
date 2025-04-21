@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 18:52:38 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/21 23:46:23 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,18 @@ void	print_token_type(t_type *token_type)
 	else if (*token_type == ERROR)
 		ft_putstr_fd("error", 2);
 }
+// find the top most word
+t_node *find_word_root(t_node *node)
+{
+	t_node *temp;
+	
+	temp = node->root;
+	while (temp->root && temp->root->token.type == WORD)
+	{
+		temp = temp->root;
+	}
+	return (temp);
+}
 
 // finds the main root head of tree
 t_node	*find_head_root(t_node *node)
@@ -47,13 +59,15 @@ t_node	*find_head_root(t_node *node)
 }
 
 // prints syntax error
-void	*syntax_error(t_token *token, t_lexer *lexer)
+// if syntax error the exit code should be 2 @TODO
+void	*syntax_error(t_minishell *m, t_token *token, t_lexer *lexer)
 {
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 	if (token->type != PIPE)
 		*token = get_next_token(lexer);
 	print_token_type(&token->type);
 	ft_putstr_fd("'\n", 2);
+	m->exit_status = 2;
 	return (NULL);
 }
 

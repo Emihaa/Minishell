@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 21:42:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 01:27:16 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 	if (command == BUILTIN_CD)
 		builtin_cd(m, count_argc(argv), argv);
 	if (command == BUILTIN_PWD)
-		builtin_pwd(m, m->redir_fds[WRITE]); // @TODO: add command
+		builtin_pwd(m, m->redir_fds[WRITE]);
 	if (command == BUILTIN_ENV)
 		builtin_env(m->envp);
 	if (command == BUILTIN_UNSET)

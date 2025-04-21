@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:24:03 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 20:39:14 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/21 21:36:35 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 // exit in an error situation
 // setting exit_status is optional, if set to 0 m->exit_status will stay as is
 // otherwise it is set to exit_status
-void error_exit(t_minishell *m, int exit_status)
+void	error_exit(t_minishell *m, int exit_status)
 {
 	if (exit_status > 0)
 		m->exit_status = exit_status;
