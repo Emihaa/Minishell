@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/20 19:53:15 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/22 20:55:22 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,9 +149,10 @@ t_node	*parser(t_arena *arena, t_minishell *m, char *line);
 
 // tree_utils stuff
 bool heredoc_limit(t_token *token, uint32_t *heredoc_count);
-void *syntax_error(t_token *token, t_lexer *lexer);
+void	*syntax_error(t_minishell *m, t_token *token, t_lexer *lexer);
 t_node *find_head_root(t_node *node);
 void print_token_type(t_type *token_type);
+t_node *find_word_root(t_node *node);
 
 // tree_nodes stuff
 t_node *create_node(t_node *root, t_token *token, t_arena *arena);
@@ -212,7 +213,7 @@ int handle_var(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover);
 char	*find_env_var(const char *str, const uint32_t str_len, uint32_t *index, char **env);
 uint32_t	set_quote_removed_string(char *string, t_token *data);
 
-//expand_utils stuff
+// expand_utils stuff
 void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str);
 
 // expand_in_quotes_stuff

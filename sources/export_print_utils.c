@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_print_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 17:41:23 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/18 22:49:29 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/21 21:34:26 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ int	is_sorted(char **pntr_array, int size)
 }
 
 // sorts the env in alphabetical order for export print
+// the strings should be compared until the end
+// 1024 is probably just a placeholder
 void	env_sort(char **pntr_array, int size)
 {
 	int	i;
@@ -92,7 +94,7 @@ void	env_sort(char **pntr_array, int size)
 		i = 0;
 		while (i < size - 1)
 		{
-			if (ft_strncmp(pntr_array[i], pntr_array[i + 1], 1024) > 0) // the strings should be compared until the end// 1024 is probably just a placeholder
+			if (ft_strncmp(pntr_array[i], pntr_array[i + 1], 1024) > 0)
 			{
 				swap_pntrs(&pntr_array[i], &pntr_array[i + 1]);
 			}

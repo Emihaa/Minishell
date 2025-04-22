@@ -6,26 +6,27 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 01:29:24 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/22 20:55:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-static 
+static
 char	*memmove_name(t_arena *arena, t_node *node)
- {
+{
 	char	*str;
-	
- 	str = xarena_alloc(arena, sizeof(char) * (node->token.string_len + 1));
- 	ft_memmove(str, node->token.string, node->token.string_len);
-	return (str);
- }
 
-// Change argv->type type AMBIGIOUS_REDI if expand files and
-// becomes ambigious redirect. If ambigious redirect then the string is the given argument name.
+	str = xarena_alloc(arena, sizeof(char) * (node->token.string_len + 1));
+	ft_memmove(str, node->token.string, node->token.string_len);
+	return (str);
+}
+
+// Change argv->type to AMBIGIOUS_REDI if expand files and
+// becomes ambigious redirect. If ambigious redirect then 
+// the string is the given argument name.
 // Otherwise the string is just what string expands to.
-static 
+static
 void	expand_action(t_arena *arena, t_node *node, t_string *str, t_arg *arg)
 {
 	while (arg->i < arg->data_len)
@@ -35,7 +36,7 @@ void	expand_action(t_arena *arena, t_node *node, t_string *str, t_arg *arg)
 			handle_quote(arena, arg, str);
 		else if (arg->data_str[arg->i] == '$')
 		{
-			if (handle_variable(arena, str, arg, NULL)) // then what? if it returns 1 then it is ambigious redirect??
+			if (handle_variable(arena, str, arg, NULL))
 			{
 				arg->exist = false;
 				break ;
@@ -49,20 +50,18 @@ void	expand_action(t_arena *arena, t_node *node, t_string *str, t_arg *arg)
 	}
 	else
 	{
-		terminate_and_commit_string(arena, str); // <-- is this even necessary if the string doesnt change?
+		terminate_and_commit_string(arena, str);
 		node->token.string = str->base;
 	}
-	// printf("str: %s\n", node->token.string);
 }
 
-// terminate_and_commit_string <- use this one instead
 void	expand_redirect(t_arena *arena, t_node *node)
 {
 	t_string	str;
-	t_arg	arg;
-	
+	t_arg		arg;
+
 	str = (t_string){0};
 	arg = (t_arg){0};
 	init_arg(&node->token, &arg);
- 	expand_action(arena, node, &str, &arg);
+	expand_action(arena, node, &str, &arg);
 }

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/21 22:09:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/22 20:55:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,6 @@
 #include "../includes/minishell.h" // fix maybe
 
 volatile sig_atomic_t g_int = 0;
-
-void print_expansion(char *line)
-{
-	//line++;
-	printf("%s\n", getenv(line));
-}
 
 char *get_token_name(t_token *token)
 {// debug stuff
@@ -75,7 +69,6 @@ int	create_and_store_pipe(t_minishell *m, int8_t *side)
 	return (0);
 }
 
-
 void close_heredocs(t_minishell *m)
 {
 	uint32_t i;
@@ -102,6 +95,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	// printf("command count: %o\n", minishell->command_count); // Debug stuff
 	// printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
 	signal(SIGINT, SIG_IGN);
+	printf("child process no signals\n");
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -113,6 +107,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			// printf("exit_status before = %i\n", minishell->exit_status);
 			if (WIFSIGNALED(wstatus))
 			{
+				write(1, "\n", 1);
 				minishell->exit_status = WTERMSIG(wstatus) + 128;
 				if (__WCOREDUMP(wstatus))
 					put_str(STDERR_FILENO, "Core Dumped\n"); // need to check this
@@ -199,6 +194,7 @@ int read_loop_event_hook(void)
 {
 	if (g_int == SIGINT)
 	{
+		get_minishell(NULL)->exit_status = 128 + SIGINT;
 		write(1, "\n", 1);
 		rl_replace_line("", 0);
 		rl_on_new_line();
@@ -279,7 +275,6 @@ void exec_mode(t_minishell *m)
 	}
 }
 
-// add env clean up here @TODO Emilia
 void minishell_cleanup(t_minishell *minishell)
 {
 	arena_delete(minishell->node_arena);
@@ -302,7 +297,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	if (minishell->node_arena == NULL)
 	{
 		put_str(STDERR_FILENO, "allocation failure\n");
-		error_exit(minishell, 1); // @TODO: error cheking
+		error_exit(minishell, 1); // @TODO: error checking
 	}
 	minishell->line = NULL;
 	minishell->command_count = 0;
@@ -316,7 +311,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 	if (!minishell->envp)
 	{
 		put_str(STDERR_FILENO, "allocation failure\n");
-		error_exit(minishell, 1); // @TODO: error cheking
+		error_exit(minishell, 1); // @TODO: error checking
 	}
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
