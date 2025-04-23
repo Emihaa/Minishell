@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/29 17:41:23 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/02/02 15:15:28 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 20:23:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,6 @@ get_next_line
 #  define BUFFER_SIZE 1023
 # endif
 
-char	*get_next_line(int fd, char *buffer);
+char	*get_next_line(int fd);
 
 #endif

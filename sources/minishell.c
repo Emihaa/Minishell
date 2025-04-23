@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 18:32:22 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 20:39:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -260,11 +260,12 @@ void exec_mode(t_minishell *m)
 		i = 0;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		// char *line = get_next_line(STDIN_FILENO, buff);
+		rl_tty_set_echoing(0);
+		// m->line = get_next_line(STDIN_FILENO);
 		m->line = readline(NULL);
 		if (m->line == NULL)
 			error_exit(m, m->exit_status);
-		// m->line = ft_strtrim(line, "\n");
+			// m->line = ft_strtrim(line, "\n");
 		m->line_counter += 1;
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
@@ -360,7 +361,7 @@ int main(int argc, char *argv[], char **envp)
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	
-
+	rl_erase_empty_line = 1;
 	//<-- why?
 	// we might need to do some terminal status thing
 	// interactive and non interactive shell mode

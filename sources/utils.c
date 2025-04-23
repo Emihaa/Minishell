@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 18:53:28 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:09:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ uint32_t eat_space(char *str)
 inline
 bool	is_space(char c)
 {
-	return (c == ' ' || c == '\t');
+	return (c == ' ' || c == '\t'|| c == '\n');
 }
 
 inline
