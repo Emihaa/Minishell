@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/18 00:11:49 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:03:47 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void	builtin_cd(t_minishell *m, int argc, char **argv)
 		update_pwd(m);
 	}
 	if (argc > 2)
-	{	
+	{
 		put_str(2, "minishell: cd: too many arguments\n");
 		m->exit_status = 1;
 	}

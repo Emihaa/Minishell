@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:43:59 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/17 23:39:57 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:04:44 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	create_new_env(t_minishell *m, char **envp)
 	if (!env_copy)
 		return (1);
 	while (i < m->env_capacity)
-	{	
+	{
 		env_copy[i] = envp[i];
 		i++;
 	}
@@ -68,7 +68,7 @@ char	**create_env(t_minishell *m, char **envp)
 		return (NULL);
 	}
 	while (envp[i])
-	{	
+	{
 		env_copy[i] = ft_strdup(envp[i]);
 		if (!env_copy[i])
 			return (NULL);

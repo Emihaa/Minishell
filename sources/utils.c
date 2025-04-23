@@ -6,16 +6,16 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 18:53:28 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:45:50 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 inline
-uint32_t eat_space(char *str)
+uint32_t	eat_space(char *str)
 {
-	uint32_t i;
+	uint32_t	i;
 
 	i = 0;
 	while (is_space(str[i]))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/11 21:37:52 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 19:46:57 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ t_token	tokenize_pipe(t_lexer *lexer)
 // 			currently anything other than a delimiter character counts as a word
 //			which doesn't seem correct
 t_token	get_next_token(t_lexer *lexer)
-{	
+{
 	while (is_space(lexer->line[lexer->line_index]))
 		lexer->line_index += 1;
 	if (ft_strncmp(&lexer->line[lexer->line_index], ">>", 2) == 0)

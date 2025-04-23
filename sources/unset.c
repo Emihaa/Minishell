@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 18:45:02 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/14 23:37:50 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:43:37 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ int	find_match(t_minishell *m, char *s)
 			i++;
 			continue ;
 		}
-		if (strncmp_to_c(s, m->envp[i], '=', size) == 0 && \
-			(m->envp[i][size] == '\0' || m->envp[i][size] == '='))
+		if (strncmp_to_c(s, m->envp[i], '=', size) == 0
+			&& (m->envp[i][size] == '\0' || m->envp[i][size] == '='))
 			return (i);
 		i++;
 	}

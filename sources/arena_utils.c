@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   arena_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 17:43:04 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 21:04:23 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 19:48:50 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-void *xarena_alloc(t_arena *arena, uint64_t size)
+void	*xarena_alloc(t_arena *arena, uint64_t size)
 {
-	void *result;
+	void	*result;
 
 	result = arena_alloc(arena, size);
 	if (result == NULL)
@@ -25,9 +25,9 @@ void *xarena_alloc(t_arena *arena, uint64_t size)
 	return (result);
 }
 
-void *xarena_alloc_no_zero(t_arena *arena, uint64_t size)
+void	*xarena_alloc_no_zero(t_arena *arena, uint64_t size)
 {
-	void *result;
+	void	*result;
 
 	result = arena_alloc_no_zero(arena, size);
 	if (result == NULL)
@@ -38,9 +38,9 @@ void *xarena_alloc_no_zero(t_arena *arena, uint64_t size)
 	return (result);
 }
 
-t_arena *xarena_new(uint64_t cap)
+t_arena	*xarena_new(uint64_t cap)
 {
-	t_arena *arena;
+	t_arena	*arena;
 
 	arena = malloc(sizeof(*arena) + cap);
 	if (arena == NULL)
@@ -53,4 +53,3 @@ t_arena *xarena_new(uint64_t cap)
 	arena->next = NULL;
 	return (arena);
 }
-

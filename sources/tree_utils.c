@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 19:21:21 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 21:15:21 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,12 @@ void	print_token_type(t_type *token_type)
 	else if (*token_type == ERROR)
 		ft_putstr_fd("error", 2);
 }
+
 // find the top most word
-t_node *find_word_root(t_node *node)
+t_node	*find_word_root(t_node *node)
 {
-	t_node *temp;
-	
+	t_node	*temp;
+
 	temp = node->root;
 	while (temp->root && temp->root->token.type == WORD)
 	{
@@ -47,7 +48,7 @@ t_node *find_word_root(t_node *node)
 
 // finds the main root head of tree
 t_node	*find_head_root(t_node *node)
-{	
+{
 	t_node	*temp;
 
 	temp = node;
@@ -59,11 +60,13 @@ t_node	*find_head_root(t_node *node)
 }
 
 // prints syntax error
-// if syntax error the exit code should be 2 @TODO
+// @TODO: the printout could also probably be changes to use printf <--- Emilia
+// cannot be changed, if printf then the token will be printed in the wrong pos
+// in terminal, unless we also change the print_token_type function to printf?
 void	*syntax_error(t_minishell *m, t_token *token, t_lexer *lexer)
 {
-	ft_putstr_fd("minishell: syntax error near unexpected token `", 2); //@TODO: syntax error should but minishell->exit_code to 2
-	if (token->type != PIPE)											// the printout could also probably be changes to use printf
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	if (token->type != PIPE)
 		*token = get_next_token(lexer);
 	print_token_type(&token->type);
 	ft_putstr_fd("'\n", 2);
@@ -73,9 +76,9 @@ void	*syntax_error(t_minishell *m, t_token *token, t_lexer *lexer)
 
 // heredoc max limit for over 16 heredocs
 bool	heredoc_limit(t_token *token, uint32_t *heredoc_count)
-{	
+{
 	if (token->type == HERE_DOCUMENT)
-		(*heredoc_count)++; // LUKA: this used to be *heredoc_count++; this moved the pointer heredoc_count and then dereferenced it!
+		(*heredoc_count)++; // @TODO: LUKA: this used to be *heredoc_count++; this moved the pointer heredoc_count and then dereferenced it!
 	if (*heredoc_count > 16)
 	{
 		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);

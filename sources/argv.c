@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   argv.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 20:56:09 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/21 19:50:55 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 20:02:18 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 static
 int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
-	uint32_t len;
+	uint32_t	len;
 
 	len = 0;
 	arg->exist = false;
@@ -42,7 +42,7 @@ int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 static
 char	*create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 {
-	t_string str;
+	t_string	str;
 
 	str = (t_string){0};
 	if (handle_leftover(arena, &str, arg, leftover))
@@ -60,14 +60,14 @@ char	*create_argument(t_arena *arena, t_arg *arg, t_arg *leftover)
 	}
 	if (arg->exist == false)
 		return (NULL);
-	terminate_and_commit_string(arena, &str); // add thing that moves entire argument to new arena chunk if not enough space
+	terminate_and_commit_string(arena, &str);
 	return (str.base);
 }
 
 char	**create_argv(t_arena *arena, t_node *node)
 {
-	t_arg arg_vars;
-	t_arg leftover;
+	t_arg		arg_vars;
+	t_arg		leftover;
 	t_arg_vec	argv;
 	char		*arg;
 

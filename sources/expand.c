@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 20:36:33 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 22:37:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void	assign_leftover(char *var, uint32_t var_index, t_arg *leftover)
 /// @param arg source data to be copied from
 /// @param leftover leftover from fieldsplitting is set here
 /// @return did we encounter an enviroment variable that caused field splitting 
-int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
+int	copy_env_var_and_split(t_arena *arena, t_string *str,
+	t_arg *arg, t_arg *leftover)
 {
 	uint32_t	key_len;
 	char		*var;
@@ -65,7 +66,7 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 /// @param arg source data to be copied from
 /// @param leftover leftover from fieldsplitting is set here
 /// @return did we encounter an enviroment variable that caused field splitting 
-int handle_variable(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
+int	handle_variable(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
 	if (is_valid_var_start(arg->data_str[arg->i + 1]))
 	{
@@ -87,13 +88,14 @@ int handle_variable(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 	return (0);
 }
 
-/// @brief append from source arg to str until a char needing special handling is encountered
+/// @brief append from source arg to str until a char needing 
+///			special handling is encountered
 /// @param arena used for allocations when necessary
 /// @param str where to copy data to
 /// @param arg source data to be copied from
 void	copy_until_quote_or_var(t_arena *arena, t_arg *arg, t_string *str)
 {
-	uint32_t len;
+	uint32_t	len;
 
 	len = 0;
 	while (arg->i + len < arg->data_len)
@@ -108,40 +110,29 @@ void	copy_until_quote_or_var(t_arena *arena, t_arg *arg, t_string *str)
 	arg->i += len;
 }
 
-// first time i go through the tree, i do expansion of the words
-// field splitting and handle the quates
-// go through the tree second time and gather all the words of same branch under same string
-// separated by \0
-// then create an array of pointers that point to the starting points of the string
-int expand(t_arena *arena, t_minishell *m, t_node *tree)
+// loop here so that we send the first word node of branch
+// come ut of branch, return argv to first word node
+// and then go to another branch loop
+int	expand(t_arena *arena, t_minishell *m, t_node *tree)
 {
-	// char *str;
-	t_node *tree_root;
+	t_node	*tree_root;
 
-	// printf("\n---- starting tree expansion ----\n");
-
-	//loop here so that we send the first word node of branch
-	//come ut of branch, return argv to first word node and then go to another branch loop
-	// int i = 0;
 	while (tree)
 	{
 		tree_root = tree;
-		//find the first WORD node
 		while (tree)
 		{
 			if (tree->token.type > 0)
-			{
-				tree->token.type = heredoc(arena, m, &tree->token);
-				if (tree->token.type == -2)
+				if (heredoc(arena, m, &tree->token) == -2)
 					return (-2);
-			}
-			if (tree->token.type == REDIRECT_OUT || tree->token.type == REDIRECT_IN || tree->token.type == REDIRECT_APPEND)
-			 	expand_redirect(arena, tree);
+			if (tree->token.type == REDIRECT_OUT
+				|| tree->token.type == REDIRECT_IN
+				|| tree->token.type == REDIRECT_APPEND)
+				expand_redirect(arena, tree);
 			if (tree->token.type == WORD)
 			{
-				// str = arena_alloc_no_zero(arena, sizeof(char) * 0); //alloc only the first pointer // LUKA: 3.4 took out the 1 byte slack
-				tree->token.argv = create_argv(arena, tree);					   // if we encounter weird issues
-				tree->left = NULL;																   // it's probably because of this
+				tree->token.argv = create_argv(arena, tree);
+				tree->left = NULL;
 				break ;
 			}
 			tree = tree->left;
@@ -149,6 +140,5 @@ int expand(t_arena *arena, t_minishell *m, t_node *tree)
 		tree = tree_root->right;
 	}
 	// printf("arena size after expansion: %lu\n", arena->size);
-	// printf("\n---- tree expanded ----\n\n\n");
 	return (0);
 }
