@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   expand.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/20 01:09:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/20 20:36:33 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
+/// @brief helper to assign the leftover
+/// @param var environment variable pointer
+/// @param var_index current index inside the variable
+/// @param leftover leftover is updated with new values
 static inline
 void	assign_leftover(char *var, uint32_t var_index, t_arg *leftover)
 {
@@ -21,6 +25,13 @@ void	assign_leftover(char *var, uint32_t var_index, t_arg *leftover)
 	leftover->i = 0;
 }
 
+/// @brief	appends enviroment variable to str until a space is encountered
+///			at which point the leftover is set and status is returned
+/// @param arena used for allocations when necessary
+/// @param str where to copy data to
+/// @param arg source data to be copied from
+/// @param leftover leftover from fieldsplitting is set here
+/// @return did we encounter an enviroment variable that caused field splitting 
 int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
 	uint32_t	key_len;
@@ -48,6 +59,12 @@ int copy_env_var_and_split(t_arena *arena, t_string *str, t_arg *arg, t_arg *lef
 	return (0);
 }
 
+/// @brief helper to determine which function to call and flags to set
+/// @param arena used for allocations when necessary
+/// @param str where to copy data to
+/// @param arg source data to be copied from
+/// @param leftover leftover from fieldsplitting is set here
+/// @return did we encounter an enviroment variable that caused field splitting 
 int handle_variable(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 {
 	if (is_valid_var_start(arg->data_str[arg->i + 1]))
@@ -70,6 +87,10 @@ int handle_variable(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)
 	return (0);
 }
 
+/// @brief append from source arg to str until a char needing special handling is encountered
+/// @param arena used for allocations when necessary
+/// @param str where to copy data to
+/// @param arg source data to be copied from
 void	copy_until_quote_or_var(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t len;

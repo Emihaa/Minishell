@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:31:01 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 20:51:12 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 20:19:45 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,10 @@ int small_itoa(t_expand_vars *v, char *str)
 	return (0);
 }
 
+/// @brief append the current exit code to the str and increment index by two
+/// @param arena used for allocations when necessary
+/// @param arg to move the arg read index forward by two
+/// @param str where to copy to
 void	copy_exit_code(t_arena *arena, t_arg *arg, t_string *str)
 {
 	int exit_code;

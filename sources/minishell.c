@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/21 23:52:18 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/21 23:58:05 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 volatile sig_atomic_t g_int = 0;
 
 char *get_token_name(t_token *token)
-{
+{// debug stuff
 	if (token->type == PIPE)
 		return("|");
 	if (token->type == REDIRECT_IN)
@@ -47,13 +47,13 @@ void print_token(t_token *token)
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
 			token->type, get_token_name(token), (int)token->string_len, token->string);
 }
-
+/// @todo error cheking
 int	create_and_store_pipe(t_minishell *m, int8_t *side)
 {
 	if (*side == WRITE || *side == -1)
 	{
 		if (pipe(m->pipe) == -1)
-			syscall_failure(m); //@TODO: error cheking
+			syscall_failure(m);
 		store_write_fd(m->pipe[WRITE], m);
 		m->pipe[WRITE] = -1;
 		*side = READ;
@@ -92,8 +92,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	pid_t		pid;
 
 	i = 0;
-	printf("command count: %o\n", minishell->command_count); // Debug stuff
-	printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
+	// printf("command count: %o\n", minishell->command_count); // Debug stuff
+	// printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
 	signal(SIGINT, SIG_IGN);
 	printf("child process no signals\n");
 	while (i < minishell->command_count)
@@ -247,14 +247,17 @@ void exec_mode(t_minishell *m)
 	t_node *tree;
 	uint32_t i;
 
+	// char *buff = ft_calloc(72000, 1);
 	while (1)
 	{
 		i = 0;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		m->line = readline(NULL);
+		// char *line = get_next_line(STDIN_FILENO, buff);
+		m->line = readline("minishell> ");
 		if (m->line == NULL)
 			error_exit(m, m->exit_status);
+		// m->line = ft_strtrim(line, "\n");
 		m->line_counter += 1;
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
@@ -263,6 +266,8 @@ void exec_mode(t_minishell *m)
 		if (tree != NULL)
 			minishell_exec_loop(m->node_arena, m, tree);
 		wait_for_sub_processes(m);
+		// free(line);
+		// line = NULL;
 		free(m->line);
 		m->line = NULL;
 		arena_trim(m->node_arena);
@@ -360,7 +365,7 @@ int main(int argc, char *argv[], char **envp)
 	init_minishell(&minishell, envp);
 	if (minishell.istty)
 		read_loop(&minishell);
-	else 
+	else
 		exec_mode(&minishell);
 	minishell_cleanup(&minishell);
 	put_str(STDERR_FILENO, "exit\n");

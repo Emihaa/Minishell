@@ -6,60 +6,11 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 22:12:32 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/20 23:15:11 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-
-//@TODO: heredocuments have to be opened before any forking happens
-
-/*
-
-ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
->
-bash: warning: here-document at line 1 delimited by end-of-file (wanted `DELIM')
-ltaalas@c1r3p1:~/projects/minishell/sources$
-ltaalas@c1r3p1:~/projects/minishell/sources$
-ltaalas@c1r3p1:~/projects/minishell/sources$
-ltaalas@c1r3p1:~/projects/minishell/sources$
-ltaalas@c1r3p1:~/projects/minishell/sources$
-ltaalas@c1r3p1:~/projects/minishell/sources$
-ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
->
-bash: warning: here-document at line 8 delimited by end-of-file (wanted `DELIM')
-ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
-0
-ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM | ls
->
-bash: warning: here-document at line 10 delimited by end-of-file (wanted `DELIM')
- a.out	   heredoc.c	      'heredoc copy 3.c'  'heredoc copy.c'   lexer.c	   old_lexer_testing_shit   test.txt
- heredoc  'heredoc copy 2.c'  'heredoc copy 4.c'   lexer	     minishell.c   test			    tree.c
-ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
-0
-ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM | >> >
-bash: syntax error near unexpected token `>'
->
-bash: warning: here-document at line 12 delimited by end-of-file (wanted `DELIM')
-ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
-2
-ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
-> asd
-> DELIM
-ltaalas@c1r3p1:~/projects/minishell/sources$ echo $?
-0
-ltaalas@c1r3p1:~/projects/minishell/sources$ << DELIM
-> asd
-> asd
-> asd
-> asd
->
-bash: warning: here-document at line 18 delimited by end-of-file (wanted `DELIM')
-ltaalas@c1r3p1:~/projects/minishell/sources$
-
-*/
-
 
 static
 int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
@@ -86,7 +37,7 @@ int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 }
 
 static
-int write_env_variable(char *str, const uint32_t start, int fd, t_minishell *m)
+int	write_env_variable(char *str, const uint32_t start, int fd, t_minishell *m)
 {
 	uint32_t		key_len;
 	char			*env_var;
@@ -108,7 +59,10 @@ int write_env_variable(char *str, const uint32_t start, int fd, t_minishell *m)
 }
 
 static
-void heredoc_with_expansion_write_loop(t_minishell *m, int write_fd, char *line)
+void	heredoc_with_expansion_write_loop(
+											t_minishell *m,
+											int write_fd,
+											char *line)
 {
 	const uint32_t	line_len = ft_strlen(line);
 	uint32_t		i;
@@ -132,9 +86,12 @@ void heredoc_with_expansion_write_loop(t_minishell *m, int write_fd, char *line)
 // will be replaced with our own env version
 // there will be no quote removal inside heredoc
 static
-int	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter)
+int	heredoc_with_expansion(
+							t_minishell *minishell,
+							int write_fd,
+							char *delimiter)
 {
-	const int	delimiter_len = ft_strlen(delimiter) + 1; // maybe problem
+	const int	delimiter_len = ft_strlen(delimiter) + 1;
 	char		*line;
 	int			read_rval;
 
@@ -156,7 +113,7 @@ int	heredoc_with_expansion(t_minishell *minishell, int write_fd, char *delimiter
 	return (read_rval);
 }
 
-int heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
+int	heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 {
 	int				fds[2];
 	char			*delimiter;
