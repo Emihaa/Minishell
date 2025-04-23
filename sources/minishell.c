@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/21 23:58:05 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:21:12 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,14 @@ void close_heredocs(t_minishell *m)
 	}
 }
 
+void wait_signal_handler(int signal)
+{
+	if (signal == SIGINT)
+	{
+		write(1, "\n", 1);
+	}
+}
+
 void	wait_for_sub_processes(t_minishell *minishell)
 {
 	uint32_t	i;
@@ -94,8 +102,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	i = 0;
 	// printf("command count: %o\n", minishell->command_count); // Debug stuff
 	// printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
-	signal(SIGINT, SIG_IGN);
-	printf("child process no signals\n");
+	signal(SIGINT, &wait_signal_handler);
+	// printf("child process no signals\n");
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -107,10 +115,9 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			// printf("exit_status before = %i\n", minishell->exit_status);
 			if (WIFSIGNALED(wstatus))
 			{
-				write(1, "\n", 1);
-				minishell->exit_status = WTERMSIG(wstatus) + 128;
+				minishell->exit_status = 128 + WTERMSIG(wstatus);
 				if (__WCOREDUMP(wstatus))
-					put_str(STDERR_FILENO, "Core Dumped\n"); // need to check this
+					put_str(STDERR_FILENO, "Quit (core dumped)\n"); // need to check this
 			}
 			else if (WIFEXITED(wstatus))
 				minishell->exit_status = WEXITSTATUS(wstatus);
@@ -254,7 +261,7 @@ void exec_mode(t_minishell *m)
 		m->command_count = 0;
 		m->heredoc_count = 0;
 		// char *line = get_next_line(STDIN_FILENO, buff);
-		m->line = readline("minishell> ");
+		m->line = readline(NULL);
 		if (m->line == NULL)
 			error_exit(m, m->exit_status);
 		// m->line = ft_strtrim(line, "\n");
@@ -322,12 +329,10 @@ void init_minishell(t_minishell *minishell, char **envp)
 	get_minishell(minishell);
 }
 
+// maybe this should just be setting the g_int = signal
 void signal_handler(int signal)
 {
-	if (signal == SIGINT) // this would be for the basic shell process ON_READ
-		g_int = SIGINT;
-	else
-		g_int = 0;
+	g_int = signal;
 }
 
 // SIGINT for cntrl+C
@@ -354,7 +359,6 @@ int main(int argc, char *argv[], char **envp)
 	t_minishell minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
-	signal(SIGTERM, SIG_IGN); 
 	
 
 	//<-- why?

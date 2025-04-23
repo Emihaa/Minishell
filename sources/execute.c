@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/21 19:39:43 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 18:32:27 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,15 +91,15 @@ void run_command(t_arena *arena, t_minishell *m, char **argv)
 		cmd_with_path = get_cmd_with_path(arena, m, path, argv[0]); // replace with proper command finding function
 	}
 	// debug stuff start
-	t_arena *temp = arena;
-	size_t total = 0;
-	for (int i = 0; temp != NULL; i++)
-	{
-		total += temp->capacity;
-		printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
-		printf("data of [%i]as chars: %.*s\n", i, (int)temp->capacity, temp->data);
-		temp = temp->next;
-	}
+	// t_arena *temp = arena;
+	// size_t total = 0;
+	// for (int i = 0; temp != NULL; i++)
+	// {
+	// 	total += temp->capacity;
+	// 	printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
+	// 	printf("data of [%i]as chars: %.*s\n", i, (int)temp->capacity, temp->data);
+	// 	temp = temp->next;
+	// }
 	// printf("total: <%lu>\n", total);
 	// debug stuff end
 	execve(cmd_with_path, argv, m->envp); // just have execve catch most error values
@@ -124,6 +124,8 @@ pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin 
 	{ // we are inside child, so ignore SIGINT in parent
 		apply_redirect(m);
 		close_pipe(m);
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		if (builtin != BUILTIN_FALSE)
 		{
 			(void)execute_builtin(m, argv, builtin);
