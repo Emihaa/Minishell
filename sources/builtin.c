@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/22 20:55:32 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 20:12:02 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,64 +43,11 @@ void	builtin_echo(char *argv[], int fd)
 		(void)put_char(fd, '\n');
 }
 
-static
-int	count_argc(char **argv)
-{
-	int	count;
-
-	if (argv == NULL)
-		return (0);
-	count = 0;
-	while (argv[count] != NULL)
-		count++;
-	return (count);
-}
-
-bool	ft_strtol(const char *nptr, int64_t *dest)
-{
-	int64_t	num;
-	int		sign;
-
-	num = 0;
-	while (ft_is_white_space(*nptr))
-		nptr++;
-	sign = 0 - (*nptr == '-') + (*nptr != '-');
-	if ((*nptr == '-' || *nptr == '+'))
-		nptr++;
-	if (*nptr < '0' || *nptr > '9')
-		return (0);
-	while (*nptr >= '0' && *nptr <= '9')
-	{
-		num = 10 * num + (*nptr++ - '0');
-		if (num < 0)
-			return (0);
-	}
-	*dest = (num * sign);
-	return (1);
-}
-
-int str_is_numeric(char *str)
-{
-	int64_t temp;
-	int i;
-
-	i = 0;
-	if (ft_strtol(str, &temp) == 0)
-		return (0);
-	if (*str == '-' || *str == '+')
-		i += 1;
-	while (ft_isdigit(str[i]))
-		i += 1;
-	return ((str[i] == '\0'));
-}
-
 // should it have int argc instead of count_argc function?
 // add it to the execute_builtin?
 // or is this function called elsewhere as well?
-void	builtin_exit(t_minishell *m, char **argv)
+void	builtin_exit(t_minishell *m, int argc, char **argv)
 {
-	const int	argc = count_argc(argv);
-
 	if (m->pipe_side == -1)
 		write_bytes(STDERR_FILENO, "exit\n", 5);
 	if (argv != NULL)
@@ -117,7 +64,8 @@ void	builtin_exit(t_minishell *m, char **argv)
 		}
 		else if (argc > 2)
 		{
-			write_bytes(STDERR_FILENO, "minishell: exit: too many arguments\n", 36);
+			write_bytes(STDERR_FILENO,
+				"minishell: exit: too many arguments\n", 36);
 			m->exit_status = 1;
 			return ;
 		}
@@ -130,7 +78,7 @@ void	builtin_exit(t_minishell *m, char **argv)
 //propably need file dupping (dup2)
 void	builtin_pwd(t_minishell *m, int fd)
 {
-	char current_path[PATH_MAX];
+	char	current_path[PATH_MAX];
 
 	if (getcwd(current_path, PATH_MAX) == NULL)
 	{
@@ -140,44 +88,6 @@ void	builtin_pwd(t_minishell *m, int fd)
 	}
 	(void)put_str_nl(fd, current_path);
 }
-
-
-
-// watch the youtube video that had something about path name shortening
-// it also had some stuff about arenas and macros for c. was about 13mins long
-// will need that path name shortening for this cd probably
-// void builtin_cd(char **argv, char **env)
-// {
-// 	int i;
-// 	const char *home = find_env_var("HOME", 4, i, env);
-// 	char *curpath;
-// 	char *directory;
-// 	i = 0;
-// 	while (argv[i] != NULL)
-// 		i++;
-// 	if (i > 1)
-// 	{
-// 		ft_putendl_fd("minishell: cd: too many arguments", 2);
-// 		return (1);
-// 	}
-// 	directory = argv[0];
-// 	if (argv[0] == NULL)
-// 	{
-// 		if (home == NULL)
-// 		{
-// 			ft_putendl_fd("minishell: cd: HOME not set", 2);
-// 			return(1);
-// 		}
-// 		directory = home;
-// 	}
-// 	if (directory[0] == '/') // step 3
-// 	{
-// 		curpath = directory;
-
-// 	}
-// 	(directory[0] == '.')
-// 	chdir()
-// }
 
 t_builtin	check_for_builtin(char *command)
 {
@@ -202,7 +112,7 @@ int	execute_builtin(t_minishell *m, char **argv, t_builtin command)
 {
 	m->exit_status = EXIT_SUCCESS;
 	if (command == BUILTIN_EXIT)
-		builtin_exit(m, argv);
+		builtin_exit(m, count_argc(argv), argv);
 	if (command == BUILTIN_ECHO)
 		builtin_echo(argv, m->redir_fds[WRITE]);
 	if (command == BUILTIN_CD)

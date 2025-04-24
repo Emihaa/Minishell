@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 18:32:27 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 20:17:31 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ void	delete_temp_string(t_string *str)
 	str->capacity = 0;
 }
 
-char *get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
+// @TODO: check comment
+char	*get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 {
 	const uint32_t	cmd_str_len = ft_strlen(cmd);
 	uint32_t		i;
@@ -78,11 +79,10 @@ char *get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 // 	return (NULL);
 // }
 
-
-void run_command(t_arena *arena, t_minishell *m, char **argv)
+void	run_command(t_arena *arena, t_minishell *m, char **argv)
 {
-	char *path;
-	char *cmd_with_path;
+	char	*path;
+	char	*cmd_with_path;
 
 	cmd_with_path = argv[0];
 	if (ft_strchr(cmd_with_path, '/') == NULL)
@@ -139,8 +139,8 @@ pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin 
 
 int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status)
 {
-	pid_t pid;
-	t_builtin builtin_type;
+	pid_t		pid;
+	t_builtin	builtin_type;
 
 	if (argv == NULL || argv[0] == NULL)
 		return (1);

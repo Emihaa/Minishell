@@ -3,27 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/22 21:00:37 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 22:05:46 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h" 
 
 /* Examples of AST tree:
-cat > a > b > c                 |   cat > a > b > c | > outfile
-								|
-								|                  pipe
-		  > a                   |                /      \
-		  /                     |             > a     > outfile
-	   > b                      |             /
-	   /                        |         > b
-	> c                         |         /
-	/                           |      > c
-  cat                           |      /
-								|    cat
+			cat > a > b > c 
+										
+					> a 
+					/ 
+				> b 
+				/ 
+			> c  
+			/ 
+		cat 
+								
+	cat > a > b > c | > outfile
+
+                 pipe
+                /      \
+             > a     > outfile
+             /
+         > b
+         /			 
+      > c
+      /
+    cat
 
 ls > a > b > c | cat | > outfile wc -l | echo smth > 2
 
@@ -55,7 +65,7 @@ t_node	*insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 		return (insert_bottom(node, token, arena));
 	}
 	else if (token->type == PIPE)
-		return (insert_top(node, token, arena)); 
+		return (insert_top(node, token, arena));
 	else
 	{
 		if (node->token.type == PIPE)
@@ -64,12 +74,12 @@ t_node	*insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 			return (insert_middle(node->root, node, token, arena));
 		else
 			return (insert_below(node, node, token, arena));
-	}   
+	}
 	return (node);
 }
 
-// Function to print the tree
-// static void print_tree(t_node *node, int depth)
+// // Function to print the tree
+// static void	print_tree(t_node *node, int depth)
 // {
 // 	int i = 0; 
 // 	if (!node)
@@ -95,39 +105,33 @@ t_node	*insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 // }
 
 // add before return line:
-// print_tree(tree, 1);
+// print_tree(find_head_root(tree), 1);
 // if you want the tree to be printed
-// <-- @TODO pipe as a last argument should be syntax error maybe fixed?
-// @TODO function has too many lines now
 t_node	*parser(t_arena *arena, t_minishell *m, char *line)
 {
-	t_node *tree;
-	t_lexer lexer;
-	t_token token;
-	t_type prev_type;
+	t_parser	p;
 
-	tree = NULL;
-	prev_type = ERROR;
-	lexer = (t_lexer){.line = line, .line_index = 0};
+	p.tree = NULL;
+	p.prev = ERROR;
+	p.lexer = (t_lexer){.line = line, .line_index = 0};
 	while (1)
 	{
-		token = get_next_token(&lexer);
-		if (token.type == END_OF_LINE && prev_type == PIPE)
-			return (syntax_error(m, &token, &lexer));
-		if (token.type == END_OF_LINE)
+		p.token = get_next_token(&p.lexer);
+		if (p.token.type == END_OF_LINE && p.prev == PIPE)
+			return (syntax_error(m, &p.token, &p.lexer));
+		if (p.token.type == END_OF_LINE)
 			break ;
-		if (heredoc_limit(&token, &m->heredoc_count))
+		if (heredoc_limit(&p.token, &m->heredoc_count))
 			return (NULL);
-		if ((token.string_len == 0) || (token.type == PIPE && \
-			prev_type == ERROR) || (token.type == PIPE && prev_type == PIPE))
-			return (syntax_error(m, &token, &lexer));
-		tree = insert_node(tree, NULL, &token, arena);
-		prev_type = token.type;
+		if ((p.token.string_len == 0) || (p.token.type == PIPE
+				&& p.prev == ERROR) || (p.token.type == PIPE && p.prev == PIPE))
+			return (syntax_error(m, &p.token, &p.lexer));
+		p.tree = insert_node(p.tree, NULL, &p.token, arena);
+		p.prev = p.token.type;
 	}
-	tree = find_head_root(tree);
-	//print_tree(tree, 1);
-	m->heredoc_count = 0;
-	if (expand(arena, m, tree)) // shiiit we need to return to the main readloop if heredoc is stopped by sigint. seems like we also need to make a sub process to get the exit value of 128 + signal
+	p.tree = find_head_root(p.tree);
+	m->heredoc_count = 0; // @TODO: the readloop exit by sigint is already done?
+	if (expand(arena, m, p.tree)) // shiiit we need to return to the main readloop if heredoc is stopped by sigint. seems like we also need to make a sub process to get the exit value of 128 + signal
 		return (NULL);
-	return (tree);
+	return (p.tree);
 }

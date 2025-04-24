@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/21 23:42:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:32:21 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ t_node	*insert_middle(t_node *root, t_node *node,
 	t_node	*new_node;
 
 	if (node->root != NULL && node->root->token.type == WORD)
-	{	
+	{
 		root = find_word_root(node)->root;
 		node = find_word_root(node);
 	}

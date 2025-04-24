@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 16:43:07 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/19 18:51:30 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:22:48 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ int	export_add(t_minishell *m, char *s)
 {
 	int	pos;
 
-	// pos = check_match(m, s);
 	pos = get_env_key_index(s, get_env_key_len(s, ft_strlen(s)), m->envp);
 	if (pos != -1)
 	{

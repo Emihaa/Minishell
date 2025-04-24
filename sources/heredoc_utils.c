@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/20 23:18:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/23 19:39:39 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,10 @@
 uint32_t	set_quote_removed_string(char *dest, t_token *data)
 {
 	char		quote;
-	uint32_t	data_index; 
+	uint32_t	data_index;
 	uint32_t	dest_index;
 	// feel like this or these should be renamde
-
-	data_index = 0; 
+	data_index = 0;
 	dest_index = 0;
 	while (data_index < data->string_len)
 	{
@@ -88,7 +87,7 @@ int	create_heredoc_fds(int fds[2])
 		if (errno == EEXIST)
 			continue ;
 		return (-1); // @TODO: more error stuff
-	}	
+	}
 	fds[0] = open(file_name, O_CLOEXEC | O_RDONLY);
 	if (fds[0] == -1)
 		return_val = -1;

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 22:30:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 23:09:03 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #define _GNU_SOURCE
 
 #define ANTIKRISTA 666
-
 
 // maybe change these to makefile link?
 // @NOTE: would cause problems for vscode higlighting and autocomplete
@@ -190,6 +189,15 @@ typedef struct s_arg
 	bool	exist;
 } t_arg;
 
+//for tree parser
+typedef struct s_parser
+{
+	t_node *tree;
+	t_lexer lexer;
+	t_token token;
+	t_type prev;
+} t_parser;
+
 # define ARGV_DEFAULT_SIZE 32
 void	init_argv(t_arena *arena, t_arg_vec *argv, size_t cap);
 void	init_arg(t_token *data, t_arg *arg_vars);
@@ -328,10 +336,14 @@ typedef enum e_builtin
 t_builtin check_for_builtin(char *command);
 int	execute_builtin(t_minishell *m, char **argv, t_builtin command);
 
-void builtin_exit(t_minishell *m, char **argv);
+void	builtin_exit(t_minishell *m, int argc, char **argv);
 void builtin_echo(char *argv[], int fd);
 void builtin_pwd(t_minishell *m, int fd);
 
+//builtin_utils stuff
+bool	ft_strtol(const char *nptr, int64_t *dest);
+int str_is_numeric(char *str);
+int	count_argc(char **argv);
 
 // execute stuff
 pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin builtin);

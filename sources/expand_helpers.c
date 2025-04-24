@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 19:39:50 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 20:18:26 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	init_argv(t_arena *arena, t_arg_vec *argv, size_t cap)
 	argv->size = 0;
 }
 
-int realloc_argv(t_arena *arena, t_arg_vec *argv)
+int	realloc_argv(t_arena *arena, t_arg_vec *argv)
 {
 	argv->capacity *= 2;
 	argv->data = arena_realloc(arena, argv->data,
@@ -47,5 +47,5 @@ int realloc_argv(t_arena *arena, t_arg_vec *argv)
 // if char is quote or '$'
 int	is_quote_or_var(char c)
 {
-	return(is_quote(c) || c == '$');
+	return (is_quote(c) || c == '$');
 }

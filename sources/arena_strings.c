@@ -6,13 +6,14 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/19 22:01:58 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:48:11 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-t_arena *find_free_arena(t_arena *a, size_t size)
+// @TODO: check comment
+t_arena	*find_free_arena(t_arena *a, size_t size)
 {
 	size_t	capacity;
 
@@ -54,7 +55,7 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 {
 	if (str->capacity < str->size + src_len)
 	{
-		if (string_find_new_memory(a, str, str->size + src_len	))
+		if (string_find_new_memory(a, str, str->size + src_len))
 			return (-1);
 	}
 	ft_memmove(&str->base[str->size], src, src_len);
@@ -63,7 +64,7 @@ int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len)
 }
 
 // terminate and reserve
-int terminate_and_commit_string(t_arena *a, t_string *str)
+int	terminate_and_commit_string(t_arena *a, t_string *str)
 {
 	if (str->capacity < str->size + 1)
 	{

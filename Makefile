@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/24 22:11:30 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/04/24 23:08:59 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,7 +46,7 @@ SOURCES =	minishell.c		utils.c		hooks.c											\
 			redirect.c		redirect_utils.c											\
 			execute.c		execute_utils.c												\
 			error.c			write_functions.c											\
-			builtin.c																	\
+			builtin.c		builtin_utils.c												\
 			export.c		export_utils.c		export_print_utils.c					\
 			unset.c			env.c				env_helpers.c		cd.c				\
 			arena_utils.c	arena_strings.c												\

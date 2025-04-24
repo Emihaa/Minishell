@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lt_arena_realloc.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 22:32:36 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 22:33:19 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 17:52:13 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ void	*arena_memmove(void *dest, const void *src, size_t n)
 	return (dest);
 }
 
-void	*arena_realloc(t_arena *arena, void *old, uint64_t old_siz, uint64_t new_siz)
+void	*arena_realloc(t_arena *arena, void *old,
+			uint64_t old_siz, uint64_t new_siz)
 {
 	void	*new;
 

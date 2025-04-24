@@ -6,15 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:24:03 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/21 21:36:35 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/23 19:45:10 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// seems to be unused currently
-
-
+// @TODO: seems to be unused currently
 // exit in an error situation
 // setting exit_status is optional, if set to 0 m->exit_status will stay as is
 // otherwise it is set to exit_status

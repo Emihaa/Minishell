@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 22:55:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 23:10:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@
 
 volatile sig_atomic_t g_int = 0;
 
-char *get_token_name(t_token *token)
-{// debug stuff
+// debug stuff
+char	*get_token_name(t_token *token)
+{
 	if (token->type == PIPE)
 		return("|");
 	if (token->type == REDIRECT_IN)
@@ -41,7 +42,7 @@ char *get_token_name(t_token *token)
 }
 
 //debug stuff
-void print_token(t_token *token)
+void	print_token(t_token *token)
 {
 	// debug stuff
 	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
@@ -69,9 +70,9 @@ int	create_and_store_pipe(t_minishell *m, int8_t *side)
 	return (0);
 }
 
-void close_heredocs(t_minishell *m)
+void	close_heredocs(t_minishell *m)
 {
-	uint32_t i;
+	uint32_t	i;
 
 	i = 0;
 	while(i < m->heredoc_count)
@@ -85,7 +86,7 @@ void close_heredocs(t_minishell *m)
 	}
 }
 
-void wait_signal_handler(int signal)
+void	wait_signal_handler(int signal)
 {
 	if (signal == SIGINT)
 	{
@@ -132,9 +133,9 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	signal(SIGINT, signal_handler);
 }
 
-int store_heredoc(t_minishell *m, int fd)
+int	store_heredoc(t_minishell *m, int fd)
 {
-	uint32_t i;
+	uint32_t	i;
 
 	i = 0;
 	store_read_fd(fd, m);
@@ -150,9 +151,9 @@ int store_heredoc(t_minishell *m, int fd)
 	return (0);
 }
 
-int do_redir(t_minishell *m, t_token *data)
+int	do_redir(t_minishell *m, t_token *data)
 {
-	int status;
+	int	status;
 
 	status = 0;
 	if(data->type > 0) // maybe temp stuff
@@ -168,10 +169,10 @@ int do_redir(t_minishell *m, t_token *data)
 	return (status);
 }
 
-int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
+int	minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 {
-	t_node *current_head;
-	int status;
+	t_node	*current_head;
+	int		status;
 
 	m->pipe_side = -1;
 	status = 0;
@@ -197,7 +198,7 @@ int minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 }
 
 // @TODO cntrl+C on CAT gives two new newlines
-int read_loop_event_hook(void)
+int	read_loop_event_hook(void)
 {
 	if (g_int == SIGINT)
 	{
@@ -212,10 +213,10 @@ int read_loop_event_hook(void)
 	return (0);
 }
 
-void read_loop(t_minishell *m)
+void	read_loop(t_minishell *m)
 {
-	t_node *tree;
-	uint32_t i;
+	t_node		*tree;
+	uint32_t	i;
 
 	while (1)
 	{
@@ -249,7 +250,7 @@ void read_loop(t_minishell *m)
 	}
 }
 
-void exec_mode(t_minishell *m)
+void	exec_mode(t_minishell *m)
 {
 	t_arena *file_buf = xarena_new(4096 + 1);
 	t_node *tree;
@@ -278,7 +279,7 @@ void exec_mode(t_minishell *m)
 	}
 }
 
-void minishell_cleanup(t_minishell *minishell)
+void	minishell_cleanup(t_minishell *minishell)
 {
 	arena_delete(minishell->node_arena);
 	close_heredocs(minishell);
@@ -291,7 +292,7 @@ void minishell_cleanup(t_minishell *minishell)
 // set default values for the minishell struct
 // the struct is going to work as a kind of storage for globally needef alues
 // we might want to pre allocate the arenas that will be used here to make cleanup easier
-void init_minishell(t_minishell *minishell, char **envp)
+void	init_minishell(t_minishell *minishell, char **envp)
 {
 	static int heredoc_fds_arr[16] = {0};
 
@@ -326,7 +327,7 @@ void init_minishell(t_minishell *minishell, char **envp)
 }
 
 // maybe this should just be setting the g_int = signal
-void signal_handler(int signal)
+void	signal_handler(int signal)
 {
 	g_int = signal;
 }
@@ -350,9 +351,9 @@ void signal_handler(int signal)
 // @TODO: if we are on child process then we dont want the parent to get any signals
 // so we need to have the signal(SIGINT, SIG_ING); on parent if we are on child process
 // remember also to return the signal handling
-int main(int argc, char *argv[], char **envp)
+int	main(int argc, char *argv[], char **envp)
 {
-	t_minishell minishell;
+	t_minishell	minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	
