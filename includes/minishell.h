@@ -6,11 +6,9 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 23:09:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 23:19:44 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-//@TODO: heredocuments have to be opened before any forking happens
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -73,35 +71,15 @@ typedef struct s_minishell
 	int			*heredoc_fds;
 	int			redir_fds[2];
 	int			pipe[2];
+	pid_t		last_pid;
 	int8_t		pipe_side;
-	pid_t			*pids;  // maybe needed
-	pid_t			last_pid;
 	int			exit_status;
 	char		*line;
-	t_arena		*node_arena;
+	t_arena		*global_arena;
 	char		**envp;
 	int			envp_size;
 	int			env_capacity;
 }	t_minishell;
-
-
-// LUKA: maybe use this? idunno probably  not
-//
-typedef union u_data
-{
-	char	*string;
-	char	**command_argv;
-}	t_data;
-
-// LUKA: length based string
-// I expect this will make creating tokens a bit easier
-// and remove the need to allocate anything inside the lexer
-// UNUSED 04.03.25 added to token struct
-typedef struct s_token_string
-{
-	uint64_t	length;		// total size of the string
-	char	*pointer;	// where the string starts
-}	t_token_string;
 
 // struct for token information
 // can be extender if necessary

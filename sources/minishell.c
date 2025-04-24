@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 23:10:51 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 23:18:19 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,21 +232,21 @@ void	read_loop(t_minishell *m)
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
 			continue ;
-		tree = parser(m->node_arena, m, &m->line[i]);
+		tree = parser(m->global_arena, m, &m->line[i]);
 		if (tree != NULL)
-			minishell_exec_loop(m->node_arena, m, tree);
+			minishell_exec_loop(m->global_arena, m, tree);
 		wait_for_sub_processes(m);
 		free(m->line);
 		m->line = NULL;
-		// t_arena *temp = m->node_arena;
+		// t_arena *temp = m->global_arena;
 		// for (int i = 0; temp != NULL; i++)
 		// {
 		// 	printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
 		// 	printf("data of [%i]as chars: %.*s\n", i, (int)temp->size, temp->data);
 		// 	temp = temp->next;
 		// }
-		arena_trim(m->node_arena);
-		arena_reset(m->node_arena);
+		arena_trim(m->global_arena);
+		arena_reset(m->global_arena);
 	}
 }
 
@@ -268,20 +268,20 @@ void	exec_mode(t_minishell *m)
 			error_exit(m, m->exit_status);
 		}
 		m->line_counter += 1;
-		tree = parser(m->node_arena, m, &m->line[i]);
+		tree = parser(m->global_arena, m, &m->line[i]);
 		if (tree != NULL)
-			minishell_exec_loop(m->node_arena, m, tree);
+			minishell_exec_loop(m->global_arena, m, tree);
 		wait_for_sub_processes(m);
 		free(m->line);
 		m->line = NULL;
-		arena_trim(m->node_arena);
-		arena_reset(m->node_arena);
+		arena_trim(m->global_arena);
+		arena_reset(m->global_arena);
 	}
 }
 
 void	minishell_cleanup(t_minishell *minishell)
 {
-	arena_delete(minishell->node_arena);
+	arena_delete(minishell->global_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
 	while (minishell->envp_size >= 0)
@@ -297,12 +297,7 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	static int heredoc_fds_arr[16] = {0};
 
 	minishell->istty = isatty(STDIN_FILENO);
-	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
-	if (minishell->node_arena == NULL)
-	{
-		put_str(STDERR_FILENO, "allocation failure\n");
-		error_exit(minishell, 1); // @TODO: error checking
-	}
+	minishell->global_arena = xarena_new(DEFAULT_ARENA_CAPACITY);
 	minishell->line = NULL;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
@@ -322,7 +317,6 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	minishell->pipe[READ] = -1;
 	minishell->pipe[WRITE] = -1;
 	minishell->last_pid = 0;
-	minishell->pids = NULL;
 	get_minishell(minishell);
 }
 
