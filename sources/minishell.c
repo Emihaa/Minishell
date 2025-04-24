@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:25:56 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/24 20:48:16 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,17 +255,17 @@ void	exec_mode(t_minishell *m)
 	t_node		*tree;
 	uint32_t	i;
 
-	// char *buff = ft_calloc(72000, 1);
+	char *buff = ft_calloc(72000, 1);
 	while (1)
 	{
 		i = 0;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		// char *line = get_next_line(STDIN_FILENO, buff);
-		m->line = readline(NULL);
+		char *line = get_next_line(STDIN_FILENO, buff);
+		//m->line = readline(NULL);
 		if (m->line == NULL)
 			error_exit(m, m->exit_status);
-		// m->line = ft_strtrim(line, "\n");
+		m->line = ft_strtrim(line, "\n");
 		m->line_counter += 1;
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')

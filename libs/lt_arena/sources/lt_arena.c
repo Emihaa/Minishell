@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lt_arena.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 16:43:43 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 22:32:27 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 17:51:49 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	arena_unalloc(t_arena *a, uint64_t size)
 	return (0);
 }
 
-void arena_reset(t_arena *a)
+void	arena_reset(t_arena *a)
 {
 	while (a != NULL)
 	{

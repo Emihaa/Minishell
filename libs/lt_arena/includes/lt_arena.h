@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lt_arena.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 21:59:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 23:10:56 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 17:49:35 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,36 +29,35 @@ typedef struct s_arena
 
 typedef struct s_arena_temp
 {
-	t_arena *arena;
+	t_arena		*arena;
 	uint64_t	pos;
 }	t_arena_temp;
 
-t_arena*	arena_new(uint64_t cap);
-void		arena_delete(t_arena *a);
-void		arena_trim(t_arena *arena);
+t_arena			*arena_new(uint64_t cap);
+void			arena_delete(t_arena *a);
+void			arena_trim(t_arena *arena);
 
+void			*arena_alloc(t_arena *a, uint64_t size);
+void			*arena_alloc_no_zero(t_arena *a, uint64_t size);
+int				arena_unalloc(t_arena *a, uint64_t size);
+void			*arena_realloc(t_arena *arena, void *old,
+					uint64_t old_siz, uint64_t new_siz);
 
-void		*arena_alloc(t_arena *a, uint64_t size);
-void		*arena_alloc_no_zero(t_arena *a, uint64_t size);
-int			arena_unalloc(t_arena *a, uint64_t size);
-void		*arena_realloc(t_arena *arena, void *old, uint64_t old_siz, uint64_t new_siz);
+void			*arena_memmove(void *dest, const void *src, size_t n);
+void			*arena_realloc(t_arena *arena, void *old,
+					uint64_t old_siz, uint64_t new_siz);
 
-void		*arena_memmove(void *dest, const void *src, size_t n);
-void		*arena_realloc(t_arena *arena, void *old, uint64_t old_siz, uint64_t new_siz);
-
-
-void		arena_reset(t_arena *a);
+void			arena_reset(t_arena *a);
 
 t_arena_temp	arena_temp_begin(t_arena *a);
 void			arena_temp_end(t_arena_temp *a);
 
-
-typedef struct
+typedef struct s_string
 {
 	t_arena		*memory;
 	char		*base;
 	size_t		size;
 	size_t		capacity;
-} t_string;
+}	t_string;
 
 #endif
