@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 23:19:44 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 23:26:57 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct s_minishell
 	int			exit_status;
 	char		*line;
 	t_arena		*global_arena;
+	t_arena		*file_buf;
 	char		**envp;
 	int			envp_size;
 	int			env_capacity;

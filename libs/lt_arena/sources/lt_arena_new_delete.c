@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lt_arena_new_delete.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 23:54:14 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 17:53:23 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/24 23:41:51 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	arena_delete(t_arena *arena)
 	t_arena	*a0;
 	t_arena	*a1;
 
+	if (arena == NULL)
+		return ;
 	a0 = arena->next;
 	while (a0 != NULL)
 	{
@@ -47,6 +49,8 @@ void	arena_trim(t_arena *arena)
 	t_arena	*a0;
 	t_arena	*a1;
 
+	if (arena == NULL)
+		return ;
 	a0 = arena->next;
 	while (a0 != NULL)
 	{
