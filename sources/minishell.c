@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 20:48:16 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/24 21:32:11 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -361,7 +361,7 @@ int	main(int argc, char *argv[], char **envp)
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
 	
-
+	rl_erase_empty_line = 1;
 	//<-- why?
 	// we might need to do some terminal status thing
 	// interactive and non interactive shell mode

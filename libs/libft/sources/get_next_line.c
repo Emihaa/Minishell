@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 14:55:36 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 17:42:11 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/24 21:31:03 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,8 +82,9 @@ static ssize_t	check_buffer(int fd, char *buffer)
 	return (bytes_read);
 }
 
-char	*get_next_line(int fd, char *buffer)
+char	*get_next_line(int fd)
 {
+	static char	buffer[BUFFER_SIZE + 1];
 	char		*return_line;
 	ssize_t		bytes_read;
 
