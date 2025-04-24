@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/22 20:55:22 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 22:30:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,7 +305,7 @@ t_minishell *get_minishell(t_minishell *m);
 void *xarena_alloc(t_arena *arena, uint64_t size);
 void *xarena_alloc_no_zero(t_arena *arena, uint64_t size);
 t_arena *xarena_new(uint64_t cap);
-
+void *xarena_realloc(t_arena *arena, void *old, uint64_t old_size, uint64_t new_size);
 // ARENA strings
 
 int	append_to_string(t_arena *a, t_string *str, char *src, size_t src_len);
@@ -353,5 +353,9 @@ int	put_str(int fd, char *str);
 int	put_str_nl(int fd, char *str);
 int	put_char(int fd, char c);
 
+
+//get_line
+
+char	*get_line(t_arena *arena, int fd);
 
 #endif

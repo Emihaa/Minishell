@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 17:43:04 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/18 21:04:23 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/24 22:30:10 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,19 @@ void *xarena_alloc(t_arena *arena, uint64_t size)
 	void *result;
 
 	result = arena_alloc(arena, size);
+	if (result == NULL)
+	{
+		(void)put_str(2, "minishell: Allocation failure\n");
+		error_exit(get_minishell(NULL), 1);
+	}
+	return (result);
+}
+
+void *xarena_realloc(t_arena *arena, void *old, uint64_t old_size, uint64_t new_size)
+{
+	void *result;
+
+	result = arena_realloc(arena, old, old_size, new_size);
 	if (result == NULL)
 	{
 		(void)put_str(2, "minishell: Allocation failure\n");
