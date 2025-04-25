@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 20:32:16 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 00:36:03 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 /// @brief global integer for signal handling accross heredoc and main
 extern volatile sig_atomic_t	g_int;
 
-/// @brief All token token types. 
+/// @brief All token token types.
 /// All tokens are negative expect heredoc to catch heredoc
 /// @param PIPE				=	-'|'
 /// @param REDIRECT_IN		=	-'<'
@@ -46,7 +46,7 @@ extern volatile sig_atomic_t	g_int;
 /// @param HERE_DOCUMENT	= 	256		<- <<
 /// @param REDIRECT_APPEND	=	-257	<- >>
 /// @param WORD				=	-260	<- generic word, can be cmd or arg
-/// @param END_OF_LINE		=	0		<- 
+/// @param END_OF_LINE		=	0		<-
 /// @param ERROR			=	-404	<- used in parser syntax handling
 typedef enum e_type
 {
@@ -61,8 +61,7 @@ typedef enum e_type
 	ERROR			=	-404,
 }	t_type;
 
-/// @TODO: restucture to reduce memory footprint
-/// @brief Globally used parameters 
+/// @brief Globally used parameters
 typedef struct s_minishell
 {
 	int			istty;
@@ -111,7 +110,7 @@ void		*xarena_realloc(t_arena *arena, void *old,
 
 // error.c
 void		error_exit(t_minishell *m, int exit_status);
-void	syscall_failure(t_minishell *m, char *file, int line);
+void		syscall_failure(t_minishell *m, char *file, int line);
 
 // execute_utils.c
 void		close_pipe(t_minishell *m);

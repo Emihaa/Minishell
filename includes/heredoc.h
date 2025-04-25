@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 01:14:56 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 17:38:44 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/26 00:37:38 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 # include "minishell.h"
 # include "parser.h"
 
-# define HEREDOC_TEMP_NAME "./heredoc_temp"
-# define NAME_BASE_LEN sizeof(HEREDOC_TEMP_NAME) - 1
+# define HEREDOC_TEMP_NAME "/tmp/heredoc_temp"
+# define NAME_BASE_LEN 17 // sizeof(HEREDOC_TEMP_NAME) - 1
 # define EOF_ERROR "minishell: warning: here-document at line %i \
 delimited by end-of-file (wanted `%s')\n"
 
