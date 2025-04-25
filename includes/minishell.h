@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 18:21:49 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:27:53 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ int			redirect_ambi(char *file_name);
 int			redirect_out(char *file_name, t_minishell *m);
 int			redirect_append(char *file_name, t_minishell *m);
 int			redirect_in(char *file_name, t_minishell *m);
-int		redirect_heredoc(t_token *data, t_minishell *m); @TODO
+// int			redirect_heredoc(t_token *data, t_minishell *m);
 // is this used anywhere??
 
 // utils.c
