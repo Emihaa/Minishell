@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 01:53:01 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 03:40:21 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ int	redirect_in(char *file_name, t_minishell *m)
 	return (0);
 }
 
+// @TODO: this isnt used anywhere and the file has too
+// many functions. Should we delete this?
 int	redirect_heredoc(t_token *data, t_minishell *m)
 {
 	const int	fd = data->type;

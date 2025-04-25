@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 02:09:09 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 04:12:23 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,8 @@ t_node	*parser(t_arena *arena, t_minishell *m, char *line)
 		p.prev = p.token.type;
 	}
 	p.tree = find_head_root(p.tree);
-	m->heredoc_count = 0; // @TODO: the readloop exit by sigint is already done?
-	if (expand(arena, m, p.tree)) // shiiit we need to return to the main readloop if heredoc is stopped by sigint. seems like we also need to make a sub process to get the exit value of 128 + signal
+	m->heredoc_count = 0;
+	if (expand(arena, m, p.tree))
 		return (NULL);
 	return (p.tree);
 }

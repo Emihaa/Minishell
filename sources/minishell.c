@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 03:29:15 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 04:19:02 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,36 +22,14 @@
 #include "../includes/parser.h"
 #include "../includes/heredoc.h"
 
-volatile sig_atomic_t g_int = 0;
-
-/// @todo error checking
-int	create_and_store_pipe(t_minishell *m, int8_t *side)
-{
-	if (*side == WRITE || *side == -1)
-	{
-		if (pipe(m->pipe) == -1)
-			syscall_failure(m);
-		store_write_fd(m->pipe[WRITE], m);
-		m->pipe[WRITE] = -1;
-		*side = READ;
-		return (0);
-	}
-	else if (*side == READ)
-	{
-		store_read_fd(m->pipe[READ], m);
-		m->pipe[READ] = -1;
-		*side = WRITE;
-		return (0);
-	}
-	return (0);
-}
+volatile sig_atomic_t	g_int = 0;
 
 void	close_heredocs(t_minishell *m)
 {
 	uint32_t	i;
 
 	i = 0;
-	while(i < m->heredoc_count)
+	while (i < m->heredoc_count)
 	{
 		if (m->heredoc_fds[i] != -1)
 		{
@@ -59,14 +37,6 @@ void	close_heredocs(t_minishell *m)
 				syscall_failure(m);
 		}
 		i++;
-	}
-}
-
-void	wait_signal_handler(int signal)
-{
-	if (signal == SIGINT)
-	{
-		write(1, "\n", 1);
 	}
 }
 
@@ -101,85 +71,6 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	signal(SIGINT, signal_handler);
 }
 
-int	store_heredoc(t_minishell *m, int fd)
-{
-	uint32_t	i;
-
-	i = 0;
-	store_read_fd(fd, m);
-	while (i < m->heredoc_count)
-	{
-		if (m->heredoc_fds[i] == fd)
-		{
-			m->heredoc_fds[i] = -1;
-			break ;
-		}
-		i++;
-	}
-	return (0);
-}
-
-int	do_redir(t_minishell *m, t_token *data)
-{
-	int	status;
-
-	status = 0;
-	if(data->type > 0) // maybe temp stuff
-		status = store_heredoc(m, data->type); // delimiter will still have quotes removed
-	else if (data->type == REDIRECT_OUT)
-		status = redirect_out(data->string, m);
-	else if (data->type == REDIRECT_IN)
-		status = redirect_in(data->string, m);
-	else if (data->type == REDIRECT_APPEND)
-		status = redirect_append(data->string, m);
-	else if (data->type == REDIRECT_AMBI)
-		status = redirect_ambi(data->string);
-	return (status);
-}
-
-int	minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
-{
-	t_node	*current_head;
-	int		status;
-
-	m->pipe_side = -1;
-	status = 0;
-	while (tree)
-	{
-		current_head = tree;
-		if (m->pipe_side == READ)
-			status = create_and_store_pipe(m, &m->pipe_side);
-		if (tree->token.type == PIPE)
-			status = create_and_store_pipe(m, &m->pipe_side);
-		while (tree)
-		{
-			status = do_redir(m, &tree->token);
-			if (tree->token.type == WORD || status != 0)
-				if (execute_command(arena, m, tree->token.argv, status))
-					break ;
-			tree = tree->left;
-		}
-		reset_redirect(m);
-		tree = current_head->right;
-	}
-	return (0);
-}
-
-int	read_loop_event_hook(void)
-{
-	if (g_int == SIGINT)
-	{
-		get_minishell(NULL)->exit_status = 128 + SIGINT;
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-		g_int = 0;
-		return (1);
-	}
-	return (0);
-}
-
 void	read_loop(t_minishell *m)
 {
 	t_node		*tree;
@@ -194,7 +85,7 @@ void	read_loop(t_minishell *m)
 		m->line = readline("minishell> ");
 		if (m->line == NULL)
 			break ;
-		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
+		add_history(m->line);
 		m->line_counter += 1;
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
@@ -236,60 +127,12 @@ void	exec_mode(t_minishell *m)
 	}
 }
 
-void	minishell_cleanup(t_minishell *minishell)
-{
-	arena_delete(minishell->global_arena);
-	arena_delete(minishell->file_buf);
-	close_heredocs(minishell);
-	free(minishell->line);
-	while (minishell->envp_size-- > 0)
-		free(minishell->envp[minishell->envp_size]);
-	free(minishell->envp);
-}
-
-// set default values for the minishell struct
-// the struct is going to work as a kind of storage for globally needef alues
-// we might want to pre allocate the arenas that will be used here to make cleanup easier
-void	init_minishell(t_minishell *minishell, char **envp)
-{
-	static int heredoc_fds_arr[16] = {0};
-
-	minishell->istty = isatty(STDIN_FILENO);
-	minishell->global_arena = xarena_new(DEFAULT_ARENA_CAPACITY);
-	minishell->file_buf = NULL;
-	minishell->line = NULL;
-	minishell->command_count = 0;
-	minishell->line_counter = 0;
-	minishell->exit_status = 0;
-	minishell->heredoc_fds = heredoc_fds_arr;
-	minishell->heredoc_count = 0;
-	minishell->envp_size = 0;
-	minishell->env_capacity = 64;
-	minishell->envp = create_env(minishell, envp); // <---------- @TODO Emilia
-	if (!minishell->envp)
-	{
-		put_str(STDERR_FILENO, "allocation failure\n");
-		error_exit(minishell, 1); // @TODO: error checking
-	}
-	minishell->redir_fds[READ] = STDIN_FILENO;
-	minishell->redir_fds[WRITE] = STDOUT_FILENO;
-	minishell->pipe[READ] = -1;
-	minishell->pipe[WRITE] = -1;
-	minishell->last_pid = 0;
-	get_minishell(minishell);
-}
-
-void	signal_handler(int signal)
-{
-	g_int = signal;
-}
-
 int	main(int argc, char *argv[], char **envp)
 {
 	t_minishell	minishell;
+
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
-	
 	rl_erase_empty_line = 1;
 	// we might need to do some terminal status thing
 	// interactive and non interactive shell mode
@@ -302,5 +145,5 @@ int	main(int argc, char *argv[], char **envp)
 		exec_mode(&minishell);
 	minishell_cleanup(&minishell);
 	put_str(STDERR_FILENO, "exit\n");
-    return (minishell.exit_status);
+	return (minishell.exit_status);
 }

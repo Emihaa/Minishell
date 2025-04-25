@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   arena_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 17:43:04 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 23:10:19 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/25 04:04:37 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,10 @@ void	*xarena_alloc(t_arena *arena, uint64_t size)
 	return (result);
 }
 
-void *xarena_realloc(t_arena *arena, void *old, uint64_t old_size, uint64_t new_size)
+void	*xarena_realloc(t_arena *arena, void *old,
+			uint64_t old_size, uint64_t new_size)
 {
-	void *result;
+	void	*result;
 
 	result = arena_realloc(arena, old, old_size, new_size);
 	if (result == NULL)
@@ -38,9 +39,9 @@ void *xarena_realloc(t_arena *arena, void *old, uint64_t old_size, uint64_t new_
 	return (result);
 }
 
-void *xarena_alloc_no_zero(t_arena *arena, uint64_t size)
+void	*xarena_alloc_no_zero(t_arena *arena, uint64_t size)
 {
-	void *result;
+	void	*result;
 
 	result = arena_alloc_no_zero(arena, size);
 	if (result == NULL)

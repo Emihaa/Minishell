@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 02:09:15 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 04:09:02 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	*syntax_error(t_minishell *m, t_token *token, t_lexer *lexer)
 bool	heredoc_limit(t_token *token, uint32_t *heredoc_count)
 {
 	if (token->type == HERE_DOCUMENT)
-		(*heredoc_count)++; // @TODO: LUKA: this used to be *heredoc_count++; this moved the pointer heredoc_count and then dereferenced it!
+		(*heredoc_count)++;
 	if (*heredoc_count > 16)
 	{
 		ft_putstr_fd("minishell: maximum here-document count exceeded\n", 2);

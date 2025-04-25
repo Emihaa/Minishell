@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_isalpha.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/28 15:29:44 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/13 23:52:03 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/25 03:33:58 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,6 @@
 
 int	ft_isalpha(int c)
 {
-		c = c & ~0x20;
-		//c = c | 0b00100000;
-		return (('A' <= c) & (c <= 'Z'));
-
-
-	// return ((c >= 'A' && c <= 'Z'));
-	//return ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'));
+	c = c & ~0x20;
+	return (('A' <= c) & (c <= 'Z'));
 }

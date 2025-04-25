@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 03:25:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 04:19:48 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,7 @@ typedef struct s_minishell
 	int			redir_fds[2];
 	int			pipe[2];
 	int8_t		pipe_side;
-	pid_t			*pids;  // maybe needed
-	pid_t			last_pid;
+	pid_t		last_pid;
 	int			exit_status;
 	char		*line;
 	t_arena		*global_arena;
@@ -107,7 +106,8 @@ int			terminate_and_commit_string(t_arena *a, t_string *str);
 void		*xarena_alloc(t_arena *arena, uint64_t size);
 void		*xarena_alloc_no_zero(t_arena *arena, uint64_t size); //not in use
 t_arena		*xarena_new(uint64_t cap); //@TODO:not in use
-void		*xarena_realloc(t_arena *arena, void *old, uint64_t old_size, uint64_t new_size);
+void		*xarena_realloc(t_arena *arena, void *old,
+				uint64_t old_size, uint64_t new_size);
 
 // error.c
 void		error_exit(t_minishell *m, int exit_status);
@@ -122,7 +122,15 @@ void		command_not_found(t_minishell *m, char *cmd);
 int			execute_command(t_arena *arena, t_minishell *m,
 				char **argv, int status);
 
+// minishell_utils.c
+void		wait_signal_handler(int signal);
+int			read_loop_event_hook(void);
+void		minishell_cleanup(t_minishell *minishell);
+void		init_minishell(t_minishell *minishell, char **envp);
+void		signal_handler(int signal);
+
 // minishell.c
+void		close_heredocs(t_minishell *m);
 void		wait_for_sub_processes(t_minishell *minishell);
 void		minishell_cleanup(t_minishell *minishell);
 void		signal_handler(int signal);

@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 01:03:22 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 03:15:34 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 04:02:49 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,9 @@ typedef struct s_parser
 	t_token	token;
 	t_type	prev;
 }	t_parser;
+
+// minishell_exec.c
+int		minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree);
 
 // lexer.c
 t_token	get_next_token(t_lexer *lexer);

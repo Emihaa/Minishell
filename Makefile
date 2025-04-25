@@ -6,7 +6,7 @@
 #    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/25 03:19:13 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/25 03:56:32 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,8 @@ LT_ARENA = $(LIB_DIR)/$(LT_ARENA_DIR)/build/lt_arena.a
 
 NAME = minishell
 
-SOURCES =	minishell.c		utils.c		hooks.c											\
+SOURCES =	minishell.c		minishell_utils.c	minishell_exec.c						\
+			utils.c			hooks.c														\
 			lexer.c																		\
 			tree.c			tree_nodes.c		tree_utils.c							\
 			expand.c		expand_redirect.c	expand_utils.c		expand_helpers.c	\

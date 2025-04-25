@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 01:23:22 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 03:38:50 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,5 @@ int	expand(t_arena *arena, t_minishell *m, t_node *tree)
 		}
 		tree = tree_root->right;
 	}
-	// printf("arena size after expansion: %lu\n", arena->size);
 	return (0);
 }

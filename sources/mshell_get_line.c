@@ -3,32 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   mshell_get_line.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 23:18:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 22:55:28 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/25 04:11:26 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
 static
-void read_failure(void)
+void	read_failure(void)
 {
-	t_minishell *m;
-	
+	t_minishell	*m;
+
 	m = get_minishell(NULL);
 	stdout = stderr;
-	printf("minishell: line %i: read failure: %s\n", m->line_counter, strerror(errno));
+	printf("minishell: line %i: read failure: %s\n",
+		m->line_counter, strerror(errno));
 	m->exit_status = 1;
 }
 
 static
-int read_file_to_buff(t_arena *arena, char **buffer, int fd)
+int	read_file_to_buff(t_arena *arena, char **buffer, int fd)
 {
-	ssize_t bytes_read;
-	size_t i;
-	size_t allocated;
+	ssize_t	bytes_read;
+	size_t	i;
+	size_t	allocated;
 
 	i = 0;
 	allocated = 4096;
@@ -52,12 +53,13 @@ int read_file_to_buff(t_arena *arena, char **buffer, int fd)
 
 char	*get_line(t_arena *arena, int fd)
 {
-	static size_t read_head = 0;
-	static char *buff;
-	char *line;
-	size_t i;
+	static size_t	read_head;
+	static char		*buff;
+	char			*line;
+	size_t			i;
 
 	line = NULL;
+	read_head = 0;
 	if (read_head <= 0)
 	{
 		if (read_file_to_buff(arena, &buff, fd))
