@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 21:15:21 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 02:09:15 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/parser.h"
 
 // token recognisation function
 void	print_token_type(t_type *token_type)

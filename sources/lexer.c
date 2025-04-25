@@ -6,13 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 19:46:57 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:30:59 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h" 
-// change to be a just "minishell.h"
-// after making sure makefile linking works properly
+#include "../includes/parser.h" 
 
 // does the current character delimit a word
 static inline

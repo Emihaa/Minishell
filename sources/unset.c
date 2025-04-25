@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 18:45:02 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 19:43:37 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:56 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 // compare the string(s1) to env names(s2), if s1 has '=' char then return 1,
 // as env names can't have '=' letters in names.

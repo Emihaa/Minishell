@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 16:43:07 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 20:22:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:40 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 // prints env in alphabetical order by creating new pntr_array
 // and sorting the pointers

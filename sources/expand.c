@@ -6,11 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 22:37:32 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:23:22 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/expand.h"
+#include "../includes/builtin.h"
+#include "../includes/heredoc.h"
 
 /// @brief helper to assign the leftover
 /// @param var environment variable pointer

@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 19:21:03 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:51:18 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/expand.h"
 
 static
 char	*memmove_name(t_arena *arena, t_node *node)

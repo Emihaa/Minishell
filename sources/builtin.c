@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:12:02 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:59:57 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 // @TODO: we need to figure out how we want to do file redirections
 // for builtins when run in the main process (parent)

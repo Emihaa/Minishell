@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:18:26 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:51:55 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/expand.h"
 
 // copy the current arguments data to the struct
 void	init_arg(t_token *data, t_arg *arg_vars)

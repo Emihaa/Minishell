@@ -6,16 +6,15 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:31:50 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:53:01 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-//static char stump[1] = "\0";
+#include "../includes/parser.h"
 
 // @TODO: restructure error messages
 // we might want to do some kind of printf thing with a buffer
-
 int	redirect_ambi(char *file_name)
 {
 	stdout = stderr;

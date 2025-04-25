@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 20:56:09 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:02:18 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:51:56 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/expand.h"
 
 static
 int	handle_leftover(t_arena *arena, t_string *str, t_arg *arg, t_arg *leftover)

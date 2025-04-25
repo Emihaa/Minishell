@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 20:03:47 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:11 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 static char	*arena_strjoin(t_minishell *m, char *s1, char *s2)
 {

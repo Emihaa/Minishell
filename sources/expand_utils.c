@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 19:31:01 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:19:52 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:52:03 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/expand.h"
 
 // builtin exit somebody can add anything they want a exit code
 // atol

@@ -6,11 +6,12 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:17:31 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 00:51:48 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 static inline
 void	delete_temp_string(t_string *str)

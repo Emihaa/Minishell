@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 00:37:44 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 20:23:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:22:58 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/heredoc.h"
 
 int	heredoc_event_hook(void)
 {

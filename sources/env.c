@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:43:59 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 20:04:44 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:17 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 // the og env is full, so we will create a new one with double the capacity
 int	create_new_env(t_minishell *m, char **envp)

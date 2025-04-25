@@ -6,11 +6,12 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 23:07:45 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:21:47 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/heredoc.h"
+#include "../includes/builtin.h"
 
 static
 int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)

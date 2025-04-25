@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 19:52:47 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 20:12:45 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:06 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 int	count_argc(char **argv)
 {

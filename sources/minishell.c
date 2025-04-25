@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 21:32:11 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 02:31:59 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,10 @@
 #include <string.h>
 #include <linux/limits.h>
 
-#include "../includes/minishell.h" // fix maybe
+#include "../includes/minishell.h"
+#include "../includes/builtin.h"
+#include "../includes/parser.h"
+#include "../includes/heredoc.h"
 
 volatile sig_atomic_t g_int = 0;
 
@@ -255,17 +258,17 @@ void	exec_mode(t_minishell *m)
 	t_node		*tree;
 	uint32_t	i;
 
-	char *buff = ft_calloc(72000, 1);
+	// char *buff = ft_calloc(72000, 1);
 	while (1)
 	{
 		i = 0;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		char *line = get_next_line(STDIN_FILENO, buff);
-		//m->line = readline(NULL);
+		// char *line = get_next_line(STDIN_FILENO, buff);
+		m->line = readline(NULL);
 		if (m->line == NULL)
 			error_exit(m, m->exit_status);
-		m->line = ft_strtrim(line, "\n");
+		// m->line = ft_strtrim(line, "\n");
 		m->line_counter += 1;
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
@@ -288,8 +291,8 @@ void	minishell_cleanup(t_minishell *minishell)
 	arena_delete(minishell->node_arena);
 	close_heredocs(minishell);
 	free(minishell->line);
-	while (minishell->envp_size >= 0)
-		free(minishell->envp[minishell->envp_size--]);
+	while (minishell->envp_size-- > 0)
+		free(minishell->envp[minishell->envp_size]);
 	free(minishell->envp);
 }
 
@@ -326,7 +329,6 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	minishell->pipe[READ] = -1;
 	minishell->pipe[WRITE] = -1;
 	minishell->last_pid = 0;
-	minishell->pids = NULL;
 	get_minishell(minishell);
 }
 

@@ -6,7 +6,7 @@
 #    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/23 19:53:53 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/25 01:33:01 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -55,6 +55,10 @@ SOURCES =	minishell.c		utils.c		hooks.c											\
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 
 HEADERS =	$(INC_DIR)/minishell.h \
+			$(INC_DIR)/expand.h \
+			$(INC_DIR)/builtin.h \
+			$(INC_DIR)/parser.h \
+			$(INC_DIR)/heredoc.h \
 			$(LIB_DIR)/$(LT_ARENA_DIR)/$(INC_DIR)/lt_arena.h \
 			$(LIB_DIR)/$(LIBFT_DIR)/$(INC_DIR)/libft.h
 

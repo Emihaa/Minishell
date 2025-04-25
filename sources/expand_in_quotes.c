@@ -3,20 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   expand_in_quotes.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/19 20:45:59 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/20 20:28:35 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/25 00:51:17 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/expand.h"
+#include "../includes/builtin.h"
 
 /// @brief copies from source arg the text within singlequotes into str
 /// @param arena used for allocations when necessary
 /// @param arg source data to be copied from
 /// @param str destinaton to copy to
-void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
+static void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t	len;
 
@@ -37,7 +38,7 @@ void	copy_in_single_quote(t_arena *arena, t_arg *arg, t_string *str)
 /// @param arena used for allocations when necessary
 /// @param arg source data to be copied from
 /// @param str destinaton to copy to
-void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
+static void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t	key_len;
 	uint32_t	var_len;
@@ -57,7 +58,7 @@ void	copy_full_env_var(t_arena *arena, t_arg *arg, t_string *str)
 /// @param arena used for allocations when necessary
 /// @param str where to copy data to
 /// @param arg source data to be copied from
-void	handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
+static void	handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 {
 	if (is_valid_var_start(arg->data_str[arg->i + 1]))
 	{
@@ -85,7 +86,7 @@ void	handle_variable_in_quotes(t_arena *arena, t_arg *arg, t_string *str)
 /// @param arena used for allocations when necessary
 /// @param str where to copy data to
 /// @param arg source data to be copied from
-void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
+static void	copy_in_double_quote(t_arena *arena, t_arg *arg, t_string *str)
 {
 	uint32_t	len;
 

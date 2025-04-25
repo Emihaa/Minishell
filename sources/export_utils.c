@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 20:29:28 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 20:21:53 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:33 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 // find empthy slot from the env and return the pos number
 int	find_slot(t_minishell *m)

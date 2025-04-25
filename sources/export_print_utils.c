@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 17:41:23 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/21 21:34:26 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:30 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 // return the pos of char if it is there in string
 int	char_pos(char *s, char c)

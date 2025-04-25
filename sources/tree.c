@@ -6,11 +6,12 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 22:05:46 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 02:09:09 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h" 
+#include "../includes/expand.h"
+#include "../includes/parser.h"
 
 /* Examples of AST tree:
 			cat > a > b > c 

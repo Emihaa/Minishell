@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/18 21:17:54 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 19:20:36 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:00:14 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/builtin.h"
 
 inline
 bool	is_valid_var_start(char c)

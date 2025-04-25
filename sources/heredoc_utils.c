@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 19:39:39 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 01:21:56 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h"
+#include "../includes/heredoc.h"
 
 // give an allocated dest pointer that is atleast the size of
 // {data->u_data.string_len + 1}

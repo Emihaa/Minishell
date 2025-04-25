@@ -6,11 +6,11 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/23 20:32:21 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 02:09:19 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/minishell.h" 
+#include "../includes/parser.h"
 
 // create a new node
 t_node	*create_node(t_node *root, t_token *token, t_arena *arena)
