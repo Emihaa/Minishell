@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 03:27:28 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 03:29:15 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 
 volatile sig_atomic_t g_int = 0;
 
-/// @todo error cheking
+/// @todo error checking
 int	create_and_store_pipe(t_minishell *m, int8_t *side)
 {
 	if (*side == WRITE || *side == -1)
@@ -165,7 +165,6 @@ int	minishell_exec_loop(t_arena *arena, t_minishell *m, t_node *tree)
 	return (0);
 }
 
-// @TODO cntrl+C on CAT gives two new newlines
 int	read_loop_event_hook(void)
 {
 	if (g_int == SIGINT)
@@ -280,31 +279,11 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	get_minishell(minishell);
 }
 
-// maybe this should just be setting the g_int = signal
 void	signal_handler(int signal)
 {
 	g_int = signal;
 }
 
-// SIGINT for cntrl+C
-// cancel current input, prints a newline + promt
-// in child rocesses reset signal to default so they get killed properly
-// signal status, ON_READ <- default status of the shell
-// ON_HDOC <-- shell using stdin and writing on hdoc
-// ON_EXE, which shell is on while commands are being executed
-
-
-// SIGQUIT for ctrl+\ <- this does nothing
-// ignore the SIGQUIT, and reset it to default?
-
-// ctrl+D EOF (End Of File) <- doesnt send signal but must be handled manually
-// returns NULL to readline(), clean up and exit
-// but only does this if input is empty
-// this one already works
-
-// @TODO: if we are on child process then we dont want the parent to get any signals
-// so we need to have the signal(SIGINT, SIG_ING); on parent if we are on child process
-// remember also to return the signal handling
 int	main(int argc, char *argv[], char **envp)
 {
 	t_minishell	minishell;
@@ -312,7 +291,6 @@ int	main(int argc, char *argv[], char **envp)
 	signal(SIGQUIT, SIG_IGN);
 	
 	rl_erase_empty_line = 1;
-	//<-- why?
 	// we might need to do some terminal status thing
 	// interactive and non interactive shell mode
 	(void)argc;

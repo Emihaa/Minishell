@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 03:24:58 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 03:25:32 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ int			put_str_nl(int fd, char *str);
 int			put_str(int fd, char *str);
 int			put_char(int fd, char c);
 
-//get_line
-char	*get_line(t_arena *arena, int fd);
+// get_line.c
+char		*get_line(t_arena *arena, int fd);
 
 #endif
