@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 03:38:07 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:05:41 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	delete_temp_string(t_string *str)
 	str->capacity = 0;
 }
 
-// @TODO: check comment
+/// @TODO: check comment
 char	*get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 {
 	const uint32_t	cmd_str_len = ft_strlen(cmd);
@@ -68,7 +68,8 @@ void	run_command(t_arena *arena, t_minishell *m, char **argv)
 	execve_failure(m, argv[0]);
 }
 
-pid_t	execute_subprocess(t_arena *arena, t_minishell *m, char **argv, t_builtin builtin)
+pid_t	execute_subprocess(t_arena *arena, t_minishell *m,
+		char **argv, t_builtin builtin)
 {
 	pid_t	pid;
 

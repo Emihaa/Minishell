@@ -6,13 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 02:09:19 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:47:59 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/parser.h"
 
-// create a new node
+/// @brief create a new node
 t_node	*create_node(t_node *root, t_token *token, t_arena *arena)
 {
 	t_node	*new_node;
@@ -25,7 +25,7 @@ t_node	*create_node(t_node *root, t_token *token, t_arena *arena)
 	return (new_node);
 }
 
-// create node in between the root and current node
+/// @brief create node in between the root and current node
 t_node	*insert_middle(t_node *root, t_node *node,
 						t_token *token, t_arena *arena)
 {
@@ -55,7 +55,7 @@ t_node	*insert_middle(t_node *root, t_node *node,
 	return (node);
 }
 
-// create node below current to the left
+/// @brief create node below current to the left
 t_node	*insert_below(t_node *root, t_node *node,
 						t_token *token, t_arena *arena)
 {
@@ -66,8 +66,8 @@ t_node	*insert_below(t_node *root, t_node *node,
 	return (new_node);
 }
 
-// first find most bottom node
-// then creates new node to bottom and connect the old bottom with new
+/// @brief first find most bottom node
+/// then creates new node to bottom and connect the old bottom with new
 t_node	*insert_bottom(t_node *node, t_token *token, t_arena *arena)
 {
 	t_node	*bottom_node;
@@ -81,9 +81,9 @@ t_node	*insert_bottom(t_node *node, t_token *token, t_arena *arena)
 	return (new_node);
 }
 
-// if token is pipe, we want the pipe to top of everything
-// if at the top there is already pipe then we want the new pipe at the
-// right side of the old pipe
+/// @brief if token is pipe, we want the pipe to top of everything
+/// if at the top there is already pipe then we want the new pipe at the
+/// right side of the old pipe
 t_node	*insert_top(t_node *node, t_token *token, t_arena *arena)
 {
 	t_node	*head_node;

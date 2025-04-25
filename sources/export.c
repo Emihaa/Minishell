@@ -6,14 +6,14 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 16:43:07 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 01:00:40 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:04:55 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/builtin.h"
 
-// prints env in alphabetical order by creating new pntr_array
-// and sorting the pointers
+/// @brief prints env in alphabetical order by creating new pntr_array
+/// and sorting the pointers
 void	print_export(t_minishell *m)
 {
 	char	**pntr_array;
@@ -38,11 +38,10 @@ void	print_export(t_minishell *m)
 	free(pntr_array);
 }
 
-// check if there is match in the env and strdup on top of that the new info
-// else see if there is empty space on the env, and strdup on the NULL point
-// if not space then recreate the env with double the size
-// @TODO _something doesnt show up on export but
-// should be the last one on env print?
+/// @brief check if there is match in the env and strdup on top of that the
+/// new info else see if there is empty space on the env,
+/// and strdup on the NULL point
+/// if not space then recreate the env with double the size
 int	export_add(t_minishell *m, char *s)
 {
 	int	pos;

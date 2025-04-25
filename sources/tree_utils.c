@@ -6,13 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 04:09:02 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:51:58 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/parser.h"
 
-// token recognisation function
+/// @brief token recognisation function
 void	print_token_type(t_type *token_type)
 {
 	if (*token_type == PIPE)
@@ -33,7 +33,7 @@ void	print_token_type(t_type *token_type)
 		ft_putstr_fd("error", 2);
 }
 
-// find the top most word
+/// @brief find the top most word
 t_node	*find_word_root(t_node *node)
 {
 	t_node	*temp;
@@ -46,7 +46,7 @@ t_node	*find_word_root(t_node *node)
 	return (temp);
 }
 
-// finds the main root head of tree
+/// @brief finds the main root head of tree
 t_node	*find_head_root(t_node *node)
 {
 	t_node	*temp;
@@ -59,10 +59,7 @@ t_node	*find_head_root(t_node *node)
 	return (temp);
 }
 
-// prints syntax error
-// @TODO: the printout could also probably be changes to use printf <--- Emilia
-// cannot be changed, if printf then the token will be printed in the wrong pos
-// in terminal, unless we also change the print_token_type function to printf?
+/// @brief prints syntax error & returns NULL
 void	*syntax_error(t_minishell *m, t_token *token, t_lexer *lexer)
 {
 	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
@@ -74,7 +71,7 @@ void	*syntax_error(t_minishell *m, t_token *token, t_lexer *lexer)
 	return (NULL);
 }
 
-// heredoc max limit for over 16 heredocs
+/// @brief heredoc max limit for over 16 heredocs
 bool	heredoc_limit(t_token *token, uint32_t *heredoc_count)
 {
 	if (token->type == HERE_DOCUMENT)

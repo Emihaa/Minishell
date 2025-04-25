@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 03:44:08 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 04:21:01 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:46:23 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,6 @@ void	wait_signal_handler(int signal)
 	{
 		write(1, "\n", 1);
 	}
-}
-
-int	read_loop_event_hook(void)
-{
-	if (g_int == SIGINT)
-	{
-		get_minishell(NULL)->exit_status = 128 + SIGINT;
-		write(1, "\n", 1);
-		rl_replace_line("", 0);
-		rl_on_new_line();
-		rl_redisplay();
-		g_int = 0;
-		return (1);
-	}
-	return (0);
 }
 
 void	signal_handler(int signal)
@@ -51,10 +36,8 @@ void	minishell_cleanup(t_minishell *minishell)
 	free(minishell->envp);
 }
 
-// set default values for the minishell struct
-// the struct is going to work as a kind of storage for globally needef alues
-// we might want to pre allocate the arenas that 
-// will be used here to make cleanup easier
+/// @brief initializes default values for the minishell struct
+/// for globally used values
 void	init_minishell(t_minishell *minishell, char **envp)
 {
 	static int	heredoc_fds_arr[16] = {0};

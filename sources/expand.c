@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:51:33 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 03:38:50 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:31:24 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,9 @@ void	copy_until_quote_or_var(t_arena *arena, t_arg *arg, t_string *str)
 	arg->i += len;
 }
 
-// loop here so that we send the first word node of branch
-// come ut of branch, return argv to first word node
-// and then go to another branch loop
+/// @brief loop here so that we send the first word node of branch
+/// come ut of branch, return argv to first word node
+/// and then go to another branch loop
 int	expand(t_arena *arena, t_minishell *m, t_node *tree)
 {
 	t_node	*tree_root;

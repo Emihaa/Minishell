@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 04:19:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:58:45 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ typedef enum e_type
 	ERROR			=	-404,
 }	t_type;
 
-// @TODO: restucture to reduce memory footprint
+/// @TODO: restucture to reduce memory footprint
 /// @brief Globally used parameters 
 typedef struct s_minishell
 {
@@ -124,7 +124,6 @@ int			execute_command(t_arena *arena, t_minishell *m,
 
 // minishell_utils.c
 void		wait_signal_handler(int signal);
-int			read_loop_event_hook(void);
 void		minishell_cleanup(t_minishell *minishell);
 void		init_minishell(t_minishell *minishell, char **envp);
 void		signal_handler(int signal);

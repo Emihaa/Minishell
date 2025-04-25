@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 04:28:21 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:01:25 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void	exec_mode(t_minishell *m)
 	}
 }
 
+/// @todo check the comments
 int	main(int argc, char *argv[], char **envp)
 {
 	t_minishell	minishell;

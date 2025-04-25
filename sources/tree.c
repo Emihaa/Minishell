@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 19:00:37 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 04:12:23 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:51:30 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,11 @@ ls > a > b > c | cat | > outfile wc -l | echo smth > 2
 								
 */
 
-// Examples above:
-// always adds new nodes to left side on the branch
-// commands/words should be at the bottom
-// redirect should be in the middle
-// pipex always at the top
+/// @brief Examples above:
+/// always adds new nodes to left side on the branch
+/// commands/words should be at the bottom
+/// redirect should be in the middle
+/// pipex always at the top
 t_node	*insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 {
 	if (!node)
@@ -79,35 +79,9 @@ t_node	*insert_node(t_node *node, t_node *root, t_token *token, t_arena *arena)
 	return (node);
 }
 
-// // Function to print the tree
-// static void	print_tree(t_node *node, int depth)
-// {
-// 	int i = 0; 
-// 	if (!node)
-// 		return ;
-// 	while (i++ < depth)
-// 		printf("  ");
-// 	// Print current node
-// 	printf("[-- ");
-// 	print_token_type(&node->token.type);
-// 	printf(" -> %.*s\n", (int)node->token.string_len, node->token.string);
-// 	// Print left subtree
-// 	if (node->left)
-// 	{
-// 		printf(" L ");
-// 		print_tree(node->left, depth + 1);
-// 	}
-// 	// Print right subtree
-// 	if (node->right)
-// 	{
-// 		printf(" R ");
-// 		print_tree(node->right, depth + 1);
-// 	}
-// }
-
-// add before return line:
-// print_tree(find_head_root(tree), 1);
-// if you want the tree to be printed
+/// @brief syntax handling and AST (Abstract syntax tree) start
+/// returns either the pointer to the root of the tree
+/// or NULL
 t_node	*parser(t_arena *arena, t_minishell *m, char *line)
 {
 	t_parser	p;

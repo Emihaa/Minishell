@@ -6,13 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 01:30:59 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:03:39 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/parser.h" 
 
-// does the current character delimit a word
+/// @brief does the current character delimit a word
 static inline
 bool	is_delimiter(char c)
 {
@@ -29,7 +29,7 @@ bool	is_delimiter(char c)
 	return (false);
 }
 
-// moves in the line until finds a matching quote or the EOL 
+/// @brief moves in the line until finds a matching quote or the EOL
 static inline
 int	match_quote(t_lexer *lexer, char quote, int len)
 {
@@ -49,14 +49,10 @@ int	match_quote(t_lexer *lexer, char quote, int len)
 	return (len);
 }
 
-// if we hit a quote len will for sure be at least 1
-// so might break the len check
-
-// creates a token matching the input parameters
-// for tokens that can have a string
-// @TODO: rename
+/// @brief creates a token matching the input parameters
+/// for tokens that can have a string
 static
-t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
+t_token	tokenize(t_lexer *lexer, t_type type, int to_skip)
 {
 	t_token	token;
 	char	c;
@@ -84,7 +80,7 @@ t_token	tokenize_stuffs(t_lexer *lexer, t_type type, int to_skip)
 	return (token);
 }
 
-// just returns a token with correct parameters for a pipe
+/// @brief returns a token with correct parameters for a pipe
 static inline
 t_token	tokenize_pipe(t_lexer *lexer)
 {
@@ -98,25 +94,26 @@ t_token	tokenize_pipe(t_lexer *lexer)
 	return (token);
 }
 
-// skips whitespace between tokens and finds the next token type to return
-// @TODO:	find out which character can be valid parts of a word
+/// @TODO:	find out which character can be valid parts of a word
 // 			currently anything other than a delimiter character counts as a word
 //			which doesn't seem correct
+/// @brief skips whitespace between tokens and 
+/// finds the next token type to return
 t_token	get_next_token(t_lexer *lexer)
 {
 	while (is_space(lexer->line[lexer->line_index]))
 		lexer->line_index += 1;
 	if (ft_strncmp(&lexer->line[lexer->line_index], ">>", 2) == 0)
-		return (tokenize_stuffs(lexer, REDIRECT_APPEND, 2));
+		return (tokenize(lexer, REDIRECT_APPEND, 2));
 	if (ft_strncmp(&lexer->line[lexer->line_index], "<<", 2) == 0)
-		return (tokenize_stuffs(lexer, HERE_DOCUMENT, 2));
+		return (tokenize(lexer, HERE_DOCUMENT, 2));
 	if (lexer->line[lexer->line_index] == '|')
 		return (tokenize_pipe(lexer));
 	if (lexer->line[lexer->line_index] == '<')
-		return (tokenize_stuffs(lexer, REDIRECT_IN, 1));
+		return (tokenize(lexer, REDIRECT_IN, 1));
 	if (lexer->line[lexer->line_index] == '>')
-		return (tokenize_stuffs(lexer, REDIRECT_OUT, 1));
+		return (tokenize(lexer, REDIRECT_OUT, 1));
 	if (lexer->line[lexer->line_index] == '\0')
 		return ((t_token){0});
-	return (tokenize_stuffs(lexer, WORD, 0));
+	return (tokenize(lexer, WORD, 0));
 }

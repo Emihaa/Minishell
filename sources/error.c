@@ -6,16 +6,16 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:24:03 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 04:09:34 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:56:55 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-// @TODO: seems to be unused currently
-// exit in an error situation
-// setting exit_status is optional, if set to 0 m->exit_status will stay as is
-// otherwise it is set to exit_status
+/// @TODO: seems to be unused currently
+/// exit in an error situation
+/// setting exit_status is optional, if set to 0 m->exit_status will stay as is
+/// otherwise it is set to exit_status
 void	error_exit(t_minishell *m, int exit_status)
 {
 	if (exit_status > 0)

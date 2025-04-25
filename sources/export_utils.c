@@ -6,13 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 20:29:28 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 01:00:33 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:33:34 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/builtin.h"
 
-// find empthy slot from the env and return the pos number
+/// @brief find empthy slot from the env and return the pos number
 int	find_slot(t_minishell *m)
 {
 	int	i;
@@ -41,9 +41,9 @@ void	error_print(t_minishell *m, char *s)
 	stdout = temp;
 }
 
-// check the spelling in the given export argument
-// if the first letter is not alpha or '_' or
-// if the rest of the letters are not numbers, alpha or '_'
+/// @brief check the spelling in the given export argument
+/// if the first letter is not alpha or '_' or
+/// if the rest of the letters are not numbers, alpha or '_'
 int	spelling_check(t_minishell *m, char *s)
 {
 	int	i;

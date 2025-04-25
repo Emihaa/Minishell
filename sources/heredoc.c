@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 01:21:47 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:58:16 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,9 @@ void	heredoc_with_expansion_write_loop(
 	}
 }
 
-// this is going to be a "simple" prototype that uses getenv
-// will be replaced with our own env version
-// there will be no quote removal inside heredoc
+/// this is going to be a "simple" prototype that uses getenv
+/// will be replaced with our own env version
+/// there will be no quote removal inside heredoc
 static
 int	heredoc_with_expansion(
 							t_minishell *minishell,

@@ -6,16 +6,15 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 01:21:56 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:58:10 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/heredoc.h"
 
-// give an allocated dest pointer that is atleast the size of
-// {data->u_data.string_len + 1}
-// will return the new size of the string that has quotes removed
-// the 
+/// give an allocated dest pointer that is atleast the size of
+/// {data->u_data.string_len + 1}
+/// will return the new size of the string that has quotes removed
 uint32_t	set_quote_removed_string(char *dest, t_token *data)
 {
 	char		quote;
@@ -45,8 +44,8 @@ uint32_t	set_quote_removed_string(char *dest, t_token *data)
 	return (dest_index);
 }
 
-// @TODO: change to name to /tmp/...
-// we need some kind of global heredoc count to check if it is under 17
+/// @TODO: change to name to /tmp/...
+/// we need some kind of global heredoc count to check if it is under 17
 char	*create_temp_file_name(uint32_t heredoc_num)
 {
 	static char	name_buf[30] = HEREDOC_TEMP_NAME;
@@ -65,8 +64,8 @@ char	*create_temp_file_name(uint32_t heredoc_num)
 	return (name_buf);
 }
 
-// @TODO: change to name to /tmp
-// @TODO: might want to make different error return values
+/// @TODO: change to name to /tmp
+/// @TODO: might want to make different error return values
 int	create_heredoc_fds(int fds[2])
 {
 	uint32_t	heredoc_num;

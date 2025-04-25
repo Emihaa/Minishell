@@ -6,13 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 00:51:55 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:27:48 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/expand.h"
 
-// copy the current arguments data to the struct
+/// @brief copy the current arguments data to the struct
 void	init_arg(t_token *data, t_arg *arg_vars)
 {
 	arg_vars->data_len = data->string_len;
@@ -21,10 +21,10 @@ void	init_arg(t_token *data, t_arg *arg_vars)
 	arg_vars->exist = false;
 }
 
-// initialize argv.
-// capacity = default_size
-// data = arena allocated.
-// size = 0;
+/// @brief initialize argv.
+/// @param capacity = default_size
+/// @param data = arena allocated.
+/// @param size = 0;
 void	init_argv(t_arena *arena, t_arg_vec *argv, size_t cap)
 {
 	argv->capacity = cap;
@@ -44,7 +44,7 @@ int	realloc_argv(t_arena *arena, t_arg_vec *argv)
 	return (0);
 }
 
-// if char is quote or '$'
+/// @brief if char is quote or '$'
 int	is_quote_or_var(char c)
 {
 	return (is_quote(c) || c == '$');

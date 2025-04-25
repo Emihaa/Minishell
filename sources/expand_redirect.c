@@ -6,12 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:53:44 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 00:51:18 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:30:05 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/expand.h"
 
+/// @brief updates the name in case of ambigious redirect
 static
 char	*memmove_name(t_arena *arena, t_node *node)
 {
@@ -22,10 +23,10 @@ char	*memmove_name(t_arena *arena, t_node *node)
 	return (str);
 }
 
-// Change argv->type to AMBIGIOUS_REDI if expand files and
-// becomes ambigious redirect. If ambigious redirect then 
-// the string is the given argument name.
-// Otherwise the string is just what string expands to.
+/// @brief Change argv->type to AMBIGIOUS_REDI if expand files and
+/// becomes ambigious redirect. If ambigious redirect then 
+/// the string is the given argument name.
+/// Otherwise the string is just what string expands to
 static
 void	expand_action(t_arena *arena, t_node *node, t_string *str, t_arg *arg)
 {

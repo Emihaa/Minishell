@@ -6,13 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/08 17:41:23 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 01:00:30 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:32:45 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/builtin.h"
 
-// return the pos of char if it is there in string
+/// @brief return the pos of char if it is there in string
 int	char_pos(char *s, char c)
 {
 	int	i;
@@ -27,8 +27,8 @@ int	char_pos(char *s, char c)
 	return (0);
 }
 
-// skip over the possible NULL strings, and then print
-// if size == 1 then the env[i] doesnt have '='
+/// @brief skip over the possible NULL strings, and then print
+/// if size == 1 then the env[i] doesnt have '='
 void	print_export_env(char **env)
 {
 	int		i;
@@ -67,7 +67,7 @@ void	swap_pntrs(char **p1, char **p2)
 	*p2 = temp;
 }
 
-// checks if the env is sorted alphabetically returns 1 if true
+/// @brief checks if the env is sorted alphabetically returns 1 if true
 int	is_sorted(char **pntr_array, int size)
 {
 	int	i;
@@ -82,9 +82,8 @@ int	is_sorted(char **pntr_array, int size)
 	return (1);
 }
 
-// sorts the env in alphabetical order for export print
-// the strings should be compared until the end
-// 1024 is probably just a placeholder
+/// @brief sorts the env in alphabetical order for export print
+/// the strings should be compared until the end
 void	env_sort(char **pntr_array, int size)
 {
 	int	i;

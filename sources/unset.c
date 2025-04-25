@@ -6,15 +6,16 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/14 18:45:02 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 01:00:56 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:03:16 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/builtin.h"
 
-// compare the string(s1) to env names(s2), if s1 has '=' char then return 1,
-// as env names can't have '=' letters in names.
-// otherwise if there are differences return 1 or if match then 0
+/// @brief compare the string(s1) to env names(s2), if s1 has '=' 
+/// char then return 1,
+/// as env names can't have '=' letters in names.
+/// otherwise if there are differences return 1 or if match then 0
 static
 int	strncmp_to_c(const char *s1, const char *s2, char c, size_t n)
 {
@@ -34,7 +35,8 @@ int	strncmp_to_c(const char *s1, const char *s2, char c, size_t n)
 	return (0);
 }
 
-// Find name match from the env and return the position of match in the env
+/// @brief Find name match from the env 
+/// and return the position of match in the env
 static
 int	find_match(t_minishell *m, char *s)
 {
@@ -60,6 +62,10 @@ int	find_match(t_minishell *m, char *s)
 	return (-1);
 }
 
+/// @brief searches for possible match from env
+/// frees the pos from env, swaps the bottom attribute from
+/// the env to the freed position, makes the bottom NULL
+/// and updates the envp_size--
 void	builtin_unset(t_minishell *m, int argc, char **argv)
 {
 	int	pos;

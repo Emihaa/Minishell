@@ -6,13 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/07 19:43:59 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 01:00:17 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:26:09 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/builtin.h"
 
-// the og env is full, so we will create a new one with double the capacity
+/// @brief the og env is full, create a new one with double the capacity
 int	create_new_env(t_minishell *m, char **envp)
 {
 	char	**env_copy;
@@ -34,7 +34,7 @@ int	create_new_env(t_minishell *m, char **envp)
 	return (0);
 }
 
-// check if '=' on env and print that line otherwise skip
+/// @brief check if '=' on env and print that line otherwise skip
 void	builtin_env(char **envp)
 {
 	int	i;
@@ -50,8 +50,8 @@ void	builtin_env(char **envp)
 	}
 }
 
-// env is always double the capacity what i am copying
-// for export space
+/// @brief env is always double the capacity, of what is copied
+/// in the beginning
 char	**create_env(t_minishell *m, char **envp)
 {
 	char	**env_copy;

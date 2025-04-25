@@ -6,15 +6,15 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 03:40:21 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:47:19 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include "../includes/parser.h"
 
-// @TODO: restructure error messages
-// we might want to do some kind of printf thing with a buffer
+/// @TODO: restructure error messages
+/// we might want to do some kind of printf thing with a buffer
 int	redirect_ambi(char *file_name)
 {
 	stdout = stderr;
@@ -73,8 +73,8 @@ int	redirect_in(char *file_name, t_minishell *m)
 	return (0);
 }
 
-// @TODO: this isnt used anywhere and the file has too
-// many functions. Should we delete this?
+/// @todo: this isnt used anywhere and the file has too
+/// many functions. Should we delete this?
 int	redirect_heredoc(t_token *data, t_minishell *m)
 {
 	const int	fd = data->type;

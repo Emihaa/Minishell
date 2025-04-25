@@ -6,16 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 00:59:57 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:13:14 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/builtin.h"
 
-// @TODO: we need to figure out how we want to do file redirections
-// for builtins when run in the main process (parent)
-// one way would be to not redirect anything but just write into the fd that
-// minishell->fds[WRITE] points to
+/// @brief echo command
 void	builtin_echo(char *argv[], int fd)
 {
 	bool	newline;
@@ -43,9 +40,7 @@ void	builtin_echo(char *argv[], int fd)
 		(void)put_char(fd, '\n');
 }
 
-// should it have int argc instead of count_argc function?
-// add it to the execute_builtin?
-// or is this function called elsewhere as well?
+/// @brief exit command
 void	builtin_exit(t_minishell *m, int argc, char **argv)
 {
 	if (m->pipe_side == -1)
@@ -74,8 +69,7 @@ void	builtin_exit(t_minishell *m, int argc, char **argv)
 	exit(m->exit_status);
 }
 
-//pwd command
-//propably need file dupping (dup2)
+/// @brief pwd command
 void	builtin_pwd(t_minishell *m, int fd)
 {
 	char	current_path[PATH_MAX];

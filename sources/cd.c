@@ -6,12 +6,13 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 03:25:41 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:02:37 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/builtin.h"
 
+/// @brief custom strjoin for arena usage
 static char	*arena_strjoin(t_minishell *m, char *s1, char *s2)
 {
 	char	*temp;
@@ -33,6 +34,7 @@ static char	*arena_strjoin(t_minishell *m, char *s1, char *s2)
 	return (temp);
 }
 
+/// @brief changes directory to path at "HOME"
 static void	cd_home(t_minishell *m)
 {
 	char	*temp;
@@ -49,6 +51,7 @@ static void	cd_home(t_minishell *m)
 	chdir(temp);
 }
 
+/// @brief updates the "OLDPWD" & "PWD" in the env
 static void	update_pwd(t_minishell *m)
 {
 	char	current_path[PATH_MAX];
@@ -66,9 +69,9 @@ static void	update_pwd(t_minishell *m)
 	export_add(m, temp);
 }
 
-// changes directory based on input
-// argc == 1 or argc == 2 changes to the given folder
-// if more arguments, writes error
+/// @brief changes directory based on input
+/// argc == 1 or argc == 2 changes to the given folder
+/// if more arguments, writes error
 void	builtin_cd(t_minishell *m, int argc, char **argv)
 {
 	FILE	*temp;

@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 01:14:56 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 03:12:39 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 17:38:44 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,6 @@ int			heredoc(t_arena *arena, t_minishell *minishell, t_token *data);
 
 // hooks.c
 int			heredoc_event_hook(void);
+int			read_loop_event_hook(void);
 
 #endif
