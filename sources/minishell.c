@@ -6,16 +6,9 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 04:19:02 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 04:28:21 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include <unistd.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <string.h>
-#include <linux/limits.h>
 
 #include "../includes/minishell.h"
 #include "../includes/builtin.h"
