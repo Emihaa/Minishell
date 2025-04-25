@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   write_functions.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 19:19:56 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/23 21:29:02 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/26 00:19:00 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int	write_bytes(int fd, char *str, size_t bytes_to_write)
 	{
 		bytes_written = write(fd, str, bytes_to_write);
 		if (bytes_written == -1)
-			return (-1); // full error situation
+			return (-1);
 		str += bytes_written;
 		bytes_to_write -= bytes_written;
 	}

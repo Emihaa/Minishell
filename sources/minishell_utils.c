@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 03:44:08 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 20:29:02 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 00:13:57 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	minishell_cleanup(t_minishell *minishell)
 /// for globally used values
 void	init_minishell(t_minishell *minishell, char **envp)
 {
-	static int	heredoc_fds_arr[16] = {0};
+	static int	heredoc_fds_arr[16] = {-1};
 
 	minishell->istty = isatty(STDIN_FILENO);
 	minishell->global_arena = xarena_new(DEFAULT_ARENA_CAPACITY);
@@ -57,8 +57,8 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	minishell->envp = create_env(minishell, envp);
 	if (!minishell->envp)
 	{
-		put_str(STDERR_FILENO, "allocation failure\n");
-		error_exit(minishell, 1); // @TODO: error checking
+		put_str(STDERR_FILENO, "minishell: allocation failure\n");
+		error_exit(minishell, 1);
 	}
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;

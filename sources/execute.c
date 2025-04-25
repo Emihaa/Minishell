@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 20:33:58 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 00:11:10 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void	delete_temp_string(t_string *str)
 	str->capacity = 0;
 }
 
-/// @TODO: check comment
 char	*get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 {
 	const uint32_t	cmd_str_len = ft_strlen(cmd);
@@ -61,9 +60,9 @@ void	run_command(t_arena *arena, t_minishell *m, char **argv)
 	if (ft_strchr(cmd_with_path, '/') == NULL)
 	{
 		path = get_env_var_value("PATH", 4);
-		cmd_with_path = get_cmd_with_path(arena, m, path, argv[0]); // replace with proper command finding function
+		cmd_with_path = get_cmd_with_path(arena, m, path, argv[0]);
 	}
-	execve(cmd_with_path, argv, m->envp); // just have execve catch most error values
+	execve(cmd_with_path, argv, m->envp);
 	execve_failure(m, argv[0]);
 }
 
@@ -74,7 +73,7 @@ pid_t	execute_subprocess(t_arena *arena, t_minishell *m,
 
 	pid = fork();
 	if (pid == (pid_t)(-1))
-		syscall_failure(m, __FILE__, __LINE__); // @TODO: error cheking
+		syscall_failure(m, __FILE__, __LINE__);
 	if (pid == 0)
 	{
 		apply_redirect(m);
@@ -103,9 +102,9 @@ int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status)
 	{
 		pid = fork();
 		if (pid == -1)
-			syscall_failure(m, __FILE__, __LINE__); // @TODO: error cheking
+			syscall_failure(m, __FILE__, __LINE__);
 		if (pid == 0)
-			error_exit(m, 1); // @todo check if this exit code is correct
+			error_exit(m, 1);
 		m->command_count += 1;
 		m->last_pid = pid;
 		return (1);

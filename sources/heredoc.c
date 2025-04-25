@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 20:51:46 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 00:18:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 		if (ft_strncmp(line, delimiter, delimiter_len) == 0)
 			break ;
 		if (put_str_nl(write_fd, line) == -1)
-			break ; // @TODO: maybe error cheking
+			break ;
 		free(line);
 	}
 	free(line);
@@ -76,7 +76,7 @@ void	heredoc_with_expansion_write_loop(
 		while (line[i + len] != '\0' && line[i + len] != '$')
 			len += 1;
 		if (write_bytes(write_fd, line + i, len) == -1)
-			break ; // @TODO: maybe error cheking
+			break ;
 		if (line[i + len] == '$')
 			len += write_env_variable(line, i + len, write_fd, m);
 		i += len + 1;
@@ -105,7 +105,7 @@ int	heredoc_with_expansion(
 			break ;
 		heredoc_with_expansion_write_loop(minishell, write_fd, line);
 		if (put_char(write_fd, '\n'))
-			break ; // @TODO: error cheking
+			break ;
 		free(line);
 	}
 	free(line);

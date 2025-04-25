@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 21:59:04 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 00:12:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,13 +85,13 @@ int	create_heredoc_fds(int fds[2])
 			break ;
 		if (errno == EEXIST)
 			continue ;
-		return (-1); // @TODO: more error stuff
+		return (-1);
 	}
 	fds[0] = open(file_name, O_CLOEXEC | O_RDONLY);
 	if (fds[0] == -1)
 		return_val = -1;
 	if (unlink(file_name) == -1)
-		return_val = -1; // @TODO: more error stuff
+		return_val = -1;
 	return (return_val);
 }
 
@@ -110,7 +110,7 @@ int	heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 	if (minishell->istty == 1)
 		rl_event_hook = heredoc_event_hook;
 	*line = readline("> ");
-	if (*line == NULL || g_int == SIGINT) // do this for other signals maybe
+	if (*line == NULL || g_int == SIGINT)
 	{
 		if (g_int == SIGINT)
 		{

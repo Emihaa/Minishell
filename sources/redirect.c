@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 17:39:28 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 17:47:19 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/26 00:17:17 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,5 @@ int	redirect_in(char *file_name, t_minishell *m)
 		return (1);
 	}
 	store_read_fd(fd, m);
-	return (0);
-}
-
-/// @todo: this isnt used anywhere and the file has too
-/// many functions. Should we delete this?
-int	redirect_heredoc(t_token *data, t_minishell *m)
-{
-	const int	fd = data->type;
-
-	store_read_fd(fd, m);
-	m->heredoc_fds[m->heredoc_count] = -1;
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 20:19:37 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 00:16:41 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_arena	*find_free_arena(t_arena *a, size_t size)
 			capacity = DEFAULT_ARENA_CAPACITY;
 			if (capacity < size)
 				capacity = size;
-			a->next = xarena_new(capacity); // maybe x_arenanew to exit instantly // maybe not
+			a->next = xarena_new(capacity);
 		}
 		a = a->next;
 	}

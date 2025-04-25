@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:24:03 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 20:55:58 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 00:14:44 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ void	error_exit(t_minishell *m, int exit_status)
 void	syscall_failure(t_minishell *m, char *file, int line)
 {
 	stdout = stderr;
-	printf("minishell: syscall failed with [%s]\n"
-		"Trying to wait for subprocesses and exiting\n", strerror(errno));
+	printf("minishell: syscall failed with [%s]\n", strerror(errno));
 	printf("(%s:%i)\n", file, line);
-	wait_for_sub_processes(m);
+	if (m->pipe_side == -1)
+		wait_for_sub_processes(m);
 	m->exit_status = 1;
 	printf("exit\n");
 	error_exit(m, 0);
@@ -44,9 +44,9 @@ void	syscall_failure(t_minishell *m, char *file, int line)
 	(void)file;
 	(void)line;
 	stdout = stderr;
-	printf("minishell: syscall failed with [%s]\n"
-		"Trying to wait for subprocesses and exiting\n", strerror(errno));
-	wait_for_sub_processes(m);
+	printf("minishell: syscall failed with [%s]\n", strerror(errno));
+	if (m->pipe_side == -1)
+		wait_for_sub_processes(m);
 	m->exit_status = 1;
 	printf("exit\n");
 	error_exit(m, 0);
