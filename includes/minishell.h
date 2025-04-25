@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 17:58:45 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:21:49 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,8 +104,8 @@ int			terminate_and_commit_string(t_arena *a, t_string *str);
 
 // arena_utils.c
 void		*xarena_alloc(t_arena *arena, uint64_t size);
-void		*xarena_alloc_no_zero(t_arena *arena, uint64_t size); //not in use
-t_arena		*xarena_new(uint64_t cap); //@TODO:not in use
+void		*xarena_alloc_no_zero(t_arena *arena, uint64_t size);
+t_arena		*xarena_new(uint64_t cap);
 void		*xarena_realloc(t_arena *arena, void *old,
 				uint64_t old_size, uint64_t new_size);
 
@@ -145,7 +145,7 @@ int			redirect_ambi(char *file_name);
 int			redirect_out(char *file_name, t_minishell *m);
 int			redirect_append(char *file_name, t_minishell *m);
 int			redirect_in(char *file_name, t_minishell *m);
-// int		redirect_heredoc(t_token *data, t_minishell *m); @TODO
+int		redirect_heredoc(t_token *data, t_minishell *m); @TODO
 // is this used anywhere??
 
 // utils.c

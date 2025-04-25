@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 22:03:22 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 17:55:29 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 18:17:14 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ uint32_t	eat_space(char *str)
 	return (i);
 }
 
-// || c == '\n' maybe?
 inline
 bool	is_space(char c)
 {
