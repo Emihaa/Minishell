@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/24 23:28:40 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/25 00:03:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,24 +185,23 @@ void	read_loop(t_minishell *m)
 
 	while (1)
 	{
-		i = 0;
+		free(m->line);
+		m->line = NULL;
 		rl_event_hook = read_loop_event_hook;
 		m->command_count = 0;
 		m->heredoc_count = 0;
 		m->line = readline("minishell> ");
 		if (m->line == NULL)
 			break ;
-		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		m->line_counter += 1;
-		i += eat_space(m->line);
+		i = eat_space(m->line);
 		if (m->line[i] == '\0')
 			continue ;
+		add_history(m->line); // bash would add a line with only spaces to the history. I dont think that makes any sense so we'll look at it later
 		tree = parser(m->global_arena, m, &m->line[i]);
 		if (tree != NULL)
 			minishell_exec_loop(m->global_arena, m, tree);
 		wait_for_sub_processes(m);
-		free(m->line);
-		m->line = NULL;
 		arena_trim(m->global_arena);
 		arena_reset(m->global_arena);
 	}
@@ -307,11 +306,7 @@ int	main(int argc, char *argv[], char **envp)
 	t_minishell	minishell;
 	signal(SIGINT, signal_handler);
 	signal(SIGQUIT, SIG_IGN);
-	
-	rl_erase_empty_line = 1;
-	//<-- why?
-	// we might need to do some terminal status thing
-	// interactive and non interactive shell mode
+
 	(void)argc;
 	(void)argv;
 	init_minishell(&minishell, envp);
