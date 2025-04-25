@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 17:58:16 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 20:51:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	heredoc_no_expansion(t_minishell *minishell, int write_fd, char *delimiter)
 	}
 	free(line);
 	if (close(write_fd) == -1)
-		syscall_failure(minishell);
+		syscall_failure(minishell, __FILE__, __LINE__);
 	return (read_rval);
 }
 
@@ -110,7 +110,7 @@ int	heredoc_with_expansion(
 	}
 	free(line);
 	if (close(write_fd) == -1)
-		syscall_failure(minishell);
+		syscall_failure(minishell, __FILE__, __LINE__);
 	return (read_rval);
 }
 
@@ -122,16 +122,17 @@ int	heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 	int				read_rval;
 
 	if (create_heredoc_fds(fds) == -1)
-		syscall_failure(minishell);
+		syscall_failure(minishell, __FILE__, __LINE__);
 	delimiter = arena_alloc(arena, sizeof(char) * data->string_len + 1);
 	new_size = set_quote_removed_string(delimiter, data);
 	if (new_size < data->string_len)
 		read_rval = heredoc_no_expansion(minishell, fds[WRITE], delimiter);
 	else
 		read_rval = heredoc_with_expansion(minishell, fds[WRITE], delimiter);
+	data->type = fds[READ];
 	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
 	minishell->heredoc_count += 1;
 	if (read_rval == -2)
 		return (-2);
-	return (fds[READ]);
+	return (0);
 }

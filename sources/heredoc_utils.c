@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 17:58:10 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 21:59:04 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ uint32_t	set_quote_removed_string(char *dest, t_token *data)
 	char		quote;
 	uint32_t	data_index;
 	uint32_t	dest_index;
-	// feel like this or these should be renamde
+
 	data_index = 0;
 	dest_index = 0;
 	while (data_index < data->string_len)

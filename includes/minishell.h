@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 18:27:53 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 20:32:16 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,10 @@ typedef enum e_builtin
 }	t_builtin;
 
 // arena_strings.c
-int			string_find_new_memory(t_arena *a, t_string *str, size_t new_size);
-int			append_to_string(t_arena *a, t_string *str,
+void		string_find_new_memory(t_arena *a, t_string *str, size_t new_size);
+void		append_to_string(t_arena *a, t_string *str,
 				char *src, size_t src_len);
-int			terminate_and_commit_string(t_arena *a, t_string *str);
+void		terminate_and_commit_string(t_arena *a, t_string *str);
 
 // arena_utils.c
 void		*xarena_alloc(t_arena *arena, uint64_t size);
@@ -111,7 +111,7 @@ void		*xarena_realloc(t_arena *arena, void *old,
 
 // error.c
 void		error_exit(t_minishell *m, int exit_status);
-void		syscall_failure(t_minishell *m);
+void	syscall_failure(t_minishell *m, char *file, int line);
 
 // execute_utils.c
 void		close_pipe(t_minishell *m);

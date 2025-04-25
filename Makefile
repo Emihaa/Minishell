@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
+#    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/25 03:56:32 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/25 21:01:45 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -149,7 +149,7 @@ no_built_in_optimize: optimize
 no_built_in_profile: CC_FLAGS += -fno-builtin -pg -O3
 no_built_in_profile: all
 
-debug: CC_FLAGS += -g3 -ggdb3 -gdwarf -Wunreachable-code -Wunused-function
+debug: CC_FLAGS += -g3 -ggdb3 -gdwarf -Wunreachable-code -Wunused-function -D MSHELL_DEBUG
 debug: all
 
 profile: CC_FLAGS += -O3 -pg

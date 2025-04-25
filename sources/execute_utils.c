@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 00:51:51 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 22:35:56 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,17 @@
 void	close_pipe(t_minishell *m)
 {
 	if (m->pipe[WRITE] != -1)
+	{
 		if (close(m->pipe[WRITE]))
-			syscall_failure(m);
+			syscall_failure(m, __FILE__, __LINE__);
+		m->pipe[READ] = -1;
+	}
 	if (m->pipe[READ] != -1)
+	{
 		if (close(m->pipe[READ]))
-			syscall_failure(m);
+			syscall_failure(m, __FILE__, __LINE__);
+		m->pipe[READ] = -1;
+	}
 }
 
 // maybe just add this to run commmand

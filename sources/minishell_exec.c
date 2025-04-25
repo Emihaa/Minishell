@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_exec.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 03:52:05 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 04:07:04 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 21:31:14 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	create_and_store_pipe(t_minishell *m, int8_t *side)
 	if (*side == WRITE || *side == -1)
 	{
 		if (pipe(m->pipe) == -1)
-			syscall_failure(m);
+			syscall_failure(m, __FILE__, __LINE__);
 		store_write_fd(m->pipe[WRITE], m);
 		m->pipe[WRITE] = -1;
 		*side = READ;
@@ -32,6 +32,22 @@ int	create_and_store_pipe(t_minishell *m, int8_t *side)
 		return (0);
 	}
 	return (0);
+}
+
+void	close_heredocs(t_minishell *m)
+{
+	uint32_t	i;
+
+	i = 0;
+	while (i < m->heredoc_count)
+	{
+		if (m->heredoc_fds[i] != -1)
+		{
+			if (close(m->heredoc_fds[i]) == -1)
+				syscall_failure(m, __FILE__, __LINE__);
+		}
+		i++;
+	}
 }
 
 int	store_heredoc(t_minishell *m, int fd)

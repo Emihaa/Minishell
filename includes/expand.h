@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 22:35:28 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 03:11:03 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 22:00:08 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ typedef struct s_expand_vars
 	char		quote;
 	bool		had_quote;
 	char		*env_var;
-}	t_expand_vars;
+}	t_expand_vars; // unused
 
 // argv.c
 char	**create_argv(t_arena *arena, t_node *node);

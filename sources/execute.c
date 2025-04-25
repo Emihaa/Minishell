@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 18:05:41 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 20:33:58 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ char	*get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 		i = 0;
 		while (path[i] != ':' && path[i] != '\0')
 			i++;
-		if (string_find_new_memory(a, &str, i + cmd_str_len + 2))
-			syscall_failure(m); // error exit?
+		string_find_new_memory(a, &str, i + cmd_str_len + 2);
 		append_to_string(a, &str, path, i);
 		append_to_string(a, &str, "/", 1);
 		append_to_string(a, &str, cmd, cmd_str_len);
@@ -75,7 +74,7 @@ pid_t	execute_subprocess(t_arena *arena, t_minishell *m,
 
 	pid = fork();
 	if (pid == (pid_t)(-1))
-		syscall_failure(m); // @TODO: error cheking
+		syscall_failure(m, __FILE__, __LINE__); // @TODO: error cheking
 	if (pid == 0)
 	{
 		apply_redirect(m);
@@ -104,7 +103,7 @@ int	execute_command(t_arena *arena, t_minishell *m, char **argv, int status)
 	{
 		pid = fork();
 		if (pid == -1)
-			syscall_failure(m); // @TODO: error cheking
+			syscall_failure(m, __FILE__, __LINE__); // @TODO: error cheking
 		if (pid == 0)
 			error_exit(m, 1); // @todo check if this exit code is correct
 		m->command_count += 1;

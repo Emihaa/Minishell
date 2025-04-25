@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 03:44:08 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 17:46:23 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 20:29:02 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	minishell_cleanup(t_minishell *minishell)
 	while (minishell->envp_size-- > 0)
 		free(minishell->envp[minishell->envp_size]);
 	free(minishell->envp);
+	close_pipe(minishell);
 }
 
 /// @brief initializes default values for the minishell struct
