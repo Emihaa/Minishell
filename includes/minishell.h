@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 03:08:52 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 03:24:58 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,21 +65,23 @@ typedef enum e_type
 /// @brief Globally used parameters 
 typedef struct s_minishell
 {
-	int				istty;
-	uint32_t		line_counter;
-	uint32_t		command_count;
-	uint32_t		heredoc_count;
-	int				*heredoc_fds;
-	int				redir_fds[2];
-	int				pipe[2];
-	int8_t			pipe_side;
+	int			istty;
+	uint32_t	line_counter;
+	uint32_t	command_count;
+	uint32_t	heredoc_count;
+	int			*heredoc_fds;
+	int			redir_fds[2];
+	int			pipe[2];
+	int8_t		pipe_side;
+	pid_t			*pids;  // maybe needed
 	pid_t			last_pid;
-	int				exit_status;
-	char			*line;
-	t_arena			*node_arena;
-	char			**envp;
-	int				envp_size;
-	int				env_capacity;
+	int			exit_status;
+	char		*line;
+	t_arena		*global_arena;
+	t_arena		*file_buf;
+	char		**envp;
+	int			envp_size;
+	int			env_capacity;
 }	t_minishell;
 
 /// @brief Builtin commands
@@ -105,6 +107,7 @@ int			terminate_and_commit_string(t_arena *a, t_string *str);
 void		*xarena_alloc(t_arena *arena, uint64_t size);
 void		*xarena_alloc_no_zero(t_arena *arena, uint64_t size); //not in use
 t_arena		*xarena_new(uint64_t cap); //@TODO:not in use
+void		*xarena_realloc(t_arena *arena, void *old, uint64_t old_size, uint64_t new_size);
 
 // error.c
 void		error_exit(t_minishell *m, int exit_status);
@@ -150,5 +153,8 @@ int			write_bytes(int fd, char *str, size_t bytes_to_write);
 int			put_str_nl(int fd, char *str);
 int			put_str(int fd, char *str);
 int			put_char(int fd, char c);
+
+//get_line
+char	*get_line(t_arena *arena, int fd);
 
 #endif

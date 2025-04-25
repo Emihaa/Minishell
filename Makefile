@@ -6,7 +6,7 @@
 #    By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/25 01:33:01 by ehaanpaa         ###   ########.fr        #
+#    Updated: 2025/04/25 03:19:13 by ehaanpaa         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -50,7 +50,8 @@ SOURCES =	minishell.c		utils.c		hooks.c											\
 			export.c		export_utils.c		export_print_utils.c					\
 			unset.c			env.c				env_helpers.c		cd.c				\
 			arena_utils.c	arena_strings.c												\
-			argv.c			expand_in_quotes.c
+			argv.c			expand_in_quotes.c											\
+			mshell_get_line.c															\
 
 OBJECTS = $(addprefix $(OBJ_DIR)/, $(SOURCES:.c=.o))
 

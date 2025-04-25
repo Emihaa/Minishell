@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 01:00:11 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 03:25:41 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static char	*arena_strjoin(t_minishell *m, char *s1, char *s2)
 		len1 = ft_strlen(s1);
 	if (s2)
 		len2 = ft_strlen(s2);
-	temp = xarena_alloc(m->node_arena, len1 + len2 + 1);
+	temp = xarena_alloc(m->global_arena, len1 + len2 + 1);
 	if (s1)
 		ft_memmove(temp, s1, len1);
 	if (s2)

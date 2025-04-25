@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 02:31:59 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/25 03:27:28 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,33 +24,6 @@
 
 volatile sig_atomic_t g_int = 0;
 
-// debug stuff
-char	*get_token_name(t_token *token)
-{
-	if (token->type == PIPE)
-		return("|");
-	if (token->type == REDIRECT_IN)
-		return("<");
-	if (token->type == REDIRECT_OUT)
-		return(">");
-	if (token->type == REDIRECT_APPEND)
-		return(">>");
-	if (token->type == HERE_DOCUMENT)
-		return("<<");
-	if (token->type == WORD)
-		return("word");
-	if (token->type == END_OF_LINE)
-		return ("newline");
-	return ("ERROR");
-}
-
-//debug stuff
-void	print_token(t_token *token)
-{
-	// debug stuff
-	printf("token number: %i\ttoken name: %s\ttoken string: %.*s\n",
-			token->type, get_token_name(token), (int)token->string_len, token->string);
-}
 /// @todo error cheking
 int	create_and_store_pipe(t_minishell *m, int8_t *side)
 {
@@ -104,10 +77,7 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	pid_t		pid;
 
 	i = 0;
-	// printf("command count: %o\n", minishell->command_count); // Debug stuff
-	// printf("last_pid = %i\n", minishell->last_pid); // Debug stuff
 	signal(SIGINT, &wait_signal_handler);
-	// printf("child process no signals\n");
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -115,21 +85,16 @@ void	wait_for_sub_processes(t_minishell *minishell)
 			perror("wait issue");
 		if (pid == minishell->last_pid)
 		{
-			// printf("pid == %i\n", pid);
-			// printf("exit_status before = %i\n", minishell->exit_status);
 			if (WIFSIGNALED(wstatus))
 			{
 				minishell->exit_status = 128 + WTERMSIG(wstatus);
 				if (__WCOREDUMP(wstatus))
-					put_str(STDERR_FILENO, "Quit (core dumped)\n"); // need to check this
+					put_str(STDERR_FILENO, "Quit (core dumped)\n");
 			}
 			else if (WIFEXITED(wstatus))
 				minishell->exit_status = WEXITSTATUS(wstatus);
 			else
 				minishell->exit_status = 1;
-			// printf("wstatus: %d\n", wstatus);
-			// printf("exit_status after = %i\n", minishell->exit_status);
-
 		}
 		i++;
 	}
@@ -235,21 +200,14 @@ void	read_loop(t_minishell *m)
 		i += eat_space(m->line);
 		if (m->line[i] == '\0')
 			continue ;
-		tree = parser(m->node_arena, m, &m->line[i]);
+		tree = parser(m->global_arena, m, &m->line[i]);
 		if (tree != NULL)
-			minishell_exec_loop(m->node_arena, m, tree);
+			minishell_exec_loop(m->global_arena, m, tree);
 		wait_for_sub_processes(m);
 		free(m->line);
 		m->line = NULL;
-		// t_arena *temp = m->node_arena;
-		// for (int i = 0; temp != NULL; i++)
-		// {
-		// 	printf("arena region[%i] size: <%lu> capacity <%lu>\n", i, temp->size, temp->capacity);
-		// 	printf("data of [%i]as chars: %.*s\n", i, (int)temp->size, temp->data);
-		// 	temp = temp->next;
-		// }
-		arena_trim(m->node_arena);
-		arena_reset(m->node_arena);
+		arena_trim(m->global_arena);
+		arena_reset(m->global_arena);
 	}
 }
 
@@ -258,37 +216,31 @@ void	exec_mode(t_minishell *m)
 	t_node		*tree;
 	uint32_t	i;
 
-	// char *buff = ft_calloc(72000, 1);
+	m->file_buf = xarena_new(4096 + 1);
 	while (1)
 	{
 		i = 0;
 		m->command_count = 0;
 		m->heredoc_count = 0;
-		// char *line = get_next_line(STDIN_FILENO, buff);
-		m->line = readline(NULL);
+		m->line = get_line(m->file_buf, STDIN_FILENO);
 		if (m->line == NULL)
 			error_exit(m, m->exit_status);
-		// m->line = ft_strtrim(line, "\n");
 		m->line_counter += 1;
-		i += eat_space(m->line);
-		if (m->line[i] == '\0')
-			continue ;
-		tree = parser(m->node_arena, m, &m->line[i]);
+		tree = parser(m->global_arena, m, &m->line[i]);
 		if (tree != NULL)
-			minishell_exec_loop(m->node_arena, m, tree);
+			minishell_exec_loop(m->global_arena, m, tree);
 		wait_for_sub_processes(m);
-		// free(line);
-		// line = NULL;
 		free(m->line);
 		m->line = NULL;
-		arena_trim(m->node_arena);
-		arena_reset(m->node_arena);
+		arena_trim(m->global_arena);
+		arena_reset(m->global_arena);
 	}
 }
 
 void	minishell_cleanup(t_minishell *minishell)
 {
-	arena_delete(minishell->node_arena);
+	arena_delete(minishell->global_arena);
+	arena_delete(minishell->file_buf);
 	close_heredocs(minishell);
 	free(minishell->line);
 	while (minishell->envp_size-- > 0)
@@ -304,12 +256,8 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	static int heredoc_fds_arr[16] = {0};
 
 	minishell->istty = isatty(STDIN_FILENO);
-	minishell->node_arena = arena_new(DEFAULT_ARENA_CAPACITY);
-	if (minishell->node_arena == NULL)
-	{
-		put_str(STDERR_FILENO, "allocation failure\n");
-		error_exit(minishell, 1); // @TODO: error checking
-	}
+	minishell->global_arena = xarena_new(DEFAULT_ARENA_CAPACITY);
+	minishell->file_buf = NULL;
 	minishell->line = NULL;
 	minishell->command_count = 0;
 	minishell->line_counter = 0;
