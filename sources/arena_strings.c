@@ -3,16 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   arena_strings.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/13 15:00:49 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/26 00:16:41 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/26 16:28:18 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-/// @TODO: check comment
 t_arena	*find_free_arena(t_arena *a, size_t size)
 {
 	size_t	capacity;

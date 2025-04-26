@@ -6,7 +6,7 @@
 /*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/28 22:33:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 18:03:39 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/26 16:25:40 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,9 +94,6 @@ t_token	tokenize_pipe(t_lexer *lexer)
 	return (token);
 }
 
-/// @TODO:	find out which character can be valid parts of a word
-// 			currently anything other than a delimiter character counts as a word
-//			which doesn't seem correct
 /// @brief skips whitespace between tokens and 
 /// finds the next token type to return
 t_token	get_next_token(t_lexer *lexer)
