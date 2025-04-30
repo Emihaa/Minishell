@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mshell_get_line.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/23 23:18:07 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 04:11:26 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/30 19:44:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	read_file_to_buff(t_arena *arena, char **buffer, int fd)
 			*buffer = xarena_realloc(arena, *buffer, i, (allocated * 2) + 1);
 			allocated *= 2;
 		}
-		bytes_read = read(fd, (*buffer) + i, 2048);
+		bytes_read = read(fd, (*buffer) + i, 1024);
 		i += bytes_read;
 	}
 	if (bytes_read >= 0)
@@ -53,20 +53,19 @@ int	read_file_to_buff(t_arena *arena, char **buffer, int fd)
 
 char	*get_line(t_arena *arena, int fd)
 {
-	static size_t	read_head;
+	static size_t	read_head = 0;
 	static char		*buff;
 	char			*line;
 	size_t			i;
 
 	line = NULL;
-	read_head = 0;
 	if (read_head <= 0)
 	{
 		if (read_file_to_buff(arena, &buff, fd))
 			return (NULL);
 	}
 	if (buff[read_head] == '\0')
-		return (line);
+		return (NULL);
 	i = 0;
 	while (buff[read_head + i] != '\n' && buff[read_head + i] != '\0')
 		i += 1;
