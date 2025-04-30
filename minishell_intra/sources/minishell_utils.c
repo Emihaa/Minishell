@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 03:44:08 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/30 17:05:52 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/30 17:08:54 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,11 @@ void	minishell_cleanup(t_minishell *minishell)
 	arena_delete(minishell->file_buf);
 	close_heredocs(minishell);
 	free(minishell->line);
-	while (minishell->envp_size-- > 0)
-		free(minishell->envp[minishell->envp_size]);
+	if (minishell->envp)
+	{
+		while (minishell->envp_size-- > 0)
+			free(minishell->envp[minishell->envp_size]);
+	}
 	free(minishell->envp);
 	close_pipe(minishell);
 }
