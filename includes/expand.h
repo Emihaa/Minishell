@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/24 22:35:28 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/25 22:00:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/30 17:02:46 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ char	**create_argv(t_arena *arena, t_node *node);
 // expand_in_helpers.c
 void	init_arg(t_token *data, t_arg *arg_vars);
 void	init_argv(t_arena *arena, t_arg_vec *argv, size_t cap);
-int		realloc_argv(t_arena *arena, t_arg_vec *argv);
+void	realloc_argv(t_arena *arena, t_arg_vec *argv);
 int		is_quote_or_var(char c);
 
 // expand_in_quotes.c

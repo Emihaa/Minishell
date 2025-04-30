@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 03:44:08 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/26 00:13:57 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/04/30 16:57:27 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,21 @@ void	minishell_cleanup(t_minishell *minishell)
 	close_pipe(minishell);
 }
 
+static
+void	envp_alloc_error(t_minishell *m)
+{
+	put_str(STDERR_FILENO, "minishell: allocation failure\n");
+	error_exit(m, 1);
+}
+
+
 /// @brief initializes default values for the minishell struct
 /// for globally used values
 void	init_minishell(t_minishell *minishell, char **envp)
 {
 	static int	heredoc_fds_arr[16] = {-1};
 
+	ft_memset(minishell, 0, sizeof(*minishell));
 	minishell->istty = isatty(STDIN_FILENO);
 	minishell->global_arena = xarena_new(DEFAULT_ARENA_CAPACITY);
 	minishell->file_buf = NULL;
@@ -56,10 +65,7 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	minishell->env_capacity = 64;
 	minishell->envp = create_env(minishell, envp);
 	if (!minishell->envp)
-	{
-		put_str(STDERR_FILENO, "minishell: allocation failure\n");
-		error_exit(minishell, 1);
-	}
+		envp_alloc_error(minishell);
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;

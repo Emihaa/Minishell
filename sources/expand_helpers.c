@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand_helpers.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 21:25:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/25 17:27:48 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/04/30 17:00:45 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,12 @@ void	init_argv(t_arena *arena, t_arg_vec *argv, size_t cap)
 	argv->size = 0;
 }
 
-int	realloc_argv(t_arena *arena, t_arg_vec *argv)
+void	realloc_argv(t_arena *arena, t_arg_vec *argv)
 {
 	argv->capacity *= 2;
-	argv->data = arena_realloc(arena, argv->data,
+	argv->data = xarena_realloc(arena, argv->data,
 			argv->size * sizeof(*argv->data),
 			sizeof(*argv->data) * (argv->capacity + 1));
-	if (argv->data == NULL)
-		return (-1);
-	return (0);
 }
 
 /// @brief if char is quote or '$'
