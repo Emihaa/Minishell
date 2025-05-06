@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 16:56:06 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:21:08 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	builtin_echo(char *argv[])
 	else
 		newline = true;
 	i = !newline + 1;
-	while (ft_strncmp(argv[i], "-n", 3) == 0)
+	while (argv[i] != NULL && ft_strncmp(argv[i], "-n", 3) == 0)
 		i++;
 	while (1)
 	{
