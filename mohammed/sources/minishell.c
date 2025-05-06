@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 17:33:07 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/05/06 22:36:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	pid_t		pid;
 
 	i = 0;
-	signal(SIGINT, &wait_signal_handler);
+	if (minishell->istty)
+		signal(SIGINT, &wait_signal_handler);
 	while (i < minishell->command_count)
 	{
 		pid = wait(&wstatus);
@@ -55,9 +56,13 @@ void	wait_for_sub_processes(t_minishell *minishell)
 		}
 		i++;
 	}
-	signal(SIGINT, signal_handler);
+	if (minishell->istty)
+		signal(SIGINT, signal_handler);
 }
 
+
+// for reasons I have yet to figure out,
+// having this rl_even_hook breaks some testers
 void	read_loop(t_minishell *m)
 {
 	t_node		*tree;

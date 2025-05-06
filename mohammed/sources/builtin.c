@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:21:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 18:21:08 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/06 21:55:48 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	builtin_echo(char *argv[])
 	i = !newline + 1;
 	while (argv[i] != NULL && ft_strncmp(argv[i], "-n", 3) == 0)
 		i++;
-	while (1)
+	while (argv[i])
 	{
 		(void)put_str(STDOUT_FILENO, argv[i]);
 		i++;
