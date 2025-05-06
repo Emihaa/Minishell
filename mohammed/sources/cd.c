@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/04/26 21:59:25 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/07 01:26:50 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	cd_home(t_minishell *m)
 		return ;
 	}
 	temp = arena_strjoin(m, NULL, ft_strchr(m->envp[pos], '=') + 1);
-	chdir(temp);
+	chdir(temp); // @NOTE should this be checked for failure
 }
 
 /// @brief updates the "OLDPWD" & "PWD" in the env

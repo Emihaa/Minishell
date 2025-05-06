@@ -6,7 +6,7 @@
 #    By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/01 17:30:48 by ltaalas           #+#    #+#              #
-#    Updated: 2025/04/26 18:15:11 by ltaalas          ###   ########.fr        #
+#    Updated: 2025/05/07 01:28:36 by ltaalas          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,7 +65,7 @@ HEADERS =	$(INC_DIR)/minishell.h \
 			$(LIB_DIR)/$(LT_ARENA_DIR)/$(INC_DIR)/lt_arena.h \
 			$(LIB_DIR)/$(LIBFT_DIR)/$(INC_DIR)/libft.h
 
-LINKS = $(addprefix -l, readline) # make this make any sense
+LINKS = $(addprefix -l, readline)
 
 CC_FLAGS = -Wall -Wextra -Werror
 
