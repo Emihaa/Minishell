@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 17:39:03 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/05/06 23:20:06 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ char	*get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 	if (path == NULL || *path == '\0')
 		return (cmd);
 	str = (t_string){0};
-	while (*path != '\0')
+	while (*cmd && *path != '\0')
 	{
 		i = 0;
 		while (path[i] != ':' && path[i] != '\0')
@@ -42,7 +42,7 @@ char	*get_cmd_with_path(t_arena *a, t_minishell *m, char *path, char *cmd)
 		append_to_string(a, &str, "/", 1);
 		append_to_string(a, &str, cmd, cmd_str_len);
 		terminate_and_commit_string(a, &str);
-		if (access(str.base, F_OK) == 0)
+		if (access(str.base, X_OK) == 0 && (directory_check(str.base) == false))
 			return (str.base);
 		delete_temp_string(&str);
 		path += i + (path[i] == ':');

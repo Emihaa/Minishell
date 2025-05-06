@@ -6,12 +6,13 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/05 18:55:34 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/06 23:26:47 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 #include "../includes/builtin.h"
+#include <sys/stat.h>
 
 void	close_pipe(t_minishell *m)
 {
@@ -60,6 +61,23 @@ void	execute_builtin_in_main_process(t_minishell *m,
 	}
 }
 
+int	directory_check(char *cmd)
+{
+	int			errno_temp;
+	struct stat	sb;
+
+	errno_temp = errno;
+	if (stat(cmd, &sb) == 0)
+	{
+		if (S_ISDIR(sb.st_mode))
+		{
+			return (1);
+		}
+	}
+	errno = errno_temp;
+	return (0);
+}
+
 // maybe just add this to run commmand
 void	execve_failure(t_minishell *m, char *cmd)
 {
@@ -69,9 +87,13 @@ void	execve_failure(t_minishell *m, char *cmd)
 	m->exit_status = 1;
 	if (errno == ENOENT)
 		m->exit_status = 127;
-	if (errno == EACCES)
+	else if (errno == EACCES)
+	{
 		m->exit_status = 126;
-	if (errno == EISDIR || errno == ENOTDIR)
+		if (directory_check(cmd))
+			errno = EISDIR;
+	}
+	else if (errno == EISDIR || errno == ENOTDIR)
 		m->exit_status = 126;
 	stdout = stderr;
 	if (m->istty)

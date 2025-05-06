@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 22:36:20 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/06 23:22:42 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void	wait_for_sub_processes(t_minishell *minishell)
 	if (minishell->istty)
 		signal(SIGINT, signal_handler);
 }
-
 
 // for reasons I have yet to figure out,
 // having this rl_even_hook breaks some testers

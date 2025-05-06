@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 19:06:30 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/05 18:46:44 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/05/06 23:16:12 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,6 +125,7 @@ void		execve_failure(t_minishell *m, char *cmd);
 void		command_not_found(t_minishell *m, char *cmd);
 void		execute_builtin_in_main_process(t_minishell *m,
 				char **argv, int builtin_type);
+int			directory_check(char *cmd);
 
 // execute.c
 int			execute_command(t_arena *arena, t_minishell *m,
