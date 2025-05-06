@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/25 03:44:08 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/05/06 17:39:25 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/05/06 19:32:04 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,10 @@ void	init_minishell(t_minishell *minishell, char **envp)
 {
 	static int	heredoc_fds_arr[16];
 
+	get_minishell(minishell);
 	ft_memset(heredoc_fds_arr, -1, sizeof(heredoc_fds_arr));
 	ft_memset(minishell, 0, sizeof(*minishell));
 	minishell->istty = isatty(STDIN_FILENO);
-	minishell->global_arena = xarena_new(DEFAULT_ARENA_CAPACITY);
 	minishell->file_buf = NULL;
 	minishell->line = NULL;
 	minishell->command_count = 0;
@@ -73,14 +73,14 @@ void	init_minishell(t_minishell *minishell, char **envp)
 	minishell->heredoc_count = 0;
 	minishell->envp_size = 0;
 	minishell->env_capacity = 64;
-	minishell->envp = create_env(minishell, envp);
-	if (!minishell->envp)
-		envp_alloc_error(minishell);
 	minishell->redir_fds[READ] = STDIN_FILENO;
 	minishell->redir_fds[WRITE] = STDOUT_FILENO;
 	minishell->pipe[READ] = -1;
 	minishell->pipe[WRITE] = -1;
 	minishell->stdout_dup = -1;
 	minishell->last_pid = 0;
-	get_minishell(minishell);
+	minishell->global_arena = xarena_new(DEFAULT_ARENA_CAPACITY);
+	minishell->envp = create_env(minishell, envp);
+	if (!minishell->envp)
+		envp_alloc_error(minishell);
 }
