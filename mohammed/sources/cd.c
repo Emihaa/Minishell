@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
+/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/05/07 01:26:50 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/07 23:43:28 by ehaanpaa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,9 @@ static char	*arena_strjoin(t_minishell *m, char *s1, char *s2)
 }
 
 /// @brief changes directory to path at "HOME"
-static void	cd_home(t_minishell *m)
+static int	cd_home(t_minishell *m)
 {
+	FILE	*file;
 	char	*temp;
 	int		pos;
 
@@ -45,10 +46,19 @@ static void	cd_home(t_minishell *m)
 	{
 		put_str(2, "minishell: cd: HOME not set\n");
 		m->exit_status = 1;
-		return ;
+		return (1);
 	}
 	temp = arena_strjoin(m, NULL, ft_strchr(m->envp[pos], '=') + 1);
-	chdir(temp); // @NOTE should this be checked for failure
+	if (chdir(temp) == -1)
+	{
+		file = stdout;
+		stdout = stderr;
+		printf("minishell: cd: %s: %s\n", temp, strerror(errno));
+		m->exit_status = 1;
+		stdout = file;
+		return (1);
+	}
+	return (0);
 }
 
 /// @brief updates the "OLDPWD" & "PWD" in the env
@@ -80,11 +90,12 @@ void	builtin_cd(t_minishell *m, int argc, char **argv)
 	if (argc == 1 || argc == 2)
 	{
 		if (argc == 1)
-			cd_home(m);
+			if (cd_home(m))
+				return ;
 		else if (chdir(argv[1]) == -1)
 		{
 			stdout = stderr;
-			printf("minishell: cd: %s: No such file or directory\n", argv[1]);
+			printf("minishell: cd: %s: %s\n", argv[1], strerror(errno));
 			m->exit_status = 1;
 			stdout = temp;
 			return ;
