@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 17:24:03 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/05 16:49:14 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/08 18:26:24 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ void	syscall_failure(t_minishell *m, char *file, int line)
 	stdout = stderr;
 	printf("minishell: syscall failed with [%s]\n", strerror(errno));
 	printf("(%s:%i)\n", file, line);
-	if (m->pipe_side == -1)
-		wait_for_sub_processes(m);
 	m->exit_status = 1;
 	printf("exit\n");
 	stdout = temp;
@@ -51,8 +49,6 @@ void	syscall_failure(t_minishell *m, char *file, int line)
 	temp = stdout;
 	stdout = stderr;
 	printf("minishell: syscall failed with [%s]\n", strerror(errno));
-	if (m->pipe_side == -1)
-		wait_for_sub_processes(m);
 	m->exit_status = 1;
 	printf("exit\n");
 	stdout = temp;
