@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ehaanpaa <ehaanpaa@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 17:59:21 by ehaanpaa          #+#    #+#             */
-/*   Updated: 2025/05/07 23:43:28 by ehaanpaa         ###   ########.fr       */
+/*   Updated: 2025/05/07 23:50:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,10 @@ void	builtin_cd(t_minishell *m, int argc, char **argv)
 	if (argc == 1 || argc == 2)
 	{
 		if (argc == 1)
+		{
 			if (cd_home(m))
 				return ;
+		}
 		else if (chdir(argv[1]) == -1)
 		{
 			stdout = stderr;

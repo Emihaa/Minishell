@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/27 19:23:33 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 23:22:42 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/08 00:01:20 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,11 +123,13 @@ int	main(int argc, char *argv[], char **envp)
 
 	(void)argc;
 	(void)argv;
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_IGN);
 	init_minishell(&minishell, envp);
 	if (minishell.istty)
+	{
+		signal(SIGINT, signal_handler);
+		signal(SIGQUIT, SIG_IGN);
 		read_loop(&minishell);
+	}
 	else
 		exec_mode(&minishell);
 	minishell_cleanup(&minishell);

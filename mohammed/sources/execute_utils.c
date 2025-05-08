@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/01 00:07:00 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 23:26:47 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/08 00:26:29 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,14 +87,12 @@ void	execve_failure(t_minishell *m, char *cmd)
 	m->exit_status = 1;
 	if (errno == ENOENT)
 		m->exit_status = 127;
-	else if (errno == EACCES)
+	else if (errno == EACCES || errno == EISDIR || errno == ENOTDIR)
 	{
 		m->exit_status = 126;
 		if (directory_check(cmd))
 			errno = EISDIR;
 	}
-	else if (errno == EISDIR || errno == ENOTDIR)
-		m->exit_status = 126;
 	stdout = stderr;
 	if (m->istty)
 		printf("minishell: %s: %s\n", cmd, strerror(errno));
