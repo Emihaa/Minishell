@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/31 21:05:55 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/06 23:20:06 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/08 20:52:45 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ pid_t	execute_subprocess(t_arena *arena, t_minishell *m,
 	{
 		apply_redirect(m);
 		close_pipe(m);
+		close_heredocs(m);
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		if (builtin != BUILTIN_FALSE)

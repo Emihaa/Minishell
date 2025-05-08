@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 17:47:15 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/05/05 16:32:58 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/08 20:51:28 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,12 +125,12 @@ int	heredoc(t_arena *arena, t_minishell *minishell, t_token *data)
 		syscall_failure(minishell, __FILE__, __LINE__);
 	delimiter = xarena_alloc(arena, sizeof(char) * data->string_len + 1);
 	new_size = set_quote_removed_string(delimiter, data);
+	data->type = fds[READ];
+	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
 	if (new_size < data->string_len)
 		read_rval = heredoc_no_expansion(minishell, fds[WRITE], delimiter);
 	else
 		read_rval = heredoc_with_expansion(minishell, fds[WRITE], delimiter);
-	data->type = fds[READ];
-	minishell->heredoc_fds[minishell->heredoc_count] = fds[READ];
 	minishell->heredoc_count += 1;
 	if (read_rval == -2)
 	{

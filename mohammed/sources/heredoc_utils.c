@@ -6,7 +6,7 @@
 /*   By: ltaalas <ltaalas@student.hive.fi>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:56:53 by ltaalas           #+#    #+#             */
-/*   Updated: 2025/04/26 18:55:04 by ltaalas          ###   ########.fr       */
+/*   Updated: 2025/05/08 20:36:53 by ltaalas          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,7 @@ int	create_heredoc_fds(int fds[2])
 {
 	uint32_t	heredoc_num;
 	char		*file_name;
-	int			return_val;
 
-	return_val = 0;
 	heredoc_num = 1;
 	while (1)
 	{
@@ -86,11 +84,12 @@ int	create_heredoc_fds(int fds[2])
 		return (-1);
 	}
 	fds[0] = open(file_name, O_CLOEXEC | O_RDONLY);
-	if (fds[0] == -1)
-		return_val = -1;
-	if (unlink(file_name) == -1)
-		return_val = -1;
-	return (return_val);
+	if (fds[0] != -1 && unlink(file_name) != -1)
+	{
+		return (0);
+	}
+	close(fds[1]);
+	return (-1);
 }
 
 void	print_eof_error(t_minishell *m, char *delimiter)
@@ -105,9 +104,12 @@ void	print_eof_error(t_minishell *m, char *delimiter)
 
 int	heredoc_read(t_minishell *minishell, char **line, char *delimiter)
 {
+	*line = NULL;
 	if (minishell->istty == 1)
+	{
 		rl_event_hook = heredoc_event_hook;
-	*line = readline("> ");
+		*line = readline("> ");
+	}
 	if (*line == NULL || g_sig == SIGINT)
 	{
 		if (g_sig == SIGINT)
